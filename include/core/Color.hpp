@@ -4,9 +4,4 @@
 
 NAMESPACE_BEGIN
 
-class PropertyList
-{
-
-};
-
 NAMESPACE_END

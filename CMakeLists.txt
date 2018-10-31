@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.10)
 project(Hikari)
 
 # basic
@@ -136,6 +136,8 @@ set(
         SOURCE_FILES
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp
+        
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Color.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Common.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Object.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/PropertyList.cpp
@@ -146,6 +148,7 @@ set(
 set(
         HEADER_FILS
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Color.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Common.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Object.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/PropertyList.hpp

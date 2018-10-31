@@ -5,9 +5,11 @@
 #define NOMINMAX                /* Don't override min/max */
 #endif
 
+#include <string>
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <map>
 #include <cstdint>
 #include <stdexcept>
 
@@ -44,6 +46,11 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
+NAMESPACE_BEGIN
+
+/* Forward declarations */
+
+
 /* Simple exception class, which stores a human-readable error description */
 class HikariException : public std::runtime_error 
 {
@@ -52,3 +59,5 @@ public:
 	template <typename... Args> HikariException(const char * pFmt, const Args & ... Args)
 		: std::runtime_error(tfm::format(pFmt, Args...)) { }
 };
+
+NAMESPACE_END
