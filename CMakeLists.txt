@@ -137,6 +137,7 @@ set(
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp
         
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/BoundingBox.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Color.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Common.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Object.cpp
@@ -148,6 +149,7 @@ set(
 set(
         HEADER_FILS
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/BoundingBox.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Color.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Common.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Object.hpp

@@ -1,6 +1,4 @@
-#pragma once
-
-#include <core/Common.hpp>
+#include <core/Color.hpp>
 
 NAMESPACE_BEGIN
 
