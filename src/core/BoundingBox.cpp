@@ -1,4 +1,4 @@
-#include <core/BoundingBox.hpp>
+#include <core\BoundingBox.hpp>
 
 NAMESPACE_BEGIN
 

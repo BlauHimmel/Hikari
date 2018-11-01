@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/Common.hpp>
-#include <core/Vector.hpp>
+#include <core\Common.hpp>
+#include <core\Vector.hpp>
 
 NAMESPACE_BEGIN
 
@@ -22,13 +22,13 @@ struct TRay
 {
 	using PointType = TPointType;
 	using VectorType = TVectorType;
-	using Scaler = PointType::Scaler;
+	using Scalar = typename PointType::Scalar;
 
 	PointType Origin;               ///< Ray origin
 	VectorType Direction;           ///< Ray direction
 	VectorType DirectionReciprocal; ///< Componentwise reciprocals of the ray direction
-	Scaler MinT;                    ///< Minimum position on the ray segment
-	Scaler MaxT;                    ///< Maximum position on the ray segment
+	Scalar MinT;                    ///< Minimum position on the ray segment
+	Scalar MaxT;                    ///< Maximum position on the ray segment
 
 	/// Construct a new ray
 	TRay() : MinT(Epsilon), MaxT(std::numeric_limits<Scalar>::infinity()) { }

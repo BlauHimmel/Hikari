@@ -1,4 +1,4 @@
-#include <core/Color.hpp>
+#include <core\Color.hpp>
 
 NAMESPACE_BEGIN
 

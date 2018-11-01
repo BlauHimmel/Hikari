@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/Common.hpp>
-#include <core/Ray.hpp>
+#include <core\Common.hpp>
+#include <core\Ray.hpp>
 
 NAMESPACE_BEGIN
 

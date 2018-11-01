@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/Common.hpp>
-#include <core/PropertyList.hpp>
+#include <core\Common.hpp>
+#include <core\PropertyList.hpp>
 
 NAMESPACE_BEGIN
 

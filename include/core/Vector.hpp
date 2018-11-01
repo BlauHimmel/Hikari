@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/Common.hpp>
+#include <core\Common.hpp>
 
 NAMESPACE_BEGIN
 
@@ -12,10 +12,10 @@ struct TVector : public Eigen::Matrix<TScalar, TDimension, 1>
 {
 public:
 	enum { Dimension = TDimension };
-	using Scaler     = TScalar;
-	using Base       = Eigen::Matrix<Scaler, Dimension, 1>;
-	using VectorType = TVector<Scaler, Dimension>;
-	using PointType  = TPoint<Scaler, Dimension>;
+	using Scalar     = TScalar;
+	using Base       = Eigen::Matrix<Scalar, Dimension, 1>;
+	using VectorType = TVector<Scalar, Dimension>;
+	using PointType  = TPoint<Scalar, Dimension>;
 
 	/// Create a new vector with constant component vlaues
 	TVector(Scalar Value = Scalar(0)) { Base::setConstant(Value); }
@@ -65,10 +65,10 @@ struct TPoint : public Eigen::Matrix<TScalar, TDimension, 1>
 {
 public:
 	enum { Dimension = TDimension };
-	using Scaler     = TScalar;
-	using Base       = Eigen::Matrix<Scaler, Dimension, 1>;
-	using VectorType = TVector<Scaler, Dimension>;
-	using PointType  = TPoint<Scaler, Dimension>;
+	using Scalar     = TScalar;
+	using Base       = Eigen::Matrix<Scalar, Dimension, 1>;
+	using VectorType = TVector<Scalar, Dimension>;
+	using PointType  = TPoint<Scalar, Dimension>;
 
 	/// Create a new point with constant component vlaues
 	TPoint(Scalar Value = Scalar(0)) { Base::setConstant(Value); }
@@ -117,10 +117,10 @@ struct Normal3f : public Eigen::Matrix<float, 3, 1>
 {
 public:
 	enum { Dimension = 3 };
-	using Scaler     = float;
-	using Base       = Eigen::Matrix<Scaler, Dimension, 1>;
-	using VectorType = TVector<Scaler, Dimension>;
-	using PointType  = TPoint<Scaler, Dimension>;
+	using Scalar     = float;
+	using Base       = Eigen::Matrix<Scalar, Dimension, 1>;
+	using VectorType = TVector<Scalar, Dimension>;
+	using PointType  = TPoint<Scalar, Dimension>;
 
 	/// Create a new normal with constant component vlaues
 	Normal3f(Scalar Value = 0.0f) { Base::setConstant(Value); }
@@ -146,8 +146,5 @@ public:
 		return tfm::format("[%f, %f, %f]", coeff(0), coeff(1), coeff(2));
 	}
 };
-
-/// Complete the set {a} to an orthonormal base
-void CoordinateSystem(const Vector3f & Va, Vector3f & Vb, Vector3f & Vc);
 
 NAMESPACE_END

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/Common.hpp>
-#include <core/Ray.hpp>
+#include <core\Common.hpp>
+#include <core\Ray.hpp>
 
 NAMESPACE_BEGIN
 
@@ -27,8 +27,8 @@ struct TBoundingBox
 public:
 	enum { Dimension = _PointType::Dimension };
 	using PointType  = TPointType;
-	using Scalar     = PointType::Scalar;
-	using VectorType = PointType::VectorType;
+	using Scalar     = typename PointType::Scalar;
+	using VectorType = typename PointType::VectorType;
 
 	PointType Min; ///< Component-wise minimum 
 	PointType Max; ///< Component-wise maximum 

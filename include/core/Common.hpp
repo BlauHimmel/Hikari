@@ -1,8 +1,10 @@
 #pragma once
 
 #if defined(_MSC_VER)
+/* Disable some warnings on MSVC++ */
+#pragma warning(disable : 4127 4702 4100 4515 4800 4146 4512)
 #define WIN32_LEAN_AND_MEAN     /* Don't ever include MFC on Windows */
-#define NOMINMAX                /* Don't override min/max */
+#define NOMINMAX                /* Don't override Min/max */
 #endif
 
 #include <string>
@@ -11,10 +13,14 @@
 #include <vector>
 #include <map>
 #include <cstdint>
+#include <thread>
 #include <stdexcept>
 #include <limits>
+#include <iomanip>
 
-#include <Eigen/Core>
+#include <Eigen\Core>
+#include <Eigen\Geometry>
+#include <Eigen\Lu>
 #include <tinyformat.h>
 #include <ImathPlatform.h>
 
@@ -105,8 +111,137 @@ class HikariException : public std::runtime_error
 {
 public:
 	// Variadic template constructor to support printf-style arguments
-	template <typename... Args> HikariException(const char * pFmt, const Args & ... Args)
-		: std::runtime_error(tfm::format(pFmt, Args...)) { }
+	template <typename... Args>
+	HikariException(const char * pFmt, const Args &... Arg) : std::runtime_error(tfm::format(pFmt, Arg...)) { }
 };
+
+/// Return the number of cores (real and virtual)
+int GetCoreCount();
+
+/// Indent a string by the specified number of spaces
+std::string Indent(const std::string & String, int Amount = 2);
+
+/// Convert a string to lower case
+std::string ToLower(const std::string & String);
+
+/// Convert a string into an boolean value
+bool ToBool(const std::string & String);
+
+/// Convert a string into a signed integer value
+int ToInt(const std::string & String);
+
+/// Convert a string into an unsigned integer value
+unsigned int ToUInt(const std::string & String);
+
+/// Convert a string into a floating point value
+float ToFloat(const std::string & String);
+
+/// Convert a string into a 3D vector
+Eigen::Vector3f ToVector3f(const std::string & String);
+
+/// Tokenize a string into a list by splitting at 'delim'
+std::vector<std::string> Tokenize(const std::string & String, const std::string & Delim = ", ", bool bIncludeEmpty = false);
+
+/// Check if a string ends with another string
+bool EndsWith(const std::string & String, const std::string & Ending);
+
+/// Convert a time value in milliseconds into a human-readable string
+std::string TimeString(double Time, bool bPrecise = false);
+
+/// Convert a memory amount in bytes into a human-readable string
+std::string MemString(size_t Size, bool bPrecise = false);
+
+/// Measures associated with probability distributions
+enum class EMeasure
+{
+	EUnknownMeasure = 0,
+	ESolidAngle     = 1,
+	EDiscrete       = 2
+};
+
+/// Convert radians to degrees
+inline float RadToDeg(float Value) { return Value * (180.0f / float(M_PI)); }
+
+/// Convert degrees to radians
+inline float DegToRad(float Value) { return Value * (float(M_PI) / 180.0f); }
+
+#if !defined(_GNU_SOURCE)
+	/// Emulate sincosf using sinf() and cosf()
+	inline void sincosf(float Theta, float * pSin, float * pCos)
+	{
+		*pSin = sinf(Theta);
+		*pCos = cosf(Theta);
+	}
+#endif
+
+/// Simple floating point clamping function
+inline float Clamp(float Value, float Min, float Max)
+{
+	if (Value < Min)
+	{
+		return Min;
+	}
+	else if (Value > Max)
+	{
+		return Max;
+	}
+	else
+	{
+		return Value;
+	}
+}
+
+/// Simple integer clamping function
+inline int Clamp(int Value, int Min, int Max)
+{
+	if (Value < Min)
+	{
+		return Min;
+	}
+	else if (Value > Max)
+	{
+		return Max;
+	}
+	else
+	{
+		return Value;
+	}
+}
+
+/// Linearly interpolate between two values
+inline float Lerp(float T, float V1, float V2)
+{
+	return (1.0f - T) * V1 + T * V2;
+}
+
+/// Always-positive modulo operation
+inline int Mod(int A, int B)
+{
+	int R = A % B;
+	return (R < 0) ? R + B : R;
+}
+
+/// Compute a direction for the given coordinates in spherical coordinates
+Vector3f SphericalDirection(float Theta, float Phi);
+
+/// Compute a direction for the given coordinates in spherical coordinates
+Point2f SphericalCoordinates(const Vector3f & Dir);
+
+/**
+* \brief Calculates the unpolarized fresnel reflection coefficient for a
+* dielectric material. Handles incidence from either side (i.e.
+* \code cosThetaI<0 is allowed).
+*
+* \param CosThetaI
+*      Cosine of the angle between the normal and the incident ray
+* \param ExtIOR
+*      Refractive index of the side that contains the surface normal
+* \param IntIOR
+*      Refractive index of the interior
+*/
+float Fresnel(float CosThetaI, float ExtIOR, float IntIOR);
+
+/// Complete the set {a} to an orthonormal base
+void CoordinateSystem(const Vector3f & Va, Vector3f & Vb, Vector3f & Vc);
 
 NAMESPACE_END
