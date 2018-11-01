@@ -142,6 +142,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Common.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Object.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/PropertyList.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Ray.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Transform.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Vector.cpp
 )
@@ -154,6 +155,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Common.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Object.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/PropertyList.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Ray.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Transform.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Vector.hpp
 )
