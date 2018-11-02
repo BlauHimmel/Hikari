@@ -2,7 +2,7 @@
 
 NAMESPACE_BEGIN
 
-REGISTER_CLASS(TentFilter, "tent");
+REGISTER_CLASS(TentFilter, "Tent");
 
 TentFilter::TentFilter(const PropertyList & PropList)
 {

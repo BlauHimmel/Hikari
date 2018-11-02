@@ -2,12 +2,12 @@
 
 NAMESPACE_BEGIN
 
-REGISTER_CLASS(MitchellNetravaliFilter, "mitchell");
+REGISTER_CLASS(MitchellNetravaliFilter, "Mitchell");
 
 MitchellNetravaliFilter::MitchellNetravaliFilter(const PropertyList & PropList)
 {
 	/* Filter size in pixels */
-	m_Radius = PropList.GetFloat("radius", 2.0f);
+	m_Radius = PropList.GetFloat("Radius", 2.0f);
 	/* B parameter from the paper */
 	m_B = PropList.GetFloat("B", 1.0f / 3.0f);
 	/* C parameter from the paper */

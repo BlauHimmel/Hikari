@@ -70,7 +70,7 @@ public:
 	using VectorType = TVector<Scalar, Dimension>;
 	using PointType  = TPoint<Scalar, Dimension>;
 
-	/// Create a new point with constant component vlaues
+	/// Create a new point with constant component values
 	TPoint(Scalar Value = Scalar(0)) { Base::setConstant(Value); }
 
 	/// Create a new 2D point (type error if \c Dimension != 2)

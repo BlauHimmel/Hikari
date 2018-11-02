@@ -12,7 +12,13 @@ void Object::AddChild(Object * pChildObj)
 	);
 }
 
-void Object::SetParent(Object * pParentObj) { /* Do nothing */ }
+void Object::SetParent(Object * pParentObj)
+{
+	throw HikariException(
+		"Object::SetParent(Object * pParentObj) is not implemented for objects of type '%s'!",
+		ClassTypeName(GetClassType())
+	);
+}
 
 void Object::Activate() { /* Do nothing */ }
 

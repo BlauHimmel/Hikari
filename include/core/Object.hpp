@@ -52,7 +52,7 @@ public:
 	*
 	* Subclasses may choose to override this method to be
 	* notified when they are added to a parent object. The
-	* default implementation does nothing.
+	* default implementation simply throws an exception
 	*/
 	virtual void SetParent(Object * pParentObj);
 

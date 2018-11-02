@@ -144,10 +144,13 @@ set(
         SOURCE_FILES
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/camera/PerspectiveCamera.cpp
         
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Bitmap.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Block.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/BoundingBox.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Camera.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Color.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Common.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Frame.cpp
@@ -163,15 +166,17 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/GaussianFilter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/MitchellNetravalFilter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/TentFilter.cpp
-
 )
 
 set(
         HEADER_FILS
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/camera/PerspectiveCamera.hpp
+
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Bitmap.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Block.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/BoundingBox.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Camera.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Color.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Common.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Frame.hpp

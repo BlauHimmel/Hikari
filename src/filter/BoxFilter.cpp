@@ -2,7 +2,7 @@
 
 NAMESPACE_BEGIN
 
-REGISTER_CLASS(BoxFilter, "box");
+REGISTER_CLASS(BoxFilter, "Box");
 
 BoxFilter::BoxFilter(const PropertyList & PropList)
 {

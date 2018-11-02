@@ -2,14 +2,14 @@
 
 NAMESPACE_BEGIN
 
-REGISTER_CLASS(GaussianFilter, "gaussian");
+REGISTER_CLASS(GaussianFilter, "Gaussian");
 
 GaussianFilter::GaussianFilter(const PropertyList & PropList)
 {
 	/* Half filter size */
-	m_Radius = PropList.GetFloat("radius", 2.0f);
+	m_Radius = PropList.GetFloat("Radius", 2.0f);
 	/* Standard deviation of the Gaussian */
-	m_Stddev = PropList.GetFloat("stddev", 0.5f);
+	m_Stddev = PropList.GetFloat("Stddev", 0.5f);
 }
 
 float GaussianFilter::Eval(float X) const
