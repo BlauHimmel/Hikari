@@ -166,14 +166,12 @@ inline float RadToDeg(float Value) { return Value * (180.0f / float(M_PI)); }
 /// Convert degrees to radians
 inline float DegToRad(float Value) { return Value * (float(M_PI) / 180.0f); }
 
-#if !defined(_GNU_SOURCE)
-	/// Emulate sincosf using sinf() and cosf()
-	inline void sincosf(float Theta, float * pSin, float * pCos)
-	{
-		*pSin = sinf(Theta);
-		*pCos = cosf(Theta);
-	}
-#endif
+/// Emulate sincosf using sinf() and cosf()
+inline void SinCos(float Theta, float * pSin, float * pCos)
+{
+	*pSin = sinf(Theta);
+	*pCos = cosf(Theta);
+}
 
 /// Simple floating point clamping function
 inline float Clamp(float Value, float Min, float Max)

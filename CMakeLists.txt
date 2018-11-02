@@ -148,9 +148,11 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/BoundingBox.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Color.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Common.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Frame.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Object.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/PropertyList.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Ray.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Timer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Transform.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Vector.cpp
 )
@@ -161,9 +163,11 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/BoundingBox.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Color.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Common.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Frame.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Object.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/PropertyList.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Ray.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Timer.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Transform.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Vector.hpp
 )

@@ -202,8 +202,8 @@ Vector3f SphericalDirection(float Theta, float Phi)
 {
 	float SinTheta, CosTheta, SinPhi, CosPhi;
 
-	sincosf(Theta, &SinTheta, &CosTheta);
-	sincosf(Phi, &SinPhi, &CosPhi);
+	SinCos(Theta, &SinTheta, &CosTheta);
+	SinCos(Phi, &SinPhi, &CosPhi);
 
 	return Vector3f(
 		SinTheta * CosPhi,
@@ -278,5 +278,3 @@ void CoordinateSystem(const Vector3f & Va, Vector3f & Vb, Vector3f & Vc)
 }
 
 NAMESPACE_END
-
-
