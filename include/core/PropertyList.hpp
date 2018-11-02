@@ -93,14 +93,14 @@ private:
 	{
 		enum
 		{
-			boolean_XmlType,
-			integer_XmlType,
-			float_XmlType,
-			string_XmlType,
-			color_XmlType,
-			point_XmlType,
-			vector_XmlType,
-			transform_XmlType
+			boolean_XmlType   = 0,
+			integer_XmlType   = 1,
+			float_XmlType     = 2,
+			string_XmlType    = 3,
+			color_XmlType     = 4,
+			point_XmlType     = 5,
+			vector_XmlType    = 6,
+			transform_XmlType = 7
 		} Type;
 
 		struct Value

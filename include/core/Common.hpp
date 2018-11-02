@@ -2,7 +2,7 @@
 
 #if defined(_MSC_VER)
 /* Disable some warnings on MSVC++ */
-#pragma warning(disable : 4127 4702 4100 4515 4800 4146 4512 4819)
+#pragma warning(disable : 4127 4702 4100 4515 4800 4146 4512 4819 4334)
 #define WIN32_LEAN_AND_MEAN     /* Don't ever include MFC on Windows */
 #define NOMINMAX                /* Don't override Min/max */
 #endif
@@ -11,6 +11,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <memory>
 #include <map>
 #include <cstdint>
 #include <thread>
@@ -61,6 +62,25 @@ template <typename TScalar, int TDimension>  struct TVector;
 template <typename TScalar, int TDimension>  struct TPoint;
 template <typename TPoint, typename TVector> struct TRay;
 template <typename TPoint>                   struct TBoundingBox;
+
+class BSDF;
+class Bitmap;
+class BlockGenerator;
+class Camera;
+class ImageBlock;
+class Integrator;
+class KDTree;
+class BVH;
+class Emitter;
+struct EmitterQueryRecord;
+class Mesh;
+class Object;
+class ObjectFactory;
+class Screen;
+class PhaseFunction;
+class ReconstructionFilter;
+class Sampler;
+class Scene;
 
 /* Basic data structures (vectors, points, rays, bounding boxes,
 kd-trees) are oblivious to the underlying data type and dimension.

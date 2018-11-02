@@ -25,7 +25,7 @@ template <typename TPointType>
 struct TBoundingBox
 {
 public:
-	enum { Dimension = _PointType::Dimension };
+	enum { Dimension = TPointType::Dimension };
 	using PointType  = TPointType;
 	using Scalar     = typename PointType::Scalar;
 	using VectorType = typename PointType::VectorType;
@@ -99,9 +99,9 @@ public:
 	/**
 	* \brief Check whether a point lies \a on or \a inside the bounding box
 	*
-	* \param p The point to be tested
+	* \param Pt The point to be tested
 	*
-	* \param strict Set this parameter to \c true if the bounding
+	* \param bStrict Set this parameter to \c true if the bounding
 	*               box boundary should be excluded in the test
 	*/
 	bool Contains(const PointType & Pt, bool bStrict = false) const
@@ -126,7 +126,7 @@ public:
 	* and Max=\f$-\infty\f$) does not cover any space. Hence, this method will always
 	* return \a true when given such an argument.
 	*
-	* \param strict Set this parameter to \c true if the bounding
+	* \param bStrict Set this parameter to \c true if the bounding
 	*               box boundary should be excluded in the test
 	*/
 	bool Contains(const TBoundingBox & BBox, bool bStrict = false) const
@@ -146,7 +146,7 @@ public:
 	/**
 	* \brief Check two axis-aligned bounding boxes for possible overlap.
 	*
-	* \param strict Set this parameter to \c true if the bounding
+	* \param bStrict Set this parameter to \c true if the bounding
 	*               box boundary should be excluded in the test
 	*
 	* \return \c true If overlap was detected.
