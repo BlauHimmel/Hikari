@@ -43,7 +43,7 @@ std::string Object::ClassTypeName(EClassType Type)
 
 std::map<std::string, ObjectFactory::Constructor> * ObjectFactory::m_pConstructors = nullptr;
 
-void ObjectFactory::RegisterClass(const std::string & Name, const Constructor & Construct)
+void ObjectFactory::RegisterClz(const std::string & Name, const Constructor & Construct)
 {
 	if (m_pConstructors == nullptr)
 	{

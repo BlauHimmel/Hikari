@@ -100,7 +100,7 @@ public:
 	*     A function pointer to an anonymous function that is
 	*     able to call the constructor of the class.
 	*/
-	static void RegisterClass(const std::string & Name, const Constructor & Construct);
+	static void RegisterClz(const std::string & Name, const Constructor & Construct);
 
 	/**
 	* \brief Construct an instance from the class of the given name
@@ -129,7 +129,7 @@ private:
 	{ \
 		__##Class##Register() \
 		{ \
-			ObjectFactory::RegisterClass(Name, __##Class##Constructor); \
+			ObjectFactory::RegisterClz(Name, __##Class##Constructor); \
 		} \
 	} __##Class##Obj;\
 
