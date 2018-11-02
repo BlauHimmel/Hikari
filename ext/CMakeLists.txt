@@ -83,6 +83,13 @@ endif()
 add_subdirectory(pugixml)
 set_property(TARGET pugixml PROPERTY FOLDER "dependencies")
 
+# Build glog
+set(WITH_GFLAGS       OFF  CACHE BOOL " " FORCE)
+set(BUILD_TESTING     OFF  CACHE BOOL " " FORCE)
+set(BUILD_SHARED_LIBS OFF  CACHE BOOL " " FORCE)
+add_subdirectory(glog)
+set_property(TARGET glog PROPERTY FOLDER "dependencies")
+
 # include dir
 set(OPENEXR_INCLUDE_DIRS 
     ${CMAKE_CURRENT_SOURCE_DIR}/openexr/IlmBase/Imath
@@ -127,6 +134,11 @@ set(
     ${CMAKE_CURRENT_SOURCE_DIR}/pcg32
 )
 
+set(
+    GLOG_INCLUDE_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}/glog/src
+)
+
 # Compile remainder of the codebase with compiler warnings turned on
 if(MSVC)
     if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
@@ -156,6 +168,7 @@ set(CompilerFlags
     PUGIXML_INCLUDE_DIR
     TFM_INCLUDE_DIR
     PCG32_INCLUDE_DIR
+    GLOG_INCLUDE_DIR
 )
 
 foreach(CompilerFlag ${CompilerFlags})

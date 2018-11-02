@@ -2,7 +2,7 @@
 
 #if defined(_MSC_VER)
 /* Disable some warnings on MSVC++ */
-#pragma warning(disable : 4127 4702 4100 4515 4800 4146 4512)
+#pragma warning(disable : 4127 4702 4100 4515 4800 4146 4512 4819)
 #define WIN32_LEAN_AND_MEAN     /* Don't ever include MFC on Windows */
 #define NOMINMAX                /* Don't override Min/max */
 #endif
@@ -21,6 +21,7 @@
 #include <Eigen\Core>
 #include <Eigen\Geometry>
 #include <Eigen\Lu>
+#include <glog\logging.h>
 #include <tinyformat.h>
 #include <ImathPlatform.h>
 

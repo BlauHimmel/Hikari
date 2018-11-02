@@ -89,6 +89,12 @@ endif()
 # static link glew library
 add_definitions(-DGLEW_STATIC)
 
+# static link glog library
+add_definitions(-DGOOGLE_GLOG_DLL_DECL=)
+if(MSVC)
+    add_definitions(-DGLOG_NO_ABBREVIATED_SEVERITIES)
+endif()
+
 # add extension libraries
 add_subdirectory(ext)
 
@@ -110,6 +116,7 @@ set(
         ${PUGIXML_INCLUDE_DIR}
         ${TFM_INCLUDE_DIR}
         ${PCG32_INCLUDE_DIR}
+        ${GLOG_INCLUDE_DIR}
 )
 
 set(
@@ -121,6 +128,7 @@ set(
         tbb_static
         IlmImf
         pugixml
+        glog
         ${Vulkan_LIBRARIES}
 )
 
