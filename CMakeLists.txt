@@ -158,6 +158,12 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Timer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Transform.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Vector.cpp
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/BoxFilter.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/GaussianFilter.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/MitchellNetravalFilter.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/TentFilter.cpp
+
 )
 
 set(
@@ -176,6 +182,11 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Timer.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Transform.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Vector.hpp
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/BoxFilter.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/GaussianFilter.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/MitchellNetravalFilter.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/TentFilter.hpp
 )
 
 #########################################################################
