@@ -150,6 +150,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Bitmap.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Block.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/BoundingBox.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/BSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Camera.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Color.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Common.cpp
@@ -179,6 +180,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Bitmap.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Block.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/BoundingBox.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/BSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Camera.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Color.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Common.hpp
