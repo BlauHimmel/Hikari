@@ -60,7 +60,7 @@ float DiffuseBSDF::Pdf(const BSDFQueryRecord & Record) const
 	Note that the directions in 'Record' are in local coordinates,
 	so Frame::CosTheta() actually just returns the 'z' component.
 	*/
-	return INV_PI * Frame::CosTheta(Record.Wo);
+	return float(INV_PI) * Frame::CosTheta(Record.Wo);
 }
 
 bool DiffuseBSDF::IsDiffuse() const

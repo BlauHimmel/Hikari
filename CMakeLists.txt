@@ -159,6 +159,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Camera.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Color.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Common.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/DiscretePDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Emitter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Frame.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Object.cpp
@@ -196,6 +197,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Camera.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Color.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Common.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/DiscretePDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Emitter.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Frame.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Object.hpp
