@@ -44,13 +44,13 @@ PropertyList::PropertyList() { }
         return it->second.Value.XmlName##_XmlValue; \
     }
 
-DEFINE_PROPERTY_ACCESSOR(bool, Boolean, Boolean)
-DEFINE_PROPERTY_ACCESSOR(int, Integer, Integer)
-DEFINE_PROPERTY_ACCESSOR(float, Float, Float)
-DEFINE_PROPERTY_ACCESSOR(Color3f, Color, Color)
-DEFINE_PROPERTY_ACCESSOR(Point3f, Point, Point)
-DEFINE_PROPERTY_ACCESSOR(Vector3f, Vector, Vector)
-DEFINE_PROPERTY_ACCESSOR(std::string, String, String)
-DEFINE_PROPERTY_ACCESSOR(Transform, Transform, Transform)
+DEFINE_PROPERTY_ACCESSOR(bool, Boolean, boolean)
+DEFINE_PROPERTY_ACCESSOR(int, Integer, integer)
+DEFINE_PROPERTY_ACCESSOR(float, Float, float)
+DEFINE_PROPERTY_ACCESSOR(Color3f, Color, color)
+DEFINE_PROPERTY_ACCESSOR(Point3f, Point, point)
+DEFINE_PROPERTY_ACCESSOR(Vector3f, Vector, vector)
+DEFINE_PROPERTY_ACCESSOR(std::string, String, string)
+DEFINE_PROPERTY_ACCESSOR(Transform, Transform, transform)
 
 NAMESPACE_END

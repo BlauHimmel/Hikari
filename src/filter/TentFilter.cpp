@@ -2,7 +2,7 @@
 
 NAMESPACE_BEGIN
 
-REGISTER_CLASS(TentFilter, "Tent");
+REGISTER_CLASS(TentFilter, XML_FILTER_TENT);
 
 TentFilter::TentFilter(const PropertyList & PropList)
 {

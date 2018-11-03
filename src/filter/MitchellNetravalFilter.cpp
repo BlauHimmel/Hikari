@@ -2,16 +2,16 @@
 
 NAMESPACE_BEGIN
 
-REGISTER_CLASS(MitchellNetravaliFilter, "Mitchell");
+REGISTER_CLASS(MitchellNetravaliFilter, XML_FILTER_MITCHELL_NETRAVALI);
 
 MitchellNetravaliFilter::MitchellNetravaliFilter(const PropertyList & PropList)
 {
 	/* Filter size in pixels */
-	m_Radius = PropList.GetFloat("Radius", 2.0f);
+	m_Radius = PropList.GetFloat(XML_FILTER_MITCHELL_NETRAVALI_RADIUS, 2.0f);
 	/* B parameter from the paper */
-	m_B = PropList.GetFloat("B", 1.0f / 3.0f);
+	m_B = PropList.GetFloat(XML_FILTER_MITCHELL_NETRAVALI_B, 1.0f / 3.0f);
 	/* C parameter from the paper */
-	m_C = PropList.GetFloat("C", 1.0f / 3.0f);
+	m_C = PropList.GetFloat(XML_FILTER_MITCHELL_NETRAVALI_C, 1.0f / 3.0f);
 }
 
 float MitchellNetravaliFilter::Eval(float X) const
@@ -37,7 +37,9 @@ float MitchellNetravaliFilter::Eval(float X) const
 
 std::string MitchellNetravaliFilter::ToString() const
 {
-	return tfm::format("MitchellNetravaliFilter[radius = %f, B = %f, C = %f]", m_Radius, m_B, m_C);
+	return tfm::format("MitchellNetravaliFilter[%s = %f, %s = %f, %s = %f]",
+		XML_FILTER_MITCHELL_NETRAVALI_RADIUS, XML_FILTER_MITCHELL_NETRAVALI_B, XML_FILTER_MITCHELL_NETRAVALI_C,
+		m_Radius, m_B, m_C);
 }
 
 NAMESPACE_END

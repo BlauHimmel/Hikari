@@ -2,11 +2,11 @@
 
 NAMESPACE_BEGIN
 
-REGISTER_CLASS(IndependentSampler, "Independent");
+REGISTER_CLASS(IndependentSampler, XML_SAMPLER_INDEPENDENT);
 
 IndependentSampler::IndependentSampler(const PropertyList & PropList)
 {
-	m_SampleCount = (size_t)PropList.GetInteger("SampleCount", 1);
+	m_SampleCount = (size_t)PropList.GetInteger(XML_SAMPLER_INDEPENDENT_SAMPLE_COUNT, 1);
 }
 
 std::unique_ptr<Sampler> IndependentSampler::Clone() const
@@ -44,7 +44,10 @@ Point2f IndependentSampler::Next2D()
 
 std::string IndependentSampler::ToString() const
 {
-	return tfm::format("IndependentSampler[SampleCount = %i]", m_SampleCount);
+	return tfm::format("IndependentSampler[%s = %i]",
+		XML_SAMPLER_INDEPENDENT_SAMPLE_COUNT,
+		m_SampleCount
+	);
 }
 
 IndependentSampler::IndependentSampler()

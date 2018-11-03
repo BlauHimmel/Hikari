@@ -2,24 +2,24 @@
 
 NAMESPACE_BEGIN
 
-REGISTER_CLASS(PerspectiveCamera, "Perspective");
+REGISTER_CLASS(PerspectiveCamera, XML_CAMERA_PERSPECTIVE);
 
 PerspectiveCamera::PerspectiveCamera(const PropertyList & PropList)
 {
 	/* Width and height in pixels. Default: 720p */
-	m_OutputSize.x() = PropList.GetInteger("Width", 1280);
-	m_OutputSize.y() = PropList.GetInteger("Height", 720);
+	m_OutputSize.x() = PropList.GetInteger(XML_CAMERA_PERSPECTIVE_WIDTH, 1280);
+	m_OutputSize.y() = PropList.GetInteger(XML_CAMERA_PERSPECTIVE_HEIGHT, 720);
 	m_InvOutputSize = m_OutputSize.cast<float>().cwiseInverse();
 
 	/* Specifies an optional camera-to-world transformation. Default: none */
-	m_CameraToWorld = PropList.GetTransform("ToWorld", Transform());
+	m_CameraToWorld = PropList.GetTransform(XML_CAMERA_PERSPECTIVE_TO_WORLD, Transform());
 
 	/* Horizontal field of view in degrees */
-	m_Fov = PropList.GetFloat("Fov", 30.0f);
+	m_Fov = PropList.GetFloat(XML_CAMERA_PERSPECTIVE_FOV, 30.0f);
 
 	/* Near and far clipping planes in world-space units */
-	m_NearClip = PropList.GetFloat("NearClip", 1e-4f);
-	m_FarClip = PropList.GetFloat("FarClip", 1e4f);
+	m_NearClip = PropList.GetFloat(XML_CAMERA_PERSPECTIVE_NEAR_CLIP, 1e-4f);
+	m_FarClip = PropList.GetFloat(XML_CAMERA_PERSPECTIVE_FAR_CLIP, 1e4f);
 
 	m_pFilter = nullptr;
 }
@@ -107,11 +107,11 @@ std::string PerspectiveCamera::ToString() const
 {
 	return tfm::format(
 		"PerspectiveCamera[\n"
-		"  CameraToWorld = %s,\n"
-		"  OutputSize = %s,\n"
-		"  Fov = %f,\n"
-		"  Clip = [%f, %f],\n"
-		"  Filter = %s\n"
+		"  cameraToWorld = %s,\n"
+		"  outputSize = %s,\n"
+		"  fov = %f,\n"
+		"  clip = [%f, %f],\n"
+		"  filter = %s\n"
 		"]",
 		Indent(m_CameraToWorld.ToString(), 18),
 		m_OutputSize.ToString(),

@@ -93,33 +93,32 @@ private:
 	{
 		enum
 		{
-			Boolean_XmlType   = 0,
-			Integer_XmlType   = 1,
-			Float_XmlType     = 2,
-			String_XmlType    = 3,
-			Color_XmlType     = 4,
-			Point_XmlType     = 5,
-			Vector_XmlType    = 6,
-			Transform_XmlType = 7
+			XML_TYPE(boolean)   = 0,
+			XML_TYPE(integer)   = 1,
+			XML_TYPE(float)     = 2,
+			XML_TYPE(string)    = 3,
+			XML_TYPE(color)     = 4,
+			XML_TYPE(point)     = 5,
+			XML_TYPE(vector)    = 6,
+			XML_TYPE(transform) = 7
 		} Type;
 
 		struct Value
 		{
-			Value() : Boolean_XmlValue(false) { }
+			Value() : XML_VALUE(boolean)(false) { }
 			~Value() { }
 
-			bool Boolean_XmlValue;
-			int Integer_XmlValue;
-			float Float_XmlValue;
-			std::string String_XmlValue;
-			Color3f Color_XmlValue;
-			Point3f Point_XmlValue;
-			Vector3f Vector_XmlValue;
-			Transform Transform_XmlValue;
-
+			bool XML_VALUE(boolean);
+			int XML_VALUE(integer);
+			float XML_VALUE(float);
+			std::string XML_VALUE(string);
+			Color3f XML_VALUE(color);
+			Point3f XML_VALUE(point);
+			Vector3f XML_VALUE(vector);
+			Transform XML_VALUE(transform);
 		} Value;
-
-		XmlProperty() : Type(Boolean_XmlType) { }
+		
+		XmlProperty() : Type(XML_TYPE(boolean)) { }
 	};
 
 	std::map<std::string, XmlProperty> m_XmlProperties;

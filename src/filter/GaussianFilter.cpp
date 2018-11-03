@@ -2,14 +2,14 @@
 
 NAMESPACE_BEGIN
 
-REGISTER_CLASS(GaussianFilter, "Gaussian");
+REGISTER_CLASS(GaussianFilter, XML_FILTER_GAUSSION);
 
 GaussianFilter::GaussianFilter(const PropertyList & PropList)
 {
 	/* Half filter size */
-	m_Radius = PropList.GetFloat("Radius", 2.0f);
+	m_Radius = PropList.GetFloat(XML_FILTER_GAUSSION_RADIUS, 2.0f);
 	/* Standard deviation of the Gaussian */
-	m_Stddev = PropList.GetFloat("Stddev", 0.5f);
+	m_Stddev = PropList.GetFloat(XML_FILTER_GAUSSION_STDDEV, 0.5f);
 }
 
 float GaussianFilter::Eval(float X) const
@@ -23,7 +23,9 @@ float GaussianFilter::Eval(float X) const
 
 std::string GaussianFilter::ToString() const
 {
-	return tfm::format("GaussianFilter[radius = %f, stddev = %f]", m_Radius, m_Stddev);
+	return tfm::format("GaussianFilter[%s = %f, %s = %f]",
+		XML_FILTER_GAUSSION_RADIUS, XML_FILTER_GAUSSION_STDDEV,
+		m_Radius, m_Stddev);
 }
 
 NAMESPACE_END

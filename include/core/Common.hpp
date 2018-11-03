@@ -50,6 +50,35 @@
 #define SQRT_TWO     1.41421356237309504880
 #define INV_SQRT_TWO 0.70710678118654752440
 
+/* XML fields name */
+#define XML_TYPE(Field)     Field##_XmlType
+#define XML_VALUE(Field)    Field##_XmlValue
+
+#define XML_FILTER_BOX                       "box"
+
+#define XML_CAMERA_PERSPECTIVE               "perspective"
+#define XML_CAMERA_PERSPECTIVE_WIDTH         "width"
+#define XML_CAMERA_PERSPECTIVE_HEIGHT        "height"
+#define XML_CAMERA_PERSPECTIVE_TO_WORLD      "toWorld"
+#define XML_CAMERA_PERSPECTIVE_FOV           "fov"
+#define XML_CAMERA_PERSPECTIVE_NEAR_CLIP     "nearClip"
+#define XML_CAMERA_PERSPECTIVE_FAR_CLIP      "farClip"
+
+#define XML_FILTER_GAUSSION                  "gaussian"
+#define XML_FILTER_GAUSSION_RADIUS           "radius"
+#define XML_FILTER_GAUSSION_STDDEV           "stddev"
+
+#define XML_FILTER_MITCHELL_NETRAVALI        "mitchell"
+#define XML_FILTER_MITCHELL_NETRAVALI_RADIUS "radius"
+#define XML_FILTER_MITCHELL_NETRAVALI_B      "B"
+#define XML_FILTER_MITCHELL_NETRAVALI_C      "C"
+
+#define XML_FILTER_TENT                      "tent"
+
+#define XML_SAMPLER_INDEPENDENT              "independent"
+#define XML_SAMPLER_INDEPENDENT_SAMPLE_COUNT "sampleCount"
+
+
 NAMESPACE_BEGIN
 
 /* Import cout, cerr, endl for debugging purposes */
