@@ -162,6 +162,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/DiscretePDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Emitter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Frame.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Integrator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Object.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/PropertyList.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Ray.cpp
@@ -200,6 +201,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/DiscretePDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Emitter.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Frame.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Integrator.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Object.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/PropertyList.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Ray.hpp
