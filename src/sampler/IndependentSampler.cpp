@@ -44,8 +44,8 @@ Point2f IndependentSampler::Next2D()
 
 std::string IndependentSampler::ToString() const
 {
-	return tfm::format("IndependentSampler[%s = %i]",
-		XML_SAMPLER_INDEPENDENT_SAMPLE_COUNT,
+	return tfm::format(
+		"IndependentSampler[sampleCount = %i]",
 		m_SampleCount
 	);
 }

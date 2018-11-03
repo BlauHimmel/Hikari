@@ -54,7 +54,20 @@
 #define XML_TYPE(Field)     Field##_XmlType
 #define XML_VALUE(Field)    Field##_XmlValue
 
-#define XML_FILTER_BOX                       "box"
+#define XML_BSDF_DIELECTRIC                  "dielectric"
+#define XML_BSDF_DIELECTRIC_INT_IOR          "intIOR"
+#define XML_BSDF_DIELECTRIC_EXT_IOR          "extIOR"
+
+#define XML_BSDF_DIFFUSE                     "diffuse"
+#define XML_BSDF_DIFFUSE_ALBEDO              "albedo"
+
+#define XML_BSDF_MIRROR                      "mirror"
+
+#define XML_BSDF_MICROFACET                  "microfacet"
+#define XML_BSDF_MICROFACET_ALPHA            "alpha"
+#define XML_BSDF_MICROFACET_INT_IOR          "intIOR"
+#define XML_BSDF_MICROFACET_EXT_IOR          "extIOR"
+#define XML_BSDF_MICROFACET_KD               "kd"
 
 #define XML_CAMERA_PERSPECTIVE               "perspective"
 #define XML_CAMERA_PERSPECTIVE_WIDTH         "width"
@@ -63,6 +76,8 @@
 #define XML_CAMERA_PERSPECTIVE_FOV           "fov"
 #define XML_CAMERA_PERSPECTIVE_NEAR_CLIP     "nearClip"
 #define XML_CAMERA_PERSPECTIVE_FAR_CLIP      "farClip"
+
+#define XML_FILTER_BOX                       "box"
 
 #define XML_FILTER_GAUSSION                  "gaussian"
 #define XML_FILTER_GAUSSION_RADIUS           "radius"

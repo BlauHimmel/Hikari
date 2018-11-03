@@ -23,9 +23,10 @@ float GaussianFilter::Eval(float X) const
 
 std::string GaussianFilter::ToString() const
 {
-	return tfm::format("GaussianFilter[%s = %f, %s = %f]",
-		XML_FILTER_GAUSSION_RADIUS, XML_FILTER_GAUSSION_STDDEV,
-		m_Radius, m_Stddev);
+	return tfm::format(
+		"GaussianFilter[radius = %f, stddev = %f]",
+		m_Radius, m_Stddev
+	);
 }
 
 NAMESPACE_END

@@ -145,6 +145,11 @@ set(
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/DielectricBSDF.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/DiffuseBSDF.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/MicrofacetBSDF.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/MirrorBSDF.cpp
+
         ${CMAKE_CURRENT_SOURCE_DIR}/src/camera/PerspectiveCamera.cpp
         
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Bitmap.cpp
@@ -160,6 +165,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Ray.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/ReconstructionFilter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Sampler.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Sampling.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Timer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Transform.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Vector.cpp
@@ -174,6 +180,11 @@ set(
 
 set(
         HEADER_FILS
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/DielectricBSDF.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/DiffuseBSDF.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/MicrofacetBSDF.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/MirrorBSDF.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/camera/PerspectiveCamera.hpp
 
@@ -190,6 +201,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Ray.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/ReconstructionFilter.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Sampler.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Sampling.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Timer.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Transform.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Vector.hpp

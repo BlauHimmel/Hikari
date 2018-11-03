@@ -37,9 +37,10 @@ float MitchellNetravaliFilter::Eval(float X) const
 
 std::string MitchellNetravaliFilter::ToString() const
 {
-	return tfm::format("MitchellNetravaliFilter[%s = %f, %s = %f, %s = %f]",
-		XML_FILTER_MITCHELL_NETRAVALI_RADIUS, XML_FILTER_MITCHELL_NETRAVALI_B, XML_FILTER_MITCHELL_NETRAVALI_C,
-		m_Radius, m_B, m_C);
+	return tfm::format(
+		"MitchellNetravaliFilter[radius = %f, B = %f, C = %f]",
+		m_Radius, m_B, m_C
+	);
 }
 
 NAMESPACE_END
