@@ -139,6 +139,11 @@ set(
     ${CMAKE_CURRENT_SOURCE_DIR}/glog/src
 )
 
+set(
+    FILESYSTEM_INCLUDE_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}/filesystem
+)
+
 # Compile remainder of the codebase with compiler warnings turned on
 if(MSVC)
     if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
@@ -169,6 +174,7 @@ set(CompilerFlags
     TFM_INCLUDE_DIR
     PCG32_INCLUDE_DIR
     GLOG_INCLUDE_DIR
+    FILESYSTEM_INCLUDE_DIR
 )
 
 foreach(CompilerFlag ${CompilerFlags})

@@ -25,6 +25,7 @@
 #include <glog\logging.h>
 #include <tinyformat.h>
 #include <ImathPlatform.h>
+#include <filesystem\resolver.h>
 
 #define NAMESPACE_BEGIN namespace Hikari {
 #define NAMESPACE_END }
@@ -53,6 +54,10 @@
 /* XML fields name */
 #define XML_TYPE(Field)     Field##_XmlType
 #define XML_VALUE(Field)    Field##_XmlValue
+
+#define XML_MESH_WAVEFRONG_OBJ               "obj"
+#define XML_MESH_WAVEFRONG_OBJ_FILENAME      "filename"
+#define XML_MESH_WAVEFRONG_OBJ_TO_WORLD      "toWorld"
 
 #define XML_BSDF_DIELECTRIC                  "dielectric"
 #define XML_BSDF_DIELECTRIC_INT_IOR          "intIOR"
@@ -107,24 +112,28 @@ template <typename TScalar, int TDimension>  struct TPoint;
 template <typename TPoint, typename TVector> struct TRay;
 template <typename TPoint>                   struct TBoundingBox;
 
-class BSDF;
 class Bitmap;
-class BlockGenerator;
-class Camera;
 class ImageBlock;
-class Integrator;
-class KDTree;
-class BVH;
+class BlockGenerator;
+class BSDF;
+struct BSDFQueryRecord;
+class Camera;
+struct Color3f;
+struct Color4f;
+struct DiscretePDF;
 class Emitter;
-struct EmitterQueryRecord;
+struct Frame;
+class Integrator;
 class Mesh;
+struct Intersection;
 class Object;
 class ObjectFactory;
-class Screen;
-class PhaseFunction;
+class PropertyList;
 class ReconstructionFilter;
 class Sampler;
+class Sampling;
 class Scene;
+class Timer;
 
 /* Basic data structures (vectors, points, rays, bounding boxes,
 kd-trees) are oblivious to the underlying data type and dimension.
@@ -306,5 +315,13 @@ float Fresnel(float CosThetaI, float ExtIOR, float IntIOR);
 
 /// Complete the set {a} to an orthonormal base
 void CoordinateSystem(const Vector3f & Va, Vector3f & Vb, Vector3f & Vc);
+
+/**
+* \brief Return the global file resolver instance
+*
+* This class is used to locate resource files (e.g. mesh or
+* texture files) referenced by a scene being loaded
+*/
+filesystem::resolver * GetFileResolver();
 
 NAMESPACE_END

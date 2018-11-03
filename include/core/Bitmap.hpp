@@ -1,8 +1,8 @@
 #pragma once
 
 #include <core\Common.hpp>
-#include <core\Color.hpp>
 #include <core\Vector.hpp>
+#include <core\Color.hpp>
 
 NAMESPACE_BEGIN
 

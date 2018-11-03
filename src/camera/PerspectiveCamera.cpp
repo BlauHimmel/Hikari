@@ -60,7 +60,7 @@ void PerspectiveCamera::Activate()
 	if (m_pFilter == nullptr)
 	{
 		m_pFilter.reset(
-			(ReconstructionFilter*)(ObjectFactory::CreateInstance("gaussian", PropertyList()))
+			(ReconstructionFilter*)(ObjectFactory::CreateInstance(XML_FILTER_GAUSSION, PropertyList()))
 		);
 	}
 }

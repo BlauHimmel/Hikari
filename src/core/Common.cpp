@@ -277,4 +277,10 @@ void CoordinateSystem(const Vector3f & Va, Vector3f & Vb, Vector3f & Vc)
 	Vb = Vc.cross(Va);
 }
 
+filesystem::resolver * GetFileResolver()
+{
+	static std::unique_ptr<filesystem::resolver> pResolver(new filesystem::resolver());
+	return pResolver.get();
+}
+
 NAMESPACE_END
