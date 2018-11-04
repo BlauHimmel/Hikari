@@ -14,6 +14,8 @@ NAMESPACE_BEGIN
 class PerspectiveCamera : public Camera
 {
 public:
+	virtual ~PerspectiveCamera();
+
 	PerspectiveCamera(const PropertyList & PropList);
 
 	virtual void Activate() override;

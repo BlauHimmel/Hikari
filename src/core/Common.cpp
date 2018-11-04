@@ -176,7 +176,7 @@ std::string TimeString(double Time, bool bPrecise)
 	}
 
 	std::ostringstream OS;
-	OS << std::setprecision(bPrecise ? 4 : 1) << std::fixed << time << Suffix;
+	OS << std::setprecision(bPrecise ? 4 : 1) << std::fixed << Time << Suffix;
 	return OS.str();
 }
 

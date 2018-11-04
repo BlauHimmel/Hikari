@@ -9,7 +9,7 @@ const Vector2i & Camera::GetOutputSize() const
 
 const ReconstructionFilter * Camera::GetReconstructionFilter() const
 {
-	return m_pFilter.get();
+	return m_pFilter;
 }
 
 Object::EClassType Camera::GetClassType() const

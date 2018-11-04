@@ -4,6 +4,11 @@ NAMESPACE_BEGIN
 
 REGISTER_CLASS(PerspectiveCamera, XML_CAMERA_PERSPECTIVE);
 
+PerspectiveCamera::~PerspectiveCamera()
+{
+	delete m_pFilter;
+}
+
 PerspectiveCamera::PerspectiveCamera(const PropertyList & PropList)
 {
 	/* Width and height in pixels. Default: 720p */
@@ -59,9 +64,7 @@ void PerspectiveCamera::Activate()
 	/* If no reconstruction filter was assigned, instantiate a Gaussian filter */
 	if (m_pFilter == nullptr)
 	{
-		m_pFilter.reset(
-			(ReconstructionFilter*)(ObjectFactory::CreateInstance(XML_FILTER_GAUSSION, PropertyList()))
-		);
+		m_pFilter = (ReconstructionFilter*)(ObjectFactory::CreateInstance(XML_FILTER_GAUSSION, PropertyList()));
 	}
 }
 
@@ -96,7 +99,7 @@ void PerspectiveCamera::AddChild(Object * pChildObj)
 		{
 			throw HikariException("Camera: tried to register multiple reconstruction filters!");
 		}
-		m_pFilter.reset((ReconstructionFilter*)(pChildObj));
+		m_pFilter = (ReconstructionFilter*)(pChildObj);
 		break;
 	default:
 		throw HikariException("Camera::AddChild(<%s>) is not supported!", ClassTypeName(pChildObj->GetClassType()));

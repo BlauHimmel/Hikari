@@ -112,7 +112,7 @@ void ImageBlock::Put(const Point2f & Pos, const Color3f & Value)
 		Point2i(int(std::floor(ConvertedPos.x() + m_FilterRadius)), int(std::floor(ConvertedPos.y() + m_FilterRadius)))
 	);
 
-	BBox.Clip(BoundingBox2i(Point2i(0, 0), Point2i(int(cols() - 1), int(rows() - 1))));
+	BBox.Clip(BoundingBox2i(Point2i(0, 0), Point2i(int(cols()) - 1, int(rows()) - 1)));
 
 	/* Lookup values from the pre-rasterized filter */
 	for (int x = BBox.Min.x(), idx = 0; x <= BBox.Max.x(); ++x)

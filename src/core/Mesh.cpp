@@ -39,12 +39,18 @@ std::string Intersection::ToString() const
 	);
 }
 
+Mesh::~Mesh()
+{
+	delete m_pBSDF;
+	delete m_pEmitter;
+}
+
 void Mesh::Activate()
 {
 	if (m_pBSDF == nullptr)
 	{
 		/* If no material was assigned, instantiate a diffuse BRDF */
-		m_pBSDF.reset((BSDF*)(ObjectFactory::CreateInstance(XML_BSDF_DIFFUSE, PropertyList())));
+		m_pBSDF = (BSDF*)(ObjectFactory::CreateInstance(XML_BSDF_DIFFUSE, PropertyList()));
 	}
 }
 
@@ -161,17 +167,17 @@ bool Mesh::IsEmitter() const
 
 Emitter * Mesh::GetEmitter()
 {
-	return m_pEmitter.get();
+	return m_pEmitter;
 }
 
 const Emitter * Mesh::GetEmitter() const
 {
-	return m_pEmitter.get();
+	return m_pEmitter;
 }
 
 const BSDF * Mesh::GetBSDF() const
 {
-	return m_pBSDF.get();
+	return m_pBSDF;
 }
 
 const std::string & Mesh::GetName() const
@@ -188,14 +194,14 @@ void Mesh::AddChild(Object * pChildObj)
 		{
 			throw HikariException("Mesh: tried to register multiple BSDF instances!");
 		}
-		m_pBSDF.reset((BSDF*)(pChildObj));
+		m_pBSDF = (BSDF*)(pChildObj);
 		break;
 	case EClassType::EEmitter: 
 		if (m_pEmitter != nullptr)
 		{
 			throw HikariException("Mesh: tried to register multiple Emitter instances!");
 		}
-		m_pEmitter.reset((Emitter*)(pChildObj));
+		m_pEmitter = (Emitter*)(pChildObj);
 		break;
 	default:
 		throw HikariException("Mesh::AddChild(<%s>) is not supported!", ClassTypeName(pChildObj->GetClassType()));

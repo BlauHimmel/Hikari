@@ -14,10 +14,7 @@ void Object::AddChild(Object * pChildObj)
 
 void Object::SetParent(Object * pParentObj)
 {
-	throw HikariException(
-		"Object::SetParent(Object * pParentObj) is not implemented for objects of type '%s'!",
-		ClassTypeName(GetClassType())
-	);
+	/* Don nothing */
 }
 
 void Object::Activate() { /* Do nothing */ }
@@ -26,17 +23,17 @@ std::string Object::ClassTypeName(EClassType Type)
 {
 	switch (Type)
 	{
-		case Hikari::Object::EClassType::EScene:                return "Scene";
-		case Hikari::Object::EClassType::EMesh:                 return "Mesh";
-		case Hikari::Object::EClassType::EBSDF:                 return "BSDF";
-		case Hikari::Object::EClassType::EPhaseFunction:        return "PhaseFunction";
-		case Hikari::Object::EClassType::EEmitter:              return "Emitter";
-		case Hikari::Object::EClassType::EMedium:               return "Medium";
-		case Hikari::Object::EClassType::ECamera:               return "Camera";
-		case Hikari::Object::EClassType::EIntegrator:           return "Integrator";
-		case Hikari::Object::EClassType::ESampler:              return "Sampler";
-		case Hikari::Object::EClassType::ETest:                 return "Test";
-		case Hikari::Object::EClassType::EReconstructionFilter: return "ReconstructionFilter";
+		case EClassType::EScene:                return "Scene";
+		case EClassType::EMesh:                 return "Mesh";
+		case EClassType::EBSDF:                 return "BSDF";
+		case EClassType::EPhaseFunction:        return "PhaseFunction";
+		case EClassType::EEmitter:              return "Emitter";
+		case EClassType::EMedium:               return "Medium";
+		case EClassType::ECamera:               return "Camera";
+		case EClassType::EIntegrator:           return "Integrator";
+		case EClassType::ESampler:              return "Sampler";
+		case EClassType::ETest:                 return "Test";
+		case EClassType::EReconstructionFilter: return "ReconstructionFilter";
 		default:                                                return "<Unknown>";
 	}
 }

@@ -14,7 +14,7 @@ NAMESPACE_BEGIN
 class Object
 {
 public:
-	enum class EClassType
+	enum EClassType
 	{
 		EScene                = 0,
 		EMesh                 = 1,
@@ -52,7 +52,7 @@ public:
 	*
 	* Subclasses may choose to override this method to be
 	* notified when they are added to a parent object. The
-	* default implementation simply throws an exception
+	* default implementation simply does nothing
 	*/
 	virtual void SetParent(Object * pParentObj);
 

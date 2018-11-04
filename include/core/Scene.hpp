@@ -69,10 +69,10 @@ public:
 
 protected:
 	std::vector<Mesh*> m_pMeshes;
-	std::unique_ptr<Integrator> m_pIntegrator = nullptr;
-	std::unique_ptr<Sampler> m_pSampler = nullptr;
-	std::unique_ptr<Camera> m_pCamera = nullptr;
-	std::unique_ptr<Acceleration> m_pAcceleration = nullptr;
+	Integrator * m_pIntegrator = nullptr;
+	Sampler * m_pSampler = nullptr;
+	Camera * m_pCamera = nullptr;
+	Acceleration * m_pAcceleration = nullptr;
 };
 
 NAMESPACE_END

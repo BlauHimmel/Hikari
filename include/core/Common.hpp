@@ -55,11 +55,33 @@
 #define XML_TYPE(Field)     Field##_XmlType
 #define XML_VALUE(Field)    Field##_XmlValue
 
+#define XML_TRANSFORM_TRANSLATE              "translate"
+#define XML_TRANSFORM_MATRIX                 "matrix"
+#define XML_TRANSFORM_ROTATE                 "rotate"
+#define XML_TRANSFORM_SCALE                  "scale"
+#define XML_TRANSFORM_LOOKAT                 "lookat"
+
+#define XML_INTEGRATOR                       "integrator"
+
+#define XML_INTEGRATOR_NORMAL                "normals"
+
+#define XML_TRANSFORM_ANGLE                  "angle"
+#define XML_TRANSFORM_AXIS                   "axis"
+#define XML_TRANSFORM_ORIGIN                 "origin"
+#define XML_TRANSFORM_TARGET                 "target"
+#define XML_TRANSFORM_UP                     "up"
+
+#define XML_EMITTER                          "emitter"
+
 #define XML_SCENE                            "scene"
+
+#define XML_MESH                             "mesh"
 
 #define XML_MESH_WAVEFRONG_OBJ               "obj"
 #define XML_MESH_WAVEFRONG_OBJ_FILENAME      "filename"
 #define XML_MESH_WAVEFRONG_OBJ_TO_WORLD      "toWorld"
+
+#define XML_BSDF                             "bsdf"
 
 #define XML_BSDF_DIELECTRIC                  "dielectric"
 #define XML_BSDF_DIELECTRIC_INT_IOR          "intIOR"
@@ -76,6 +98,12 @@
 #define XML_BSDF_MICROFACET_EXT_IOR          "extIOR"
 #define XML_BSDF_MICROFACET_KD               "kd"
 
+#define XML_MEDIUM                           "medium"
+
+#define XML_PHASE                            "phase"
+
+#define XML_CAMERA                           "camera"
+
 #define XML_CAMERA_PERSPECTIVE               "perspective"
 #define XML_CAMERA_PERSPECTIVE_WIDTH         "width"
 #define XML_CAMERA_PERSPECTIVE_HEIGHT        "height"
@@ -83,6 +111,10 @@
 #define XML_CAMERA_PERSPECTIVE_FOV           "fov"
 #define XML_CAMERA_PERSPECTIVE_NEAR_CLIP     "nearClip"
 #define XML_CAMERA_PERSPECTIVE_FAR_CLIP      "farClip"
+
+#define XML_TEST                             "test"
+
+#define XML_FILTER                           "rfilter"
 
 #define XML_FILTER_BOX                       "box"
 
@@ -96,6 +128,8 @@
 #define XML_FILTER_MITCHELL_NETRAVALI_C      "C"
 
 #define XML_FILTER_TENT                      "tent"
+
+#define XML_SAMPLER                          "sampler"
 
 #define XML_SAMPLER_INDEPENDENT              "independent"
 #define XML_SAMPLER_INDEPENDENT_SAMPLE_COUNT "sampleCount"

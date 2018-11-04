@@ -31,12 +31,12 @@ struct TRay
 	Scalar MaxT;                    ///< Maximum position on the ray segment
 
 	/// Construct a new ray
-	TRay() : MinT(Epsilon), MaxT(std::numeric_limits<Scalar>::infinity()) { }
+	TRay() : MinT(float(Epsilon)), MaxT(std::numeric_limits<Scalar>::infinity()) { }
 	
 	/// Construct a new ray
 	TRay(const PointType & Origin, const VectorType & Direction) :
 		Origin(Origin), Direction(Direction),
-		MinT(Epsilon), MaxT(std::numeric_limits<Scalar>::infinity())
+		MinT(float(Epsilon)), MaxT(std::numeric_limits<Scalar>::infinity())
 	{
 		Update();
 	}

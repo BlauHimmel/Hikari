@@ -62,6 +62,8 @@ struct Intersection
 class Mesh : public Object
 {
 public:
+	/// Release all memory
+	virtual ~Mesh();
 
 	/// Initialize internal data structures (called once by the XML parser)
 	virtual void Activate() override;
@@ -166,8 +168,8 @@ protected:
 	MatrixXf m_N;                                  ///< Vertex normals
 	MatrixXf m_UV;                                 ///< Vertex texture coordinates
 	MatrixXu m_F;                                  ///< Faces
-	std::unique_ptr<BSDF> m_pBSDF = nullptr;       ///< BSDF of the surface
-	std::unique_ptr<Emitter> m_pEmitter = nullptr; ///< Associated emitter, if any
+	BSDF * m_pBSDF = nullptr;                      ///< BSDF of the surface
+	Emitter * m_pEmitter = nullptr;                ///< Associated emitter, if any
 	BoundingBox3f m_BBox;                          ///< Bounding box of the mesh
 
 };

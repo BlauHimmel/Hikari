@@ -167,12 +167,14 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Integrator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Mesh.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Object.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Parser.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/PropertyList.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Ray.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/ReconstructionFilter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Sampler.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Sampling.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Scene.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Screen.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Timer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Transform.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Vector.cpp
@@ -181,6 +183,8 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/GaussianFilter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/MitchellNetravalFilter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/TentFilter.cpp
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/NormalIntegrator.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mesh/WavefrontObjMesh.cpp
 
@@ -211,12 +215,14 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Integrator.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Mesh.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Object.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Parser.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/PropertyList.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Ray.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/ReconstructionFilter.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Sampler.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Sampling.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Scene.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Screen.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Timer.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Transform.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Vector.hpp
@@ -225,6 +231,8 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/GaussianFilter.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/MitchellNetravalFilter.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/TentFilter.hpp
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/NormalIntegrator.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mesh/WavefrontObjMesh.hpp
 

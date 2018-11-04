@@ -51,7 +51,7 @@ public:
 
 protected:
 	Vector2i m_OutputSize;
-	std::unique_ptr<ReconstructionFilter> m_pFilter;
+	ReconstructionFilter * m_pFilter;
 };
 
 NAMESPACE_END

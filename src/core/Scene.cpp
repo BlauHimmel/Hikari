@@ -10,7 +10,7 @@ REGISTER_CLASS(Scene, XML_SCENE);
 
 Scene::Scene(const PropertyList & PropList)
 {
-	m_pAcceleration.reset(new Acceleration());
+	m_pAcceleration = new Acceleration();
 }
 
 Scene::~Scene()
@@ -20,36 +20,41 @@ Scene::~Scene()
 		delete pPtr;
 	}
 	m_pMeshes.clear();
+
+	delete m_pAcceleration;
+	delete m_pSampler;
+	delete m_pCamera;
+	delete m_pIntegrator;
 }
 
 const Acceleration * Scene::GetAccel() const
 {
-	return m_pAcceleration.get();
+	return m_pAcceleration;
 }
 
 const Integrator * Scene::GetIntegrator() const
 {
-	return m_pIntegrator.get();
+	return m_pIntegrator;
 }
 
 Integrator * Scene::GetIntegrator()
 {
-	return m_pIntegrator.get();
+	return m_pIntegrator;
 }
 
 const Camera * Scene::GetCamera() const
 {
-	return m_pCamera.get();
+	return m_pCamera;
 }
 
 const Sampler * Scene::GetSampler() const
 {
-	return m_pSampler.get();
+	return m_pSampler;
 }
 
 Sampler * Scene::GetSampler()
 {
-	return m_pSampler.get();
+	return m_pSampler;
 }
 
 const std::vector<Mesh*> & Scene::GetMeshes() const
@@ -78,12 +83,10 @@ void Scene::Activate()
 	if (m_pSampler == nullptr)
 	{
 		/* Create a default (independent) sampler */
-		m_pSampler.reset((Sampler*)(ObjectFactory::CreateInstance("independent", PropertyList())));
+		m_pSampler = (Sampler*)(ObjectFactory::CreateInstance("independent", PropertyList()));
 	}
 
-	LOG(INFO) << endl;
-	LOG(INFO) << "Configuration: " << ToString();
-	LOG(INFO) << endl;
+	LOG(INFO) << "\nConfiguration:\n" << ToString();
 }
 
 void Scene::AddChild(Object * pChildObj)
@@ -102,21 +105,21 @@ void Scene::AddChild(Object * pChildObj)
 		{
 			throw HikariException("There can only be one sampler per scene!");
 		}
-		m_pSampler.reset((Sampler*)(pChildObj));
+		m_pSampler = (Sampler*)(pChildObj);
 		break;
 	case EClassType::ECamera:
 		if (m_pCamera)
 		{
 			throw HikariException("There can only be one camera per scene!");
 		}
-		m_pCamera.reset((Camera*)(pChildObj));
+		m_pCamera = (Camera*)(pChildObj);
 		break;
 	case EClassType::EIntegrator:
 		if (m_pIntegrator)
 		{
 			throw HikariException("There can only be one integrator per scene!");
 		}
-		m_pIntegrator.reset((Integrator*)(pChildObj));
+		m_pIntegrator = (Integrator*)(pChildObj);
 		break;
 	default:
 		throw HikariException("Scene::AddChild(<%s>) is not supported!", ClassTypeName(pChildObj->GetClassType()));

@@ -140,7 +140,7 @@ protected:
 		ERight = 0, 
 		EDown  = 1,
 		ELeft  = 2,
-		EUp    = 4
+		EUp    = 3
 	};
 
 	Point2i m_Block;
