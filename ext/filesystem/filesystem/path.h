@@ -30,7 +30,8 @@
 # include <linux/limits.h>
 #endif
 
-NAMESPACE_BEGIN(filesystem)
+namespace filesystem
+{
 
 /**
  * \brief Simple class for manipulating paths on Linux/Windows/Mac OS
@@ -333,4 +334,4 @@ inline bool create_directory(const path& p) {
 #endif
 }
 
-NAMESPACE_END(filesystem)
+}

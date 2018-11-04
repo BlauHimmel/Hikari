@@ -55,6 +55,8 @@
 #define XML_TYPE(Field)     Field##_XmlType
 #define XML_VALUE(Field)    Field##_XmlValue
 
+#define XML_SCENE                            "scene"
+
 #define XML_MESH_WAVEFRONG_OBJ               "obj"
 #define XML_MESH_WAVEFRONG_OBJ_FILENAME      "filename"
 #define XML_MESH_WAVEFRONG_OBJ_TO_WORLD      "toWorld"
@@ -112,6 +114,7 @@ template <typename TScalar, int TDimension>  struct TPoint;
 template <typename TPoint, typename TVector> struct TRay;
 template <typename TPoint>                   struct TBoundingBox;
 
+class Acceleration;
 class Bitmap;
 class ImageBlock;
 class BlockGenerator;

@@ -4,6 +4,8 @@
 #include <core\Object.hpp>
 #include <core\Frame.hpp>
 #include <core\BoundingBox.hpp>
+#include <core\Emitter.hpp>
+#include <core\BSDF.hpp>
 
 NAMESPACE_BEGIN
 

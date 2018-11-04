@@ -11,8 +11,9 @@
 
 #include "path.h"
 
-NAMESPACE_BEGIN(filesystem)
-
+namespace filesystem
+{
+    
 /**
  * \brief Simple class for resolving paths on Linux/Windows/Mac OS
  *
@@ -69,4 +70,4 @@ private:
     std::vector<path> m_paths;
 };
 
-NAMESPACE_END(filesystem)
+}

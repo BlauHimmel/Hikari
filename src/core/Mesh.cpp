@@ -1,6 +1,4 @@
 #include <core\Mesh.hpp>
-#include <core\BSDF.hpp>
-#include <core\Emitter.hpp>
 
 NAMESPACE_BEGIN
 

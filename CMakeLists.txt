@@ -153,6 +153,7 @@ set(
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/camera/PerspectiveCamera.cpp
         
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Acceleration.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Bitmap.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Block.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/BoundingBox.cpp
@@ -195,7 +196,8 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/MirrorBSDF.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/camera/PerspectiveCamera.hpp
-
+        
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Acceleration.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Bitmap.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Block.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/BoundingBox.hpp
