@@ -115,8 +115,8 @@ Object * LoadFromXML(const std::string & Filename)
 			if (Iter == Attrs.end())
 			{
 				throw HikariException(
-					"Error while parsing \"%s\": unexpected attribute \"%s\" in \"%s\" at %s",
-					Filename, Attr.name(), Node.name(), OffsetFunc(Node.offset_debug())
+					"Unexpected attribute \"%s\" in \"%s\" at %s",
+					Attr.name(), Node.name(), OffsetFunc(Node.offset_debug())
 				);
 			}
 			Attrs.erase(Iter);
@@ -124,8 +124,8 @@ Object * LoadFromXML(const std::string & Filename)
 		if (!Attrs.empty())
 		{
 			throw HikariException(
-				"Error while parsing \"%s\": missing attribute \"%s\" in \"%s\" at %s",
-				Filename, *Attrs.begin(), Node.name(), OffsetFunc(Node.offset_debug())
+				"Missing attribute \"%s\" in \"%s\" at %s",
+				*Attrs.begin(), Node.name(), OffsetFunc(Node.offset_debug())
 			);
 		}
 	};

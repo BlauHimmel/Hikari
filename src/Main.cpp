@@ -94,7 +94,7 @@ static void Render(Scene * pScene, const std::string & Filename)
 		/// Default: parallel rendering
 		tbb::parallel_for(Range, Map);
 
-		LOG(INFO) << "done. (took " << RenderTimer.ElapsedString() << ")";
+		LOG(INFO) << "Done. (took " << RenderTimer.ElapsedString() << ")";
 	});
 
 	/* Enter the application main loop */

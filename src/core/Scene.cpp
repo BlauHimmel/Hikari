@@ -113,6 +113,7 @@ void Scene::AddChild(Object * pChildObj)
 			throw HikariException("There can only be one acceleration per scene!");
 		}
 		m_pAcceleration = (Acceleration*)(pChildObj);
+		break;
 	case EClassType::EMesh:
 		m_pMeshes.push_back((Mesh*)(pChildObj));
 		break;
