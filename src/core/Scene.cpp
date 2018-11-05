@@ -10,7 +10,7 @@ REGISTER_CLASS(Scene, XML_SCENE);
 
 Scene::Scene(const PropertyList & PropList)
 {
-	m_pAcceleration = new Acceleration();
+
 }
 
 Scene::~Scene()
@@ -69,12 +69,25 @@ bool Scene::RayIntersect(const Ray3f & Ray, Intersection & Isect) const
 
 void Scene::Activate()
 {
+	if (m_pAcceleration == nullptr)
+	{
+		/* Create a default acceleration */
+		LOG(WARNING) << "No acceleration was specified, create a default acceleration.";
+		m_pAcceleration = (Acceleration*)(ObjectFactory::CreateInstance(DEFAULT_SCENE_ACCELERATION, PropertyList()));
+	}
+
+	for (Mesh * pMesh : m_pMeshes)
+	{
+		m_pAcceleration->AddMesh(pMesh);
+	}
+
 	m_pAcceleration->Build();
 
 	if (m_pIntegrator == nullptr)
 	{
 		throw HikariException("No integrator was specified!");
 	}
+
 	if (m_pCamera == nullptr)
 	{
 		throw HikariException("No camera was specified!");
@@ -83,6 +96,7 @@ void Scene::Activate()
 	if (m_pSampler == nullptr)
 	{
 		/* Create a default sampler */
+		LOG(WARNING) << "No sampler was specified, create a default sampler.";
 		m_pSampler = (Sampler*)(ObjectFactory::CreateInstance(DEFAULT_SCENE_SAMPLER, PropertyList()));
 	}
 
@@ -93,8 +107,13 @@ void Scene::AddChild(Object * pChildObj)
 {
 	switch (pChildObj->GetClassType())
 	{
+	case EClassType::EAcceleration:
+		if (m_pAcceleration != nullptr)
+		{
+			throw HikariException("There can only be one acceleration per scene!");
+		}
+		m_pAcceleration = (Acceleration*)(pChildObj);
 	case EClassType::EMesh:
-		m_pAcceleration->AddMesh((Mesh*)(pChildObj));
 		m_pMeshes.push_back((Mesh*)(pChildObj));
 		break;
 	case EClassType::EEmitter:
@@ -141,12 +160,14 @@ std::string Scene::ToString() const
 
 	return tfm::format(
 		"Scene[\n"
+		"  acceleration = %s,\n"
 		"  integrator = %s,\n"
 		"  sampler = %s\n"
 		"  camera = %s,\n"
 		"  meshes = {\n"
 		"  %s  }\n"
 		"]",
+		Indent(m_pAcceleration->ToString()),
 		Indent(m_pIntegrator->ToString()),
 		Indent(m_pSampler->ToString()),
 		Indent(m_pCamera->ToString()),

@@ -27,7 +27,8 @@ public:
 		ESampler              = 9,
 		ETest                 = 10,
 		EReconstructionFilter = 11,
-		EClassTypeCount       = 12
+		EAcceleration         = 12,
+		EClassTypeCount       = 13
 	};
 
 	/// Virtual destructor

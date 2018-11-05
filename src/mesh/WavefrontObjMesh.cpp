@@ -10,17 +10,17 @@ REGISTER_CLASS(WavefrontObjMesh, XML_MESH_WAVEFRONG_OBJ);
 WavefrontObjMesh::WavefrontObjMesh(const PropertyList & PropList)
 {
 	using VertexMap = std::unordered_map<ObjVertex, uint32_t, ObjVertexHash>;
-	filesystem::path filename = GetFileResolver()->resolve(PropList.GetString(XML_MESH_WAVEFRONG_OBJ_FILENAME));
+	filesystem::path Filename = GetFileResolver()->resolve(PropList.GetString(XML_MESH_WAVEFRONG_OBJ_FILENAME));
 
-	std::ifstream FileIn(filename.str());
+	std::ifstream FileIn(Filename.str());
 	if (FileIn.fail())
 	{
-		throw HikariException("Unable to open OBJ file \"%s\"!", filename);
+		throw HikariException("Unable to open OBJ file \"%s\"!", Filename);
 	}
 
 	Transform Trans = PropList.GetTransform(XML_MESH_WAVEFRONG_OBJ_TO_WORLD, Transform());
 
-	LOG(INFO) << "Loading \"" << filename << "\" ... ";
+	LOG(INFO) << "Loading \"" << Filename << "\" ... ";
 	cout.flush();
 	Timer ObjTimer;
 
@@ -125,7 +125,7 @@ WavefrontObjMesh::WavefrontObjMesh(const PropertyList & PropList)
 		}
 	}
 
-	m_Name = filename.str();
+	m_Name = Filename.str();
 	LOG(INFO) << "Done. (V = " << m_V.cols() << ", F = " << m_F.cols() << ", took "
 		<< ObjTimer.ElapsedString() << " and "
 		<< MemString(m_F.size() * sizeof(uint32_t) + sizeof(float) * (m_V.size() + m_N.size() + m_UV.size()))

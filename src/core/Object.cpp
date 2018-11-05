@@ -34,7 +34,8 @@ std::string Object::ClassTypeName(EClassType Type)
 		case EClassType::ESampler:              return "Sampler";
 		case EClassType::ETest:                 return "Test";
 		case EClassType::EReconstructionFilter: return "ReconstructionFilter";
-		default:                                                return "<Unknown>";
+		case EClassType::EAcceleration:         return "Acceleration";
+		default:                                return "<Unknown>";
 	}
 }
 

@@ -72,6 +72,11 @@
 
 #define XML_EMITTER                          "emitter"
 
+#define XML_ACCELERATION                     "acceleration"
+#define XML_ACCELERATION_BRUTO_LOOP          "bruto"
+#define XML_ACCELERATION_BVH                 "bvh"
+#define XML_ACCELERATION_KD_TREE             "kdtree"
+
 #define XML_SCENE                            "scene"
 
 #define XML_MESH                             "mesh"
@@ -123,6 +128,8 @@
 #define XML_SAMPLER_INDEPENDENT_SAMPLE_COUNT "sampleCount"
 
 /* Default setting */
+#define DEFAULT_SCENE_ACCELERATION               XML_ACCELERATION_BRUTO_LOOP
+
 #define DEFAULT_SCENE_SAMPLER                    XML_SAMPLER_INDEPENDENT
 
 #define DEFAULT_CAMERA_OUTPUTSIZE_X              1280

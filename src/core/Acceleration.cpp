@@ -2,15 +2,17 @@
 
 NAMESPACE_BEGIN
 
+REGISTER_CLASS(Acceleration, XML_ACCELERATION_BRUTO_LOOP);
+
+Acceleration::Acceleration(const PropertyList & PropList)
+{
+
+}
+
 void Acceleration::AddMesh(Mesh * pMesh)
 {
-	if (m_pMesh != nullptr)
-	{
-		throw HikariException("Acceleration: only a single mesh is supported!");
-	}
-
-	m_pMesh = pMesh;
-	m_BBox = m_pMesh->GetBoundingBox();
+	m_pMeshes.push_back(pMesh);
+	m_BBox.ExpandBy(pMesh->GetBoundingBox());
 }
 
 void Acceleration::Build()
@@ -25,29 +27,33 @@ const BoundingBox3f & Acceleration::GetBoundingBox() const
 
 bool Acceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool bShadowRay) const
 {
-	bool bFoundIntersection = false;  // Was an intersection found so far?
+	bool bFoundIntersection = false;       // Was an intersection found so far?
 	uint32_t iFacet = uint32_t(-1);        // Triangle index of the closest intersection
 
 	Ray3f RayCopy(Ray); /// Make a copy of the ray (we will need to update its '.MaxT' value)
 
-	/* Brute force search through all triangles */
-	for (uint32_t Idx = 0; Idx < m_pMesh->GetTriangleCount(); ++Idx)
+	for (size_t i = 0; i < m_pMeshes.size(); i++)
 	{
-		float U, V, T;
-		if (m_pMesh->RayIntersect(Idx, RayCopy, U, V, T))
+		Mesh * pMesh = m_pMeshes[i];
+		/* Brute force search through all triangles */
+		for (uint32_t j = 0; j < pMesh->GetTriangleCount(); ++j)
 		{
-			/* An intersection was found! Can terminate
-			immediately if this is a shadow ray query */
-			if (bShadowRay)
+			float U, V, T;
+			if (pMesh->RayIntersect(j, RayCopy, U, V, T))
 			{
-				return true;
-			}
+				/* An intersection was found! Can terminate
+				immediately if this is a shadow ray query */
+				if (bShadowRay)
+				{
+					return true;
+				}
 
-			RayCopy.MaxT = Isect.T = T;
-			Isect.UV = Point2f(U, V);
-			Isect.pMesh = m_pMesh;
-			iFacet = Idx;
-			bFoundIntersection = true;
+				RayCopy.MaxT = Isect.T = T;
+				Isect.UV = Point2f(U, V);
+				Isect.pMesh = pMesh;
+				iFacet = j;
+				bFoundIntersection = true;
+			}
 		}
 	}
 
@@ -106,6 +112,16 @@ bool Acceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool bS
 	}
 
 	return bFoundIntersection;
+}
+
+Object::EClassType Acceleration::GetClassType() const
+{
+	return EClassType::EAcceleration;
+}
+
+std::string Acceleration::ToString() const
+{
+	return "BrutoLoop[]";
 }
 
 NAMESPACE_END

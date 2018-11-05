@@ -50,6 +50,7 @@ void Mesh::Activate()
 	if (m_pBSDF == nullptr)
 	{
 		/* If no material was assigned, instantiate a diffuse BRDF */
+		LOG(WARNING) << "No BSDF was specified, create a default BSDF.";
 		m_pBSDF = (BSDF*)(ObjectFactory::CreateInstance(XML_BSDF_DIFFUSE, PropertyList()));
 	}
 }

@@ -58,6 +58,7 @@ Object * LoadFromXML(const std::string & Filename)
 		ESampler              = Object::EClassType::ESampler,
 		ETest                 = Object::EClassType::ETest,
 		EReconstructionFilter = Object::EClassType::EReconstructionFilter,
+		EAcceleration         = Object::EClassType::EAcceleration,
 
 		/* Properties */
 		EBoolean              = Object::EClassType::EClassTypeCount,
@@ -82,14 +83,15 @@ Object * LoadFromXML(const std::string & Filename)
 	Tags[XML_SCENE]                = EScene;
 	Tags[XML_MESH]                 = EMesh;
 	Tags[XML_BSDF]                 = EBSDF;
-	Tags[XML_EMITTER]              = EEmitter;
-	Tags[XML_CAMERA]               = ECamera;
-	Tags[XML_MEDIUM]               = EMedium;
 	Tags[XML_PHASE]                = EPhaseFunction;
+	Tags[XML_EMITTER]              = EEmitter;
+	Tags[XML_MEDIUM]               = EMedium;
+	Tags[XML_CAMERA]               = ECamera;
 	Tags[XML_INTEGRATOR]           = EIntegrator;
 	Tags[XML_SAMPLER]              = ESampler;
-	Tags[XML_FILTER]               = EReconstructionFilter;
 	Tags[XML_TEST]                 = ETest;
+	Tags[XML_FILTER]               = EReconstructionFilter;
+	Tags[XML_ACCELERATION]         = EAcceleration;
 	Tags["boolean"]                = EBoolean;
 	Tags["integer"]                = EInteger;
 	Tags["float"]                  = EFloat;

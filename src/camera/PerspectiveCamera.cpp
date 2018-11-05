@@ -64,6 +64,7 @@ void PerspectiveCamera::Activate()
 	/* If no reconstruction filter was assigned, instantiate a default filter */
 	if (m_pFilter == nullptr)
 	{
+		LOG(WARNING) << "No reconstruction filter was specified, create a default reconstruction filter.";
 		m_pFilter = (ReconstructionFilter*)(ObjectFactory::CreateInstance(DEFAULT_CAMERA_RFILTER, PropertyList()));
 	}
 }
