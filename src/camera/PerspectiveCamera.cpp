@@ -12,19 +12,19 @@ PerspectiveCamera::~PerspectiveCamera()
 PerspectiveCamera::PerspectiveCamera(const PropertyList & PropList)
 {
 	/* Width and height in pixels. Default: 720p */
-	m_OutputSize.x() = PropList.GetInteger(XML_CAMERA_PERSPECTIVE_WIDTH, 1280);
-	m_OutputSize.y() = PropList.GetInteger(XML_CAMERA_PERSPECTIVE_HEIGHT, 720);
+	m_OutputSize.x() = PropList.GetInteger(XML_CAMERA_PERSPECTIVE_WIDTH, DEFAULT_CAMERA_OUTPUTSIZE_X);
+	m_OutputSize.y() = PropList.GetInteger(XML_CAMERA_PERSPECTIVE_HEIGHT, DEFAULT_CAMERA_OUTPUTSIZE_Y);
 	m_InvOutputSize = m_OutputSize.cast<float>().cwiseInverse();
 
 	/* Specifies an optional camera-to-world transformation. Default: none */
-	m_CameraToWorld = PropList.GetTransform(XML_CAMERA_PERSPECTIVE_TO_WORLD, Transform());
+	m_CameraToWorld = PropList.GetTransform(XML_CAMERA_PERSPECTIVE_TO_WORLD, DEFAULT_CAMERA_CAMERA_TO_WORLD);
 
 	/* Horizontal field of view in degrees */
-	m_Fov = PropList.GetFloat(XML_CAMERA_PERSPECTIVE_FOV, 30.0f);
+	m_Fov = PropList.GetFloat(XML_CAMERA_PERSPECTIVE_FOV, DEFAULT_CAMERA_FOV);
 
 	/* Near and far clipping planes in world-space units */
-	m_NearClip = PropList.GetFloat(XML_CAMERA_PERSPECTIVE_NEAR_CLIP, 1e-4f);
-	m_FarClip = PropList.GetFloat(XML_CAMERA_PERSPECTIVE_FAR_CLIP, 1e4f);
+	m_NearClip = PropList.GetFloat(XML_CAMERA_PERSPECTIVE_NEAR_CLIP, DEFAULT_CAMERA_NEAR_CLIP);
+	m_FarClip = PropList.GetFloat(XML_CAMERA_PERSPECTIVE_FAR_CLIP, DEFAULT_CAMERA_FAR_CLIP);
 
 	m_pFilter = nullptr;
 }
@@ -61,10 +61,10 @@ void PerspectiveCamera::Activate()
 		Perspective
 	).Inverse();
 
-	/* If no reconstruction filter was assigned, instantiate a Gaussian filter */
+	/* If no reconstruction filter was assigned, instantiate a default filter */
 	if (m_pFilter == nullptr)
 	{
-		m_pFilter = (ReconstructionFilter*)(ObjectFactory::CreateInstance(XML_FILTER_GAUSSION, PropertyList()));
+		m_pFilter = (ReconstructionFilter*)(ObjectFactory::CreateInstance(DEFAULT_CAMERA_RFILTER, PropertyList()));
 	}
 }
 

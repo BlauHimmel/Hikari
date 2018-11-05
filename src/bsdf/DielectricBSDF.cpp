@@ -6,11 +6,11 @@ REGISTER_CLASS(DielectricBSDF, XML_BSDF_DIELECTRIC);
 
 DielectricBSDF::DielectricBSDF(const PropertyList & PropList)
 {
-	/* Interior IOR (default: BK7 borosilicate optical glass) */
-	m_IntIOR = PropList.GetFloat(XML_BSDF_DIELECTRIC_INT_IOR, 1.5046f);
+	/* Interior IOR */
+	m_IntIOR = PropList.GetFloat(XML_BSDF_DIELECTRIC_INT_IOR, DEFAULT_BSDF_DIELECTRIC_INT_IOR);
 
-	/* Exterior IOR (default: air) */
-	m_ExtIOR = PropList.GetFloat(XML_BSDF_DIELECTRIC_EXT_IOR, 1.000277f);
+	/* Exterior IOR */
+	m_ExtIOR = PropList.GetFloat(XML_BSDF_DIELECTRIC_EXT_IOR, DEFAULT_BSDF_DIELECTRIC_EXT_IOR);
 }
 
 Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const

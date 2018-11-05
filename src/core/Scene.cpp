@@ -82,8 +82,8 @@ void Scene::Activate()
 
 	if (m_pSampler == nullptr)
 	{
-		/* Create a default (independent) sampler */
-		m_pSampler = (Sampler*)(ObjectFactory::CreateInstance("independent", PropertyList()));
+		/* Create a default sampler */
+		m_pSampler = (Sampler*)(ObjectFactory::CreateInstance(DEFAULT_SCENE_SAMPLER, PropertyList()));
 	}
 
 	LOG(INFO) << "\nConfiguration:\n" << ToString();

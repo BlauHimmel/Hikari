@@ -8,7 +8,7 @@ REGISTER_CLASS(DiffuseBSDF, XML_BSDF_DIFFUSE);
 
 DiffuseBSDF::DiffuseBSDF(const PropertyList & PropList)
 {
-	m_Albedo = PropList.GetColor(XML_BSDF_DIFFUSE_ALBEDO, Color3f(0.5f));
+	m_Albedo = PropList.GetColor(XML_BSDF_DIFFUSE_ALBEDO, DEFAULT_BSDF_DIFFUSE_ALBEDO);
 }
 
 Color3f DiffuseBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const

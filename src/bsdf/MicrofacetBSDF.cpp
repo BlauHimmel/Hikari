@@ -7,16 +7,16 @@ REGISTER_CLASS(MicrofacetBSDF, XML_BSDF_MICROFACET);
 MicrofacetBSDF::MicrofacetBSDF(const PropertyList & PropList)
 {
 	/* RMS surface roughness */
-	m_Alpha = PropList.GetFloat(XML_BSDF_MICROFACET_ALPHA, 0.1f);
+	m_Alpha = PropList.GetFloat(XML_BSDF_MICROFACET_ALPHA, DEFAULT_BSDF_MICROFACET_ALPHA);
 
-	/* Interior IOR (default: BK7 borosilicate optical glass) */
-	m_IntIOR = PropList.GetFloat(XML_BSDF_MICROFACET_INT_IOR, 1.5046f);
+	/* Interior IOR */
+	m_IntIOR = PropList.GetFloat(XML_BSDF_MICROFACET_INT_IOR, DEFAULT_BSDF_MICROFACET_INT_IOR);
 
-	/* Exterior IOR (default: air) */
-	m_ExtIOR = PropList.GetFloat(XML_BSDF_MICROFACET_EXT_IOR, 1.000277f);
+	/* Exterior IOR */
+	m_ExtIOR = PropList.GetFloat(XML_BSDF_MICROFACET_EXT_IOR, DEFAULT_BSDF_MICROFACET_EXT_IOR);
 
 	/* Albedo of the diffuse base material (a.k.a "kd") */
-	m_Kd = PropList.GetColor(XML_BSDF_MICROFACET_KD, Color3f(0.5f));
+	m_Kd = PropList.GetColor(XML_BSDF_MICROFACET_KD, DEFAULT_BSDF_MICROFACET_ALBEDO);
 
 	/* To ensure energy conservation, we must scale the
 	specular component by 1-kd.

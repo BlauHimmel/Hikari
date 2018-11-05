@@ -7,9 +7,9 @@ REGISTER_CLASS(GaussianFilter, XML_FILTER_GAUSSION);
 GaussianFilter::GaussianFilter(const PropertyList & PropList)
 {
 	/* Half filter size */
-	m_Radius = PropList.GetFloat(XML_FILTER_GAUSSION_RADIUS, 2.0f);
+	m_Radius = PropList.GetFloat(XML_FILTER_GAUSSION_RADIUS, DEFAULT_FILTER_GAUSSIAN_RADIUS);
 	/* Standard deviation of the Gaussian */
-	m_Stddev = PropList.GetFloat(XML_FILTER_GAUSSION_STDDEV, 0.5f);
+	m_Stddev = PropList.GetFloat(XML_FILTER_GAUSSION_STDDEV, DEFAULT_FILTER_GAUSSIAN_STDDEV);
 }
 
 float GaussianFilter::Eval(float X) const

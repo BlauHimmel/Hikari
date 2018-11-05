@@ -6,7 +6,7 @@ REGISTER_CLASS(IndependentSampler, XML_SAMPLER_INDEPENDENT);
 
 IndependentSampler::IndependentSampler(const PropertyList & PropList)
 {
-	m_SampleCount = (size_t)PropList.GetInteger(XML_SAMPLER_INDEPENDENT_SAMPLE_COUNT, 1);
+	m_SampleCount = (size_t)PropList.GetInteger(XML_SAMPLER_INDEPENDENT_SAMPLE_COUNT, DEFAULT_SAMPLER_INDEPENDENT_SAMPLE_COUNT);
 }
 
 std::unique_ptr<Sampler> IndependentSampler::Clone() const

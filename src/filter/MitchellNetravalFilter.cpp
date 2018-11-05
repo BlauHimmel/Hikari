@@ -7,11 +7,11 @@ REGISTER_CLASS(MitchellNetravaliFilter, XML_FILTER_MITCHELL_NETRAVALI);
 MitchellNetravaliFilter::MitchellNetravaliFilter(const PropertyList & PropList)
 {
 	/* Filter size in pixels */
-	m_Radius = PropList.GetFloat(XML_FILTER_MITCHELL_NETRAVALI_RADIUS, 2.0f);
+	m_Radius = PropList.GetFloat(XML_FILTER_MITCHELL_NETRAVALI_RADIUS, DEFAULT_FILTER_MITCHELL_RADIUS);
 	/* B parameter from the paper */
-	m_B = PropList.GetFloat(XML_FILTER_MITCHELL_NETRAVALI_B, 1.0f / 3.0f);
+	m_B = PropList.GetFloat(XML_FILTER_MITCHELL_NETRAVALI_B, DEFAULT_FILTER_MITCHELL_B);
 	/* C parameter from the paper */
-	m_C = PropList.GetFloat(XML_FILTER_MITCHELL_NETRAVALI_C, 1.0f / 3.0f);
+	m_C = PropList.GetFloat(XML_FILTER_MITCHELL_NETRAVALI_C, DEFAULT_FILTER_MITCHELL_C);
 }
 
 float MitchellNetravaliFilter::Eval(float X) const
