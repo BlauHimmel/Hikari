@@ -146,6 +146,8 @@ set(
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/acceleration/BVHAcceleration.cpp
+
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/DielectricBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/DiffuseBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/MicrofacetBSDF.cpp
@@ -193,6 +195,8 @@ set(
 
 set(
         HEADER_FILS
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/acceleration/BVHAcceleration.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/DielectricBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/DiffuseBSDF.hpp

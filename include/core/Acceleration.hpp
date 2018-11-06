@@ -61,8 +61,16 @@ public:
 	/// Return a brief string summary of the instance (for debugging purposes)
 	virtual std::string ToString() const override;
 
-private:
+protected:
+	/**
+	* \brief Obtain the mesh index and its triangle index by the total 
+	* index of triangle 
+	* */
+	void GetIndex(size_t TotalTriangleIdx, size_t & MeshIdx, size_t & TriangleIdx) const;
+
+protected:
 	std::vector<Mesh*> m_pMeshes;
+	std::vector<uint32_t> m_AccumulateMeshFacet;
 	BoundingBox3f m_BBox;
 };
 
