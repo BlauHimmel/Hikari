@@ -18,6 +18,7 @@
 #include <stdexcept>
 #include <limits>
 #include <iomanip>
+#include <time.h>
 
 #include <Eigen\Core>
 #include <Eigen\Geometry>
@@ -161,6 +162,10 @@
 #define DEFAULT_SAMPLER_INDEPENDENT_SAMPLE_COUNT 1
 
 NAMESPACE_BEGIN
+
+/* Counting the time between TIMER_START and TIMER_END */
+#define TIMER_START(Var) clock_t __Start##Var, __Finish##Var; double Var; __Start##Var = clock();
+#define TIMER_END(Var) __Finish##Var = clock();  Var = double(__Finish##Var - __Start##Var) / (CLOCKS_PER_SEC);
 
 /* Import cout, cerr, endl for debugging purposes */
 using std::cout;

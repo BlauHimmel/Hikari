@@ -35,7 +35,7 @@ struct Intersection
 	Frame GeometricFrame;
 
 	/// Pointer to the associated mesh
-	const Mesh * pMesh;
+	const Mesh * pMesh = nullptr;
 
 	/// Create an uninitialized intersection record
 	Intersection();

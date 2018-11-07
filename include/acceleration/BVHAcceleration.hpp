@@ -22,13 +22,15 @@ private:
 	struct BVHFlatNode
 	{
 		BoundingBox3f BBox;
-		uint32_t iStart, nRightChildOffset, nPrimitives;
+		uint32_t iStart = 0;
+		uint32_t nRightChildOffset = 0;
+		uint32_t nPrimitives = 0;
 	};
 
-	BVHFlatNode * m_pFlatTree;
-	uint32_t m_LeafSize;
-	uint32_t m_nNodes;
-	uint32_t m_nLeafs;
+	BVHFlatNode * m_pFlatTree = nullptr;
+	uint32_t m_LeafSize = 0;
+	uint32_t m_nNodes = 0;
+	uint32_t m_nLeafs = 0;
 };
 
 NAMESPACE_END

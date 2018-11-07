@@ -13,7 +13,18 @@ void Acceleration::AddMesh(Mesh * pMesh)
 {
 	m_pMeshes.push_back(pMesh);
 	m_BBox.ExpandBy(pMesh->GetBoundingBox());
-	m_AccumulateMeshFacet.push_back(m_AccumulateMeshFacet.back() + pMesh->GetTriangleCount());
+
+	m_Primitives.reserve(m_Primitives.size() + pMesh->GetTriangleCount());
+	MatrixXu Indices = pMesh->GetIndices();
+	uint32_t * pData = Indices.data();
+	for (std::ptrdiff_t i = 0; i < Indices.cols(); i++)
+	{
+		Primitive Tri;
+		Tri.pMesh = pMesh;
+		Tri.pFacet = pData + i * 3;
+		Tri.iFacet = i;
+		m_Primitives.push_back(Tri);
+	}
 }
 
 void Acceleration::Build()
@@ -123,28 +134,6 @@ Object::EClassType Acceleration::GetClassType() const
 std::string Acceleration::ToString() const
 {
 	return "BrutoLoop[]";
-}
-
-void Acceleration::GetIndex(size_t TotalTriangleIdx, size_t & MeshIdx, size_t & TriangleIdx) const
-{
-	assert(TotalTriangleIdx < m_AccumulateMeshFacet.back());
-
-	if (TotalTriangleIdx < m_AccumulateMeshFacet[0])
-	{
-		MeshIdx = 0;
-		TriangleIdx = TotalTriangleIdx;
-		return;
-	}
-
-	for (int i = 0; i < m_AccumulateMeshFacet.size() - 1; i++)
-	{
-		if (TotalTriangleIdx >= m_AccumulateMeshFacet[i] && TotalTriangleIdx < m_AccumulateMeshFacet[i + 1])
-		{
-			MeshIdx = i;
-			TriangleIdx = TotalTriangleIdx - m_AccumulateMeshFacet[i];
-			return;
-		}
-	}
 }
 
 NAMESPACE_END

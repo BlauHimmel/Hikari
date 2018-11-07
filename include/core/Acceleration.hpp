@@ -62,15 +62,15 @@ public:
 	virtual std::string ToString() const override;
 
 protected:
-	/**
-	* \brief Obtain the mesh index and its triangle index by the total 
-	* index of triangle 
-	* */
-	void GetIndex(size_t TotalTriangleIdx, size_t & MeshIdx, size_t & TriangleIdx) const;
+	struct Primitive
+	{
+		Mesh * pMesh = nullptr;
+		uint32_t * pFacet = nullptr;
+		uint32_t iFacet = 0;
+	};
 
-protected:
 	std::vector<Mesh*> m_pMeshes;
-	std::vector<uint32_t> m_AccumulateMeshFacet;
+	std::vector<Primitive> m_Primitives;
 	BoundingBox3f m_BBox;
 };
 

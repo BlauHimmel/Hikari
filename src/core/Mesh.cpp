@@ -2,7 +2,7 @@
 
 NAMESPACE_BEGIN
 
-Intersection::Intersection() : pMesh(nullptr) { }
+Intersection::Intersection() { }
 
 Vector3f Intersection::ToLocal(const Vector3f & Dir) const
 {
