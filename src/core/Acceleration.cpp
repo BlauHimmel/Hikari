@@ -22,7 +22,7 @@ void Acceleration::AddMesh(Mesh * pMesh)
 		Primitive Tri;
 		Tri.pMesh = pMesh;
 		Tri.pFacet = pData + i * 3;
-		Tri.iFacet = i;
+		Tri.iFacet = uint32_t(i);
 		m_Primitives.push_back(Tri);
 	}
 }

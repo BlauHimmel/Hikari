@@ -23,7 +23,7 @@ struct Intersection
 	Point3f P;
 
 	/// Unoccluded distance along the ray
-	float T;
+	float T = std::numeric_limits<float>::max();
 
 	/// UV coordinates, if any
 	Point2f UV;

@@ -41,7 +41,7 @@ void BVHAcceleration::Build()
 
 	// Push the root node
 	Stack[iStackPtr].iStart = 0;
-	Stack[iStackPtr].iEnd = m_Primitives.size();
+	Stack[iStackPtr].iEnd = uint32_t(m_Primitives.size());
 	Stack[iStackPtr].iParent = 0xfffffffc;
 	iStackPtr++;
 
@@ -159,7 +159,162 @@ void BVHAcceleration::Build()
 
 bool BVHAcceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool bShadowRay) const
 {
-	return false;
+	bool bFoundIntersection = false;       // Was an intersection found so far?
+	uint32_t iFacet = uint32_t(-1);        // Triangle index of the closest intersection
+
+	const uint32_t STACK_MAX_SIZE = 1024;
+	BVHTraversal Stack[STACK_MAX_SIZE];
+	uint32_t iStackPtr = 0;
+
+	Ray3f RayCopy(Ray); /// Make a copy of the ray (we will need to update its '.MaxT' value)
+
+	// Push the root node
+	Stack[iStackPtr].Idx = 0;
+	Stack[iStackPtr].MinT = -std::numeric_limits<float>::max();
+	iStackPtr++;
+
+	while (iStackPtr > 0)
+	{
+		// Pop the next node
+		BVHTraversal TopNode = Stack[--iStackPtr];
+		uint32_t Idx = TopNode.Idx;
+		float MinT = TopNode.MinT;
+
+		const BVHFlatNode & CurrentFlatNode = m_pFlatTree[Idx];
+
+		// If the node is further than the cloest found intersection, continue
+		if (MinT > Isect.T)
+		{
+			continue;
+		}
+
+		// Leaf node -> Check intersection
+		if (CurrentFlatNode.nRightChildOffset == 0)
+		{
+			for (uint32_t i = 0; i < CurrentFlatNode.nPrimitives; i++)
+			{
+				float U, V, T;
+				Primitive Prim =  m_Primitives[CurrentFlatNode.iStart + i];
+				if (Prim.pMesh->RayIntersect(Prim.iFacet, RayCopy, U, V, T))
+				{
+					if (bShadowRay)
+					{
+						return true;
+					}
+
+					RayCopy.MaxT = Isect.T = T;
+					Isect.UV = Point2f(U, V);
+					Isect.pMesh = Prim.pMesh;
+
+					iFacet = Prim.iFacet;
+					bFoundIntersection = true;
+				}
+			}
+		}
+		// Not a leaf
+		else
+		{
+			float HitLeftNearT, HitLeftFarT;
+			float HitRightNearT, HitRightFarT;
+			uint32_t iNearNode, iFarNode;
+			float HitNearNodeNearT, HitFarNodeNearT;
+
+			uint32_t iLeftNode = Idx + 1;
+			uint32_t iRightNode = Idx + CurrentFlatNode.nRightChildOffset;
+
+			const BVHFlatNode & LeftFlatNode = m_pFlatTree[iLeftNode];
+			const BVHFlatNode & RightFlatNode = m_pFlatTree[iRightNode];
+			
+			bool bHitLeft = LeftFlatNode.BBox.RayIntersect(RayCopy, HitLeftNearT, HitLeftFarT);
+			bool bHitRight = RightFlatNode.BBox.RayIntersect(RayCopy, HitRightNearT, HitRightFarT);
+
+			if (bHitLeft && bHitRight)
+			{
+				if (HitRightNearT < HitLeftNearT)
+				{
+					iNearNode = iRightNode;
+					iFarNode = iLeftNode;
+					HitNearNodeNearT = HitRightNearT;
+					HitFarNodeNearT = HitLeftNearT;
+				}
+				else
+				{
+					iNearNode = iLeftNode;
+					iFarNode = iRightNode;
+					HitNearNodeNearT = HitLeftNearT;
+					HitFarNodeNearT = HitRightNearT;
+				}
+
+				// Push the farther first and then the near one
+				Stack[iStackPtr++] = BVHTraversal(iFarNode, HitFarNodeNearT);
+				Stack[iStackPtr++] = BVHTraversal(iNearNode, HitNearNodeNearT);
+			}
+			else if (bHitLeft)
+			{
+				Stack[iStackPtr++] = BVHTraversal(iLeftNode, HitLeftNearT);
+			}
+			else if (bHitRight)
+			{
+				Stack[iStackPtr++] = BVHTraversal(iRightNode, HitRightNearT);
+			}
+		}
+	}
+
+	if (bFoundIntersection)
+	{
+		/* At this point, we now know that there is an intersection,
+		and we know the triangle index of the closest such intersection.
+
+		The following computes a number of additional properties which
+		characterize the intersection (normals, texture coordinates, etc..)
+		*/
+
+		/* Find the barycentric coordinates */
+		Vector3f Barycentric;
+		Barycentric << 1 - Isect.UV.sum(), Isect.UV;
+
+		/* References to all relevant mesh buffers */
+		const Mesh * pMesh = Isect.pMesh;
+		const MatrixXf & V = pMesh->GetVertexPositions();
+		const MatrixXf & N = pMesh->GetVertexNormals();
+		const MatrixXf & UV = pMesh->GetVertexTexCoords();
+		const MatrixXu & F = pMesh->GetIndices();
+
+		/* Vertex indices of the triangle */
+		uint32_t Idx0 = F(0, iFacet), Idx1 = F(1, iFacet), Idx2 = F(2, iFacet);
+		Point3f P0 = V.col(Idx0), P1 = V.col(Idx1), P2 = V.col(Idx2);
+
+		/* Compute the intersection positon accurately using barycentric coordinates */
+		Isect.P = Barycentric.x() * P0 + Barycentric.y() * P1 + Barycentric.z() * P2;
+
+		/* Compute proper texture coordinates if provided by the mesh */
+		if (UV.size() > 0)
+		{
+			Isect.UV = Barycentric.x() * UV.col(Idx0) + Barycentric.y() * UV.col(Idx1) + Barycentric.z() * UV.col(Idx2);
+		}
+
+		/* Compute the geometry frame */
+		Isect.GeometricFrame = Frame((P1 - P0).cross(P2 - P0).normalized());
+
+		if (N.size() > 0)
+		{
+			/* Compute the shading frame. Note that for simplicity,
+			the current implementation doesn't attempt to provide
+			tangents that are continuous across the surface. That
+			means that this code will need to be modified to be able
+			use anisotropic BRDFs, which need tangent continuity */
+
+			Isect.ShadingFrame = Frame(
+				(Barycentric.x() * N.col(Idx0) + Barycentric.y() * N.col(Idx1) + Barycentric.z() * N.col(Idx2)).normalized()
+			);
+		}
+		else
+		{
+			Isect.ShadingFrame = Isect.GeometricFrame;
+		}
+	}
+
+	return bFoundIntersection;
 }
 
 std::string BVHAcceleration::ToString() const
@@ -168,7 +323,7 @@ std::string BVHAcceleration::ToString() const
 		"BVHAcceleration[\n"
 		"  leafSize = %s,\n"
 		"  node = %s,\n"
-		"  leafNode = %f,\n"
+		"  leafNode = %f\n"
 		"]",
 		m_LeafSize,
 		m_nNodes,

@@ -421,7 +421,7 @@ public:
 
 			if (Ray.Direction[i] == 0)
 			{
-				if (origin < MinVal || origin > MaxVal)
+				if (Origin < MinVal || Origin > MaxVal)
 				{
 					return false;
 				}
