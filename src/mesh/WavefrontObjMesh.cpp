@@ -12,29 +12,39 @@ WavefrontObjMesh::WavefrontObjMesh(const PropertyList & PropList)
 	using VertexMap = std::unordered_map<ObjVertex, uint32_t, ObjVertexHash>;
 	filesystem::path Filename = GetFileResolver()->resolve(PropList.GetString(XML_MESH_WAVEFRONG_OBJ_FILENAME));
 
+	size_t FileSizeKB = Filename.file_size();
+	size_t FileSizeMB = size_t(std::ceil(float(FileSizeKB) / (1024.0f * 1024.0f)));
+
+	size_t ApproxVertexNumber = FileSizeMB * 5000;
+	size_t ApproxFacetNumber = ApproxVertexNumber * 2;
+
 	std::ifstream FileIn(Filename.str());
 	if (FileIn.fail())
 	{
 		throw HikariException("Unable to open OBJ file \"%s\"!", Filename);
 	}
 
-	Transform Trans = PropList.GetTransform(XML_MESH_WAVEFRONG_OBJ_TO_WORLD, Transform());
+	Transform Trans = PropList.GetTransform(XML_MESH_WAVEFRONG_OBJ_TO_WORLD, DEFAULT_MESH_TO_WORLD);
 
 	LOG(INFO) << "Loading \"" << Filename << "\" ... ";
 	cout.flush();
 	Timer ObjTimer;
 
-	std::vector<Vector3f> Positions;
-	std::vector<Vector2f> Texcoords;
-	std::vector<Vector3f> Normals;
-	std::vector<uint32_t> Indices;
-	std::vector<ObjVertex> Vertices;
+	std::vector<Vector3f> Positions;  Positions.reserve(ApproxVertexNumber);
+	std::vector<Vector2f> Texcoords;  Texcoords.reserve(ApproxVertexNumber);
+	std::vector<Vector3f> Normals;    Normals.reserve(ApproxVertexNumber);
+	std::vector<uint32_t> Indices;    Indices.reserve(ApproxFacetNumber * 3);
+	std::vector<ObjVertex> Vertices;  Vertices.reserve(ApproxVertexNumber);
 	VertexMap Map;
 
+	std::stringstream Line;
 	std::string LineString;
+
 	while (std::getline(FileIn, LineString))
 	{
-		std::istringstream Line(LineString);
+		Line.str("");
+		Line.clear();
+		Line << LineString;
 
 		std::string Prefix;
 		Line >> Prefix;

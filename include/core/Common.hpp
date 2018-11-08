@@ -159,6 +159,8 @@
 #define DEFAULT_FILTER_MITCHELL_B                (1.0f / 3.0f)
 #define DEFAULT_FILTER_MITCHELL_C                (1.0f / 3.0f)
 
+#define DEFAULT_MESH_TO_WORLD                     Transform()
+
 #define DEFAULT_SAMPLER_INDEPENDENT_SAMPLE_COUNT 1
 
 NAMESPACE_BEGIN
