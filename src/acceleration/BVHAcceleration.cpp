@@ -50,7 +50,7 @@ void BVHAcceleration::Build()
 
 	while (iStackPtr > 0)
 	{
-		BVHBuildEntry & BuildEntry = (Stack[--iStackPtr]);
+		const BVHBuildEntry & BuildEntry = (Stack[--iStackPtr]);
 		uint32_t iStart = BuildEntry.iStart;
 		uint32_t iEnd = BuildEntry.iEnd;
 		uint32_t nPrimitives = iEnd - iStart;
@@ -63,7 +63,7 @@ void BVHAcceleration::Build()
 		FlatNode.nRightChildOffset = UNTOUCHED;
 
 		// Calculate the bounding box for this node
-		Primitive & Prim = m_Primitives[iStart];
+		const Primitive & Prim = m_Primitives[iStart];
 		Mesh * pMesh = Prim.pMesh;
 		uint32_t iFacet = Prim.iFacet;
 		BoundingBox3f BBox = pMesh->GetBoundingBox(iFacet);
@@ -71,9 +71,9 @@ void BVHAcceleration::Build()
 
 		for (uint32_t i = iStart + 1; i < iEnd; i++)
 		{
-			Prim = m_Primitives[i];
-			pMesh = Prim.pMesh;
-			iFacet = Prim.iFacet;
+			const Primitive & TempPrim = m_Primitives[i];
+			pMesh = TempPrim.pMesh;
+			iFacet = TempPrim.iFacet;
 			BBox.ExpandBy(pMesh->GetBoundingBox(iFacet));
 			Centriod.ExpandBy(pMesh->GetCentroid(iFacet));
 		}
@@ -120,9 +120,9 @@ void BVHAcceleration::Build()
 		uint32_t iMid = iStart;
 		for (uint32_t i = iStart + 1; i < iEnd; i++)
 		{
-			Prim = m_Primitives[i];
-			pMesh = Prim.pMesh;
-			iFacet = Prim.iFacet;
+			const Primitive & TempPrim = m_Primitives[i];
+			pMesh = TempPrim.pMesh;
+			iFacet = TempPrim.iFacet;
 
 			if (pMesh->GetCentroid(iFacet)[SplitDim] < SplitCoord)
 			{
@@ -180,7 +180,7 @@ bool BVHAcceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool
 		uint32_t Idx = TopNode.Idx;
 		float MinT = TopNode.MinT;
 
-		const BVHFlatNode & CurrentFlatNode = m_pFlatTree[Idx];
+		BVHFlatNode CurrentFlatNode = m_pFlatTree[Idx];
 
 		// If the node is further than the cloest found intersection, continue
 		if (MinT > Isect.T)

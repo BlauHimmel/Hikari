@@ -8,7 +8,7 @@
     <integrator type="normals"/>
 
 	<acceleration type="bvh">
-		<integer name="leafSize" value="10"/>
+		<integer name="leafSize" value="4"/>
 	</acceleration>
 
     <!-- Load the Stanford bunny (https://graphics.stanford.edu/data/3Dscanrep/) -->
