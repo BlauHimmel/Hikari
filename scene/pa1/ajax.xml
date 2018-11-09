@@ -9,6 +9,7 @@
 
 	<acceleration type="bvh">
 		<integer name="leafSize" value="4"/>
+		<string name="splitMethod" value="sah"/>
 	</acceleration>
 
     <!-- Load the ajax -->

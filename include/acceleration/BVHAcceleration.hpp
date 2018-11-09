@@ -31,6 +31,7 @@ private:
 	uint32_t m_LeafSize = 0;
 	uint32_t m_nNodes = 0;
 	uint32_t m_nLeafs = 0;
+	std::string m_SplitMethod;
 };
 
 NAMESPACE_END

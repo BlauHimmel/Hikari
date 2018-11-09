@@ -18,10 +18,22 @@ struct BVHBuildEntry
 	uint32_t iStart = 0, iEnd = 0;
 };
 
+struct BVHBucket
+{
+	uint32_t nPrimitive = 0;
+	BoundingBox3f BBox;
+};
+
 BVHAcceleration::BVHAcceleration(const PropertyList & PropList) : 
 	Acceleration(PropList)
 {
 	m_LeafSize = uint32_t(PropList.GetInteger(XML_ACCELERATION_BVH_LEAF_SIZE, DEFAULT_ACCELERATION_BVH_LEAF_SIZE));
+	m_SplitMethod = PropList.GetString(XML_ACCELERATION_BVH_SPLIT_METHOD, DEFAULT_ACCELERATION_BVH_SPLIT_METHOD);
+	if (m_SplitMethod != XML_ACCELERATION_BVH_SPLIT_METHOD_CENTER && m_SplitMethod != XML_ACCELERATION_BVH_SPLIT_METHOD_SAH)
+	{
+		LOG(WARNING) << "No split method \"" << m_SplitMethod << "\", use default split method";
+		m_SplitMethod = DEFAULT_ACCELERATION_BVH_SPLIT_METHOD;
+	}
 }
 
 BVHAcceleration::~BVHAcceleration()
@@ -112,29 +124,108 @@ void BVHAcceleration::Build()
 
 		// Set the split dimensions
 		uint32_t SplitDim = Centriod.GetMajorAxis();
-
-		// Split on the center of the longest axis
-		float SplitCoord = 0.5f * (Centriod.Min[SplitDim] + Centriod.Max[SplitDim]);
-
-		// Partition the list of objects on this split
 		uint32_t iMid = iStart;
-		for (uint32_t i = iStart + 1; i < iEnd; i++)
-		{
-			const Primitive & TempPrim = m_Primitives[i];
-			pMesh = TempPrim.pMesh;
-			iFacet = TempPrim.iFacet;
 
-			if (pMesh->GetCentroid(iFacet)[SplitDim] < SplitCoord)
+		if (m_SplitMethod == XML_ACCELERATION_BVH_SPLIT_METHOD_CENTER)
+		{
+			// Split on the center of the longest axis
+			float SplitCoord = 0.5f * (Centriod.Min[SplitDim] + Centriod.Max[SplitDim]);
+
+			// Partition the list of objects on this split
+			for (uint32_t i = iStart + 1; i < iEnd; i++)
 			{
-				std::swap(m_Primitives[i], m_Primitives[iMid]);
-				iMid++;
+				const Primitive & TempPrim = m_Primitives[i];
+				pMesh = TempPrim.pMesh;
+				iFacet = TempPrim.iFacet;
+
+				if (pMesh->GetCentroid(iFacet)[SplitDim] < SplitCoord)
+				{
+					std::swap(m_Primitives[i], m_Primitives[iMid]);
+					iMid++;
+				}
+			}
+
+			// If we get a bad split, just choose the center...
+			if (iMid == iStart || iMid == iEnd)
+			{
+				iMid = iStart + (iEnd - iStart) / 2;
 			}
 		}
-
-		// If we get a bad split, just choose the center...
-		if (iMid == iStart || iMid == iEnd)
+		else if (m_SplitMethod == XML_ACCELERATION_BVH_SPLIT_METHOD_SAH)
 		{
-			iMid = iStart + (iEnd - iStart) / 2;
+			constexpr uint32_t BUCKET_NUM = 12;
+			BVHBucket Buckets[BUCKET_NUM];
+
+			float InvNorm = 1.0f / (Centriod.Max[SplitDim] - Centriod.Min[SplitDim]);
+			float InvSurfaceArea = 1.0f / BBox.GetSurfaceArea();
+
+			// Divide the bounding box into several buckets
+			for (uint32_t i = iStart; i < iEnd; i++)
+			{
+				const Primitive & TempPrim = m_Primitives[i];
+				pMesh = TempPrim.pMesh;
+				iFacet = TempPrim.iFacet;
+
+				uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (pMesh->GetCentroid(iFacet)[SplitDim] - Centriod.Min[SplitDim]) * InvNorm);
+				assert(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
+
+				Buckets[BucketIdx].nPrimitive++;
+				Buckets[BucketIdx].BBox.ExpandBy(pMesh->GetBoundingBox(iFacet));
+			}
+			
+			// Compute the cost
+			float Cost[BUCKET_NUM - 1];
+			for (uint32_t i = 0; i < BUCKET_NUM - 1; i++)
+			{
+				BoundingBox3f LeftBox(Point3f(0.0f), Point3f(0.0f)), RightBox(Point3f(0.0f), Point3f(0.0f));
+				uint32_t nLeftPrimitives = 0, nRightPrimitives = 0;
+
+				// Left
+				for (uint32_t j = 0; j <= i; j++)
+				{
+					LeftBox.ExpandBy(Buckets[j].BBox);
+					nLeftPrimitives += Buckets[j].nPrimitive;
+				}
+
+				// Right
+				for (uint32_t j = i + 1; j <= BUCKET_NUM - 1; j++)
+				{
+					RightBox.ExpandBy(Buckets[j].BBox);
+					nRightPrimitives += Buckets[j].nPrimitive;
+				}
+				Cost[i] = 0.125f + (
+					LeftBox.GetSurfaceArea() * nLeftPrimitives + 
+					RightBox.GetSurfaceArea() * nRightPrimitives
+					) * InvSurfaceArea;
+			}
+
+			// Find bucket whose cost is minimal
+			float MinCost = Cost[0];
+			uint32_t iMinCostSplitBucket = 0;
+			for (uint32_t i = 0; i < BUCKET_NUM - 1; i++)
+			{
+				if (Cost[i] < MinCost)
+				{
+					MinCost = Cost[i];
+					iMinCostSplitBucket = i;
+				}
+			}
+
+			// Split nodes
+			auto iIterMid = std::partition(
+				m_Primitives.begin() + iStart,
+				m_Primitives.begin() + iEnd,
+				[=](const Primitive Prim)
+				{
+					Mesh * pTempMesh = Prim.pMesh;
+					uint32_t iTempFacet = Prim.iFacet;
+
+					uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (pTempMesh->GetCentroid(iTempFacet)[SplitDim] - Centriod.Min[SplitDim]) * InvNorm);
+					assert(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
+					return BucketIdx <= iMinCostSplitBucket;
+				}
+			);
+			iMid = uint32_t(iIterMid - m_Primitives.begin());
 		}
 
 		// Right child pushed
@@ -324,10 +415,12 @@ std::string BVHAcceleration::ToString() const
 		"  leafSize = %s,\n"
 		"  node = %s,\n"
 		"  leafNode = %f\n"
+		"  splitMethod = %s\n"
 		"]",
 		m_LeafSize,
 		m_nNodes,
-		m_nLeafs
+		m_nLeafs,
+		m_SplitMethod
 	);
 }
 
