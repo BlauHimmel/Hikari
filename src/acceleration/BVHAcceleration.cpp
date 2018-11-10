@@ -79,7 +79,7 @@ void BVHAcceleration::Build()
 		Mesh * pMesh = Prim.pMesh;
 		uint32_t iFacet = Prim.iFacet;
 		BoundingBox3f BBox = pMesh->GetBoundingBox(iFacet);
-		BoundingBox3f Centriod = pMesh->GetCentroid(iFacet);
+		BoundingBox3f Centroid = pMesh->GetCentroid(iFacet);
 
 		for (uint32_t i = iStart + 1; i < iEnd; i++)
 		{
@@ -87,7 +87,7 @@ void BVHAcceleration::Build()
 			pMesh = TempPrim.pMesh;
 			iFacet = TempPrim.iFacet;
 			BBox.ExpandBy(pMesh->GetBoundingBox(iFacet));
-			Centriod.ExpandBy(pMesh->GetCentroid(iFacet));
+			Centroid.ExpandBy(pMesh->GetCentroid(iFacet));
 		}
 
 		FlatNode.BBox = BBox;
@@ -123,13 +123,13 @@ void BVHAcceleration::Build()
 		}
 
 		// Set the split dimensions
-		uint32_t SplitDim = Centriod.GetMajorAxis();
+		uint32_t SplitDim = Centroid.GetMajorAxis();
 		uint32_t iMid = iStart;
 
 		if (m_SplitMethod == XML_ACCELERATION_BVH_SPLIT_METHOD_CENTER)
 		{
 			// Split on the center of the longest axis
-			float SplitCoord = 0.5f * (Centriod.Min[SplitDim] + Centriod.Max[SplitDim]);
+			float SplitCoord = 0.5f * (Centroid.Min[SplitDim] + Centroid.Max[SplitDim]);
 
 			// Partition the list of objects on this split
 			for (uint32_t i = iStart + 1; i < iEnd; i++)
@@ -156,7 +156,7 @@ void BVHAcceleration::Build()
 			constexpr uint32_t BUCKET_NUM = 12;
 			BVHBucket Buckets[BUCKET_NUM];
 
-			float InvNorm = 1.0f / (Centriod.Max[SplitDim] - Centriod.Min[SplitDim]);
+			float InvNorm = 1.0f / (Centroid.Max[SplitDim] - Centroid.Min[SplitDim]);
 			float InvSurfaceArea = 1.0f / BBox.GetSurfaceArea();
 
 			// Divide the bounding box into several buckets
@@ -166,21 +166,29 @@ void BVHAcceleration::Build()
 				pMesh = TempPrim.pMesh;
 				iFacet = TempPrim.iFacet;
 
-				uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (pMesh->GetCentroid(iFacet)[SplitDim] - Centriod.Min[SplitDim]) * InvNorm);
+				uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (pMesh->GetCentroid(iFacet)[SplitDim] - Centroid.Min[SplitDim]) * InvNorm);
 				assert(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
 
 				Buckets[BucketIdx].nPrimitive++;
-				Buckets[BucketIdx].BBox.ExpandBy(pMesh->GetBoundingBox(iFacet));
+				if (Buckets[BucketIdx].BBox.IsValid())
+				{
+					Buckets[BucketIdx].BBox.ExpandBy(pMesh->GetBoundingBox(iFacet));
+				}
+				else
+				{
+					Buckets[BucketIdx].BBox = pMesh->GetBoundingBox(iFacet);
+				}
 			}
 			
 			// Compute the cost
 			float Cost[BUCKET_NUM - 1];
 			for (uint32_t i = 0; i < BUCKET_NUM - 1; i++)
 			{
-				BoundingBox3f LeftBox(Point3f(0.0f), Point3f(0.0f)), RightBox(Point3f(0.0f), Point3f(0.0f));
+				BoundingBox3f LeftBox, RightBox;
 				uint32_t nLeftPrimitives = 0, nRightPrimitives = 0;
 
 				// Left
+				LeftBox = Buckets[0].BBox;
 				for (uint32_t j = 0; j <= i; j++)
 				{
 					LeftBox.ExpandBy(Buckets[j].BBox);
@@ -188,11 +196,13 @@ void BVHAcceleration::Build()
 				}
 
 				// Right
+				RightBox = Buckets[i + 1].BBox;
 				for (uint32_t j = i + 1; j <= BUCKET_NUM - 1; j++)
 				{
 					RightBox.ExpandBy(Buckets[j].BBox);
 					nRightPrimitives += Buckets[j].nPrimitive;
 				}
+
 				Cost[i] = 0.125f + (
 					LeftBox.GetSurfaceArea() * nLeftPrimitives + 
 					RightBox.GetSurfaceArea() * nRightPrimitives
@@ -220,7 +230,7 @@ void BVHAcceleration::Build()
 					Mesh * pTempMesh = Prim.pMesh;
 					uint32_t iTempFacet = Prim.iFacet;
 
-					uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (pTempMesh->GetCentroid(iTempFacet)[SplitDim] - Centriod.Min[SplitDim]) * InvNorm);
+					uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (pTempMesh->GetCentroid(iTempFacet)[SplitDim] - Centroid.Min[SplitDim]) * InvNorm);
 					assert(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
 					return BucketIdx <= iMinCostSplitBucket;
 				}

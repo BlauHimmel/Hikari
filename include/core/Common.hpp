@@ -80,7 +80,8 @@
 #define XML_ACCELERATION_BVH_SPLIT_METHOD        "splitMethod"
 #define XML_ACCELERATION_BVH_SPLIT_METHOD_CENTER "center"
 #define XML_ACCELERATION_BVH_SPLIT_METHOD_SAH    "sah"
-#define XML_ACCELERATION_KD_TREE                 "kdtree"
+#define XML_ACCELERATION_HLBVH                   "hlbvh"
+#define XML_ACCELERATION_HLBVH_LEAF_SIZE         "leafSize"
 
 #define XML_SCENE                                "scene"
 
@@ -135,6 +136,8 @@
 /* Default setting */
 #define DEFAULT_ACCELERATION_BVH_LEAF_SIZE       10
 #define DEFAULT_ACCELERATION_BVH_SPLIT_METHOD    XML_ACCELERATION_BVH_SPLIT_METHOD_CENTER
+
+#define DEFAULT_ACCELERATION_HLBVH_LEAF_SIZE     10
 
 #define DEFAULT_SCENE_ACCELERATION               XML_ACCELERATION_BRUTO_LOOP
 

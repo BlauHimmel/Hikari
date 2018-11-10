@@ -147,6 +147,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/acceleration/BVHAcceleration.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/acceleration/HLBVHAcceleration.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/DielectricBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/DiffuseBSDF.cpp
@@ -167,6 +168,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Emitter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Frame.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Integrator.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/MemoryArena.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Mesh.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Object.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Parser.cpp
@@ -197,6 +199,7 @@ set(
         HEADER_FILS
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/acceleration/BVHAcceleration.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/acceleration/HLBVHAcceleration.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/DielectricBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/DiffuseBSDF.hpp
@@ -217,6 +220,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Emitter.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Frame.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Integrator.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/MemoryArena.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Mesh.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Object.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Parser.hpp
