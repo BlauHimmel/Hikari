@@ -1,4 +1,5 @@
 #include <acceleration\BVHAcceleration.hpp>
+#include <core\Timer.hpp>
 
 NAMESPACE_BEGIN
 
@@ -43,7 +44,7 @@ BVHAcceleration::~BVHAcceleration()
 
 void BVHAcceleration::Build()
 {
-	TIMER_START(TimeBVHBuild);
+	Timer BVHBuildTimer;
 
 	const uint32_t STACK_MAX_SIZE = 1024;
 	const uint32_t UNTOUCHED = 0xffffffff;
@@ -254,8 +255,7 @@ void BVHAcceleration::Build()
 	m_pFlatTree = new BVHFlatNode[m_nNodes];
 	memcpy(m_pFlatTree, BuildNodes.data(), m_nNodes * sizeof(BVHFlatNode));
 
-	TIMER_END(TimeBVHBuild);
-	LOG(INFO) << "Build BVH (" << m_nNodes << " nodes, with " << m_nLeafs << " leafs) in " << TimeBVHBuild << " sec.";
+	LOG(INFO) << "Build BVH (" << m_nNodes << " nodes, with " << m_nLeafs << " leafs) in " << BVHBuildTimer.ElapsedString();
 }
 
 bool BVHAcceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool bShadowRay) const

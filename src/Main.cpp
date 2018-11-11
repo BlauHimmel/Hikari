@@ -169,7 +169,6 @@ int main(int argc, char ** argv)
 	catch (const std::exception & Ex)
 	{
 		LOG(ERROR) << "Fatal error: " << Ex.what();
-		return -1;
 	}
 
 	google::ShutdownGoogleLogging();

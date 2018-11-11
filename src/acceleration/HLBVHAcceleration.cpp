@@ -1,4 +1,5 @@
 #include <acceleration\HLBVHAcceleration.hpp>
+#include <core\Timer.hpp>
 #include <tbb\tbb.h>
 
 NAMESPACE_BEGIN
@@ -21,6 +22,7 @@ struct BVHBuildNode
 
 	void InitLeaf(uint32_t iFirst, uint32_t N, const BoundingBox3f & B)
 	{
+		iSplitAxis = 3;
 		nFirstPrimitiveOffset = iFirst;
 		nPrimitive = N;
 		BBox = B;
@@ -35,6 +37,7 @@ struct BVHBuildNode
 		BBox = pLeft->BBox;
 		BBox.ExpandBy(pRight->BBox);
 		nPrimitive = 0;
+		nFirstPrimitiveOffset = uint32_t(-1);
 	}
 };
 
@@ -76,6 +79,8 @@ HLBVHAcceleration::~HLBVHAcceleration()
 
 void HLBVHAcceleration::Build()
 {
+	Timer HLBVHBuildTimer;
+
 	// Compute bounding box of all primitive centroids
 	const Mesh * pMesh = m_Primitives[0].pMesh;
 	uint32_t iFacet = m_Primitives[0].iFacet;
@@ -97,15 +102,19 @@ void HLBVHAcceleration::Build()
 	tbb::blocked_range<int> MortonRange(0, int(m_Primitives.size()));
 	auto MortonMap = [&](const tbb::blocked_range<int> & Range)
 	{
-		for (int i = Range.end(); i < Range.end(); i++)
+		for (int i = Range.begin(); i < Range.end(); i++)
 		{
 			Mesh * pMesh = m_Primitives[i].pMesh;
 			uint32_t iFacet = m_Primitives[i].iFacet;
 			MortonPrimitives[i].iPrimitive = i;
-			MortonPrimitives[i].MortonCode = EncodeMorton3(pMesh->GetCentroid(iFacet).cwiseQuotient(BBoxExtents) * MORTON_SCALE);
+			MortonPrimitives[i].MortonCode = EncodeMorton3((pMesh->GetCentroid(iFacet) - BBox.Min).cwiseQuotient(BBoxExtents) * MORTON_SCALE);
 		}
 	};
 
+	/// Uncomment the following line for single threaded computing
+	//MortonMap(MortonRange);
+
+	/// Default: parallel computing
 	tbb::parallel_for(MortonRange, MortonMap);
 
 	// Radix sort primitive Morton indices
@@ -167,7 +176,12 @@ void HLBVHAcceleration::Build()
 		}
 	};
 
-	tbb::parallel_for(MortonRange, MortonMap);
+	/// Uncomment the following line for single threaded building
+	//TreeletMap(TreeletRange);
+
+	/// Default: parallel building
+	tbb::parallel_for(TreeletRange, TreeletMap);
+
 	m_nNodes = nAtomicTotal;
 	m_nLeafs = nAtomicLeaf;
 
@@ -180,15 +194,152 @@ void HLBVHAcceleration::Build()
 	}
 
 	BVHBuildNode * pRoot = BuildUpperSAH(FinishedTreelets, 0, uint32_t(FinishedTreelets.size()));
+
+	m_Primitives.swap(OrderedPrimitives);
+
 	uint32_t nOffset = 0;
 	m_pNodes = new LinearBVHNode[m_nNodes];
 	FlattenBVHTree(pRoot, &nOffset);
 	assert(m_nNodes == nOffset);
+
+	LOG(INFO) << "Build HLBVH (" << m_nNodes << " nodes, with " << m_nLeafs << " leafs) in " << HLBVHBuildTimer.ElapsedString();
 }
 
 bool HLBVHAcceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool bShadowRay) const
 {
-	return false;
+	if (m_pNodes == nullptr)
+	{
+		return false;
+	}
+
+	bool bFoundIntersection = false;       // Was an intersection found so far?
+	uint32_t iFacet = uint32_t(-1);        // Triangle index of the closest intersection
+	
+	Ray3f RayCopy(Ray);
+	bool bDirNeg[3] = { RayCopy.DirectionReciprocal.x() < 0, RayCopy.DirectionReciprocal.y() < 0, RayCopy.DirectionReciprocal.z() < 0 };
+
+	uint32_t nToVisitOffset = 0, iCurrentNodeIndex = 0;
+	uint32_t iNodesToVisit[1024];
+
+	while (true)
+	{
+		const LinearBVHNode * pLinearNode = &m_pNodes[iCurrentNodeIndex];
+
+		if (pLinearNode->BBox.RayIntersect(RayCopy))
+		{
+			// Leaf node
+			if (pLinearNode->nPrimitve > 0)
+			{
+				for (uint32_t i = 0; i < pLinearNode->nPrimitve; i++)
+				{
+					const Primitive & TempPrim = m_Primitives[pLinearNode->nPrimitiveOffset + i];
+					Mesh * pTempMesh = TempPrim.pMesh;
+					uint32_t iTempFacet = TempPrim.iFacet;
+
+					float U, V, T;
+					if (pTempMesh->RayIntersect(iTempFacet, RayCopy, U, V, T))
+					{
+						if (bShadowRay)
+						{
+							return true;
+						}
+
+						RayCopy.MaxT = Isect.T = T;
+						Isect.UV = Point2f(U, V);
+						Isect.pMesh = TempPrim.pMesh;
+
+						iFacet = TempPrim.iFacet;
+						bFoundIntersection = true;
+					}
+				}
+
+				if (nToVisitOffset == 0)
+				{
+					break;
+				}
+
+				iCurrentNodeIndex = iNodesToVisit[--nToVisitOffset];
+			}
+			// Interior node
+			else
+			{
+				if (bDirNeg[pLinearNode->iAxis])
+				{
+					iNodesToVisit[nToVisitOffset++] = iCurrentNodeIndex + 1;
+					iCurrentNodeIndex = pLinearNode->nRightChildOffset;
+				}
+				else
+				{
+					iNodesToVisit[nToVisitOffset++] = pLinearNode->nRightChildOffset;
+					iCurrentNodeIndex = iCurrentNodeIndex + 1;
+				}
+			}
+		}
+		else
+		{
+			if (nToVisitOffset == 0)
+			{
+				break;
+			}
+			iCurrentNodeIndex = iNodesToVisit[--nToVisitOffset];
+		}
+	}
+
+	if (bFoundIntersection)
+	{
+		/* At this point, we now know that there is an intersection,
+		and we know the triangle index of the closest such intersection.
+
+		The following computes a number of additional properties which
+		characterize the intersection (normals, texture coordinates, etc..)
+		*/
+
+		/* Find the barycentric coordinates */
+		Vector3f Barycentric;
+		Barycentric << 1 - Isect.UV.sum(), Isect.UV;
+
+		/* References to all relevant mesh buffers */
+		const Mesh * pMesh = Isect.pMesh;
+		const MatrixXf & V = pMesh->GetVertexPositions();
+		const MatrixXf & N = pMesh->GetVertexNormals();
+		const MatrixXf & UV = pMesh->GetVertexTexCoords();
+		const MatrixXu & F = pMesh->GetIndices();
+
+		/* Vertex indices of the triangle */
+		uint32_t Idx0 = F(0, iFacet), Idx1 = F(1, iFacet), Idx2 = F(2, iFacet);
+		Point3f P0 = V.col(Idx0), P1 = V.col(Idx1), P2 = V.col(Idx2);
+
+		/* Compute the intersection positon accurately using barycentric coordinates */
+		Isect.P = Barycentric.x() * P0 + Barycentric.y() * P1 + Barycentric.z() * P2;
+
+		/* Compute proper texture coordinates if provided by the mesh */
+		if (UV.size() > 0)
+		{
+			Isect.UV = Barycentric.x() * UV.col(Idx0) + Barycentric.y() * UV.col(Idx1) + Barycentric.z() * UV.col(Idx2);
+		}
+
+		/* Compute the geometry frame */
+		Isect.GeometricFrame = Frame((P1 - P0).cross(P2 - P0).normalized());
+
+		if (N.size() > 0)
+		{
+			/* Compute the shading frame. Note that for simplicity,
+			the current implementation doesn't attempt to provide
+			tangents that are continuous across the surface. That
+			means that this code will need to be modified to be able
+			use anisotropic BRDFs, which need tangent continuity */
+
+			Isect.ShadingFrame = Frame(
+				(Barycentric.x() * N.col(Idx0) + Barycentric.y() * N.col(Idx1) + Barycentric.z() * N.col(Idx2)).normalized()
+			);
+		}
+		else
+		{
+			Isect.ShadingFrame = Isect.GeometricFrame;
+		}
+	}
+
+	return bFoundIntersection;
 }
 
 std::string HLBVHAcceleration::ToString() const
@@ -302,7 +453,7 @@ BVHBuildNode * HLBVHAcceleration::EmitHLBVH(
 	assert(nPrimitive > 0);
 
 	// Create and return leaf node of HLBVH treelet
-	if (iFirstBitIdx == -1 || nPrimitive < m_LeafSize)
+	if (iFirstBitIdx == -1 || nPrimitive <= m_LeafSize)
 	{
 		(*nTotalNodes)++;
 		(*nLeafNodes)++;
@@ -315,7 +466,9 @@ BVHBuildNode * HLBVHAcceleration::EmitHLBVH(
 		uint32_t PrimIdx = pMortonPrimitives[0].iPrimitive;
 		Mesh * pMesh = m_Primitives[PrimIdx].pMesh;
 		uint32_t iFacet = m_Primitives[PrimIdx].iFacet;
+
 		BoundingBox3f BBox = pMesh->GetBoundingBox(iFacet);
+		OrderedPrimitives[0 + nFirstPrimOffset] = m_Primitives[PrimIdx];
 
 		for (uint32_t i = 1; i < nPrimitive; i++)
 		{
@@ -446,7 +599,7 @@ BVHBuildNode * HLBVHAcceleration::BuildUpperSAH(
 	for (uint32_t i = iStart; i < iEnd; i++)
 	{
 		uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (TreeletRoots[i]->BBox.GetCenter()[iSplitDim] - Centroid.Min[iSplitDim]) * InvNorm);
-		assert(BucketIdx >= 0 && BucketIdx < nBuckets);
+		assert(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
 
 		Buckets[BucketIdx].nPrimitive++;
 		if (Buckets[BucketIdx].BBox.IsValid())
@@ -506,7 +659,7 @@ BVHBuildNode * HLBVHAcceleration::BuildUpperSAH(
 		[=](const BVHBuildNode * pNode)
 		{
 			uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (pNode->BBox.GetCenter()[iSplitDim] - Centroid.Min[iSplitDim]) * InvNorm);
-			assert(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
+			assert(BucketIdx >= 0 && BucketIdx < uint32_t(BUCKET_NUM));
 			return BucketIdx <= iMinCostSplitBucket;
 		}
 	);
@@ -525,6 +678,8 @@ BVHBuildNode * HLBVHAcceleration::BuildUpperSAH(
 
 uint32_t HLBVHAcceleration::FlattenBVHTree(BVHBuildNode * pNode, uint32_t * pOffset)
 {
+	assert(*pOffset < m_nNodes);
+
 	LinearBVHNode * pLinearNode = &m_pNodes[*pOffset];
 	pLinearNode->BBox = pNode->BBox;
 
@@ -546,6 +701,9 @@ uint32_t HLBVHAcceleration::FlattenBVHTree(BVHBuildNode * pNode, uint32_t * pOff
 		pLinearNode->nPrimitve = 0;
 		FlattenBVHTree(pNode->pChildren[0], pOffset);
 		pLinearNode->nRightChildOffset = FlattenBVHTree(pNode->pChildren[1], pOffset);
+
+		assert(pNode->BBox.IsValid() && pNode->pChildren[0]->BBox.IsValid() && pNode->pChildren[1]->BBox.IsValid());
+		assert(pNode->BBox.Contains(pNode->pChildren[0]->BBox) && pNode->BBox.Contains(pNode->pChildren[1]->BBox));
 	}
 
 	return Offset;

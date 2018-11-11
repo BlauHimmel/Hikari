@@ -367,7 +367,7 @@ public:
 		return Result;
 	}
 
-	/// Return a string representation of the bounding box
+	/// Check if a ray intersects a bounding box
 	bool RayIntersect(const Ray3f & Ray) const
 	{
 		float NearT = -std::numeric_limits<float>::infinity();

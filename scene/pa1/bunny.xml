@@ -7,9 +7,8 @@
     <!-- Render the visible surface normals -->
     <integrator type="normals"/>
 
-	<acceleration type="bvh">
-		<integer name="leafSize" value="4"/>
-		<string name="splitMethod" value="sah"/>
+	<acceleration type="hlbvh">
+		<integer name="leafSize" value="10"/>
 	</acceleration>
 
     <!-- Load the Stanford bunny (https://graphics.stanford.edu/data/3Dscanrep/) -->
