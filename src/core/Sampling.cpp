@@ -1,4 +1,5 @@
 #include <core\Sampling.hpp>
+#include <core\Frame.hpp>
 
 NAMESPACE_BEGIN
 
@@ -59,42 +60,94 @@ float Sampling::SquareToUniformDiskPdf(const Point2f & Pt)
 
 Vector3f Sampling::SquareToUniformSphere(const Point2f & Sample)
 {
-	throw HikariException("Sampling::SquareToUniformSphere(const Point2f & Sample) is not yet implemented!");
+	float Z = 1.0f - 2.0f * Sample.x();
+	float SinTheta = std::sqrt(std::max(0.0f, 1.0f - Z * Z));
+	float Phi = 2.0f * M_PI * Sample.y();
+	return Vector3f(
+		SinTheta * std::cosf(Phi),
+		SinTheta * std::sinf(Phi),
+		Z
+	);
 }
 
 float Sampling::SquareToUniformSpherePdf(const Vector3f & V)
 {
-	throw HikariException("Sampling::SquareToUniformSpherePdf(const Vector3f & V) is not yet implemented!");
+	return (V.norm() - 1.0f <= 1e-6) ? 1.0f / (4.0f * M_PI) : 0.0f;
 }
 
 Vector3f Sampling::SquareToUniformHemisphere(const Point2f & Sample)
 {
-	throw HikariException("Sampling::SquareToUniformHemisphere(const Point2f & Sample) is not yet implemented!");
+	float Z = 1.0f - Sample.x();
+	float SinTheta = std::sqrt(std::max(0.0f, 1.0f - Z * Z));
+	float Phi = 2.0f * M_PI * Sample.y();
+	return Vector3f(
+		SinTheta * std::cosf(Phi),
+		SinTheta * std::sinf(Phi),
+		Z
+	);
 }
 
 float Sampling::SquareToUniformHemispherePdf(const Vector3f & V)
 {
-	throw HikariException("Sampling::SquareToUniformHemispherePdf(const Vector3f & V) is not yet implemented!");
+	return (V.norm() - 1.0f <= 1e-6f && V.z() >= 0.0f) ? 1.0f / (2.0f * M_PI) : 0.0f;
 }
 
 Vector3f Sampling::SquareToCosineHemisphere(const Point2f & Sample)
 {
-	throw HikariException("Sampling::SquareToCosineHemisphere(const Point2f & Sample) is not yet implemented!");
+	Point2f Disk = SquareToUniformDisk(Sample);
+	float Z = std::sqrt(1.0f - Disk.x() * Disk.x() - Disk.y() * Disk.y());
+	return Vector3f(Disk.x(), Disk.y(), Z);
 }
 
 float Sampling::SquareToCosineHemispherePdf(const Vector3f & V)
 {
-	throw HikariException("Sampling::SquareToCosineHemispherePdf(const Vector3f & V) is not yet implemented!");
+	return (V.norm() - 1.0f <= 1e-6f && V.z() >= 0.0f) ? V.z() / M_PI : 0.0f;
 }
 
 Vector3f Sampling::SquareToBeckmann(const Point2f & Sample, float Alpha)
 {
-	throw HikariException("Sampling::SquareToBeckmann(const Point2f & Sample, float Alpha) is not yet implemented!");
+	float Ln = std::logf(1.0f - Sample.x());
+	if (std::isnan(Ln))
+	{
+		Ln = 0.0f;
+	}
+
+	float Tan2Theta = -1.0f * Alpha * Alpha * Ln;
+	float CosTheta = 1.0f / std::sqrtf(1 + Tan2Theta);
+	float SinTheta = std::sqrtf(1.0f - CosTheta * CosTheta);
+	float Phi = 2.0f * M_PI * Sample.y();
+
+	return Vector3f(
+		SinTheta * std::cosf(Phi),
+		SinTheta * std::sinf(Phi),
+		CosTheta
+	);
 }
 
 float Sampling::SquareToBeckmannPdf(const Vector3f & M, float Alpha)
 {
-	throw HikariException("Sampling::SquareToBeckmannPdf(const Vector3f & M, float Alpha) is not yet implemented!");
+	if (M.norm() - 1.0f <= 1e-6 && M.z() >= 0.0f)
+	{
+		float CosTheta = Frame::CosTheta(M);
+
+		if (CosTheta == 0.0f)
+		{
+			return 0.0f;
+		}
+
+		float TanTheta = Frame::TanTheta(M);
+
+		if (std::isinf(TanTheta))
+		{
+			return 0.0f;
+		}
+
+		float Alpha2 = Alpha * Alpha;
+
+		return std::expf(-1.0f * std::powf(TanTheta, 2.0f) / Alpha2) / (M_PI * Alpha2 * std::powf(CosTheta, 3.0f));
+	}
+
+	return 0.0f;
 }
 
 NAMESPACE_END
