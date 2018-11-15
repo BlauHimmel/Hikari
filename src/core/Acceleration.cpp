@@ -1,4 +1,5 @@
 #include <core\Acceleration.hpp>
+#include <core\Shape.hpp>
 
 NAMESPACE_BEGIN
 
@@ -14,16 +15,16 @@ void Acceleration::AddMesh(Mesh * pMesh)
 	m_pMeshes.push_back(pMesh);
 	m_BBox.ExpandBy(pMesh->GetBoundingBox());
 
-	m_Primitives.reserve(m_Primitives.size() + pMesh->GetTriangleCount());
+	m_pShapes.reserve(m_pShapes.size() + pMesh->GetTriangleCount());
 	MatrixXu Indices = pMesh->GetIndices();
 	uint32_t * pData = Indices.data();
+	Triangle * pTri = m_MemoryArena.Alloc<Triangle>(Indices.cols());
 	for (std::ptrdiff_t i = 0; i < Indices.cols(); i++)
 	{
-		Primitive Tri;
-		Tri.pMesh = pMesh;
-		Tri.pFacet = pData + i * 3;
-		Tri.iFacet = uint32_t(i);
-		m_Primitives.push_back(Tri);
+		pTri[i].m_pMesh = pMesh;
+		pTri[i].m_pFacet = pData + i * 3;
+		pTri[i].m_iFacet = uint32_t(i);
+		m_pShapes.push_back((Shape*)(&pTri[i]));
 	}
 }
 

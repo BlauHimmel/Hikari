@@ -39,12 +39,12 @@ Point2f Sampling::SquareToUniformDisk(const Point2f & Sample)
 	if (std::abs(OffsetSample.x()) > std::abs(OffsetSample.y()))
 	{
 		R = OffsetSample.x();
-		Theta = M_PI * 0.25f * (OffsetSample.y() / OffsetSample.x());
+		Theta = float(M_PI) * 0.25f * (OffsetSample.y() / OffsetSample.x());
 	}
 	else
 	{
 		R = OffsetSample.y();
-		Theta = M_PI * 0.5f - M_PI * 0.25f * (OffsetSample.x() / OffsetSample.y());
+		Theta = float(M_PI) * 0.5f - float(M_PI) * 0.25f * (OffsetSample.x() / OffsetSample.y());
 	}
 
 	return Point2f(
@@ -55,14 +55,14 @@ Point2f Sampling::SquareToUniformDisk(const Point2f & Sample)
 
 float Sampling::SquareToUniformDiskPdf(const Point2f & Pt)
 {
-	return (Pt.norm() <= 1.0f) ? 1.0f / M_PI : 0.0f;
+	return (Pt.norm() <= 1.0f) ? 1.0f / float(M_PI) : 0.0f;
 }
 
 Vector3f Sampling::SquareToUniformSphere(const Point2f & Sample)
 {
 	float Z = 1.0f - 2.0f * Sample.x();
 	float SinTheta = std::sqrt(std::max(0.0f, 1.0f - Z * Z));
-	float Phi = 2.0f * M_PI * Sample.y();
+	float Phi = 2.0f * float(M_PI) * Sample.y();
 	return Vector3f(
 		SinTheta * std::cosf(Phi),
 		SinTheta * std::sinf(Phi),
@@ -72,14 +72,14 @@ Vector3f Sampling::SquareToUniformSphere(const Point2f & Sample)
 
 float Sampling::SquareToUniformSpherePdf(const Vector3f & V)
 {
-	return (V.norm() - 1.0f <= 1e-6) ? 1.0f / (4.0f * M_PI) : 0.0f;
+	return (V.norm() - 1.0f <= 1e-6) ? 1.0f / (4.0f * float(M_PI)) : 0.0f;
 }
 
 Vector3f Sampling::SquareToUniformHemisphere(const Point2f & Sample)
 {
 	float Z = 1.0f - Sample.x();
 	float SinTheta = std::sqrt(std::max(0.0f, 1.0f - Z * Z));
-	float Phi = 2.0f * M_PI * Sample.y();
+	float Phi = 2.0f * float(M_PI) * Sample.y();
 	return Vector3f(
 		SinTheta * std::cosf(Phi),
 		SinTheta * std::sinf(Phi),
@@ -89,7 +89,7 @@ Vector3f Sampling::SquareToUniformHemisphere(const Point2f & Sample)
 
 float Sampling::SquareToUniformHemispherePdf(const Vector3f & V)
 {
-	return (V.norm() - 1.0f <= 1e-6f && V.z() >= 0.0f) ? 1.0f / (2.0f * M_PI) : 0.0f;
+	return (V.norm() - 1.0f <= 1e-6f && V.z() >= 0.0f) ? 1.0f / (2.0f * float(M_PI)) : 0.0f;
 }
 
 Vector3f Sampling::SquareToCosineHemisphere(const Point2f & Sample)
@@ -101,7 +101,7 @@ Vector3f Sampling::SquareToCosineHemisphere(const Point2f & Sample)
 
 float Sampling::SquareToCosineHemispherePdf(const Vector3f & V)
 {
-	return (V.norm() - 1.0f <= 1e-6f && V.z() >= 0.0f) ? V.z() / M_PI : 0.0f;
+	return (V.norm() - 1.0f <= 1e-6f && V.z() >= 0.0f) ? V.z() / float(M_PI) : 0.0f;
 }
 
 Vector3f Sampling::SquareToBeckmann(const Point2f & Sample, float Alpha)
@@ -115,7 +115,7 @@ Vector3f Sampling::SquareToBeckmann(const Point2f & Sample, float Alpha)
 	float Tan2Theta = -1.0f * Alpha * Alpha * Ln;
 	float CosTheta = 1.0f / std::sqrtf(1 + Tan2Theta);
 	float SinTheta = std::sqrtf(1.0f - CosTheta * CosTheta);
-	float Phi = 2.0f * M_PI * Sample.y();
+	float Phi = 2.0f * float(M_PI) * Sample.y();
 
 	return Vector3f(
 		SinTheta * std::cosf(Phi),
@@ -144,7 +144,7 @@ float Sampling::SquareToBeckmannPdf(const Vector3f & M, float Alpha)
 
 		float Alpha2 = Alpha * Alpha;
 
-		return std::expf(-1.0f * std::powf(TanTheta, 2.0f) / Alpha2) / (M_PI * Alpha2 * std::powf(CosTheta, 3.0f));
+		return std::expf(-1.0f * std::powf(TanTheta, 2.0f) / Alpha2) / (float(M_PI) * Alpha2 * std::powf(CosTheta, 3.0f));
 	}
 
 	return 0.0f;

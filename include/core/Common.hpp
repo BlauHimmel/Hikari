@@ -32,11 +32,11 @@
 #define NAMESPACE_END }
 
 #if defined(MACOS)
-	#define PLATFORM_MACOS
+	#define __PLATFORM_MACOS__
 #elif defined(LINUX)
-	#define PLATFORM_LINUX
+	#define __PLATFORM_LINUX__
 #elif defined(WIN32)
-	#define PLATFORM_WINDOWS
+	#define __PLATFORM_WINDOWS__
 #endif
 
 /* "Ray epsilon": relative error threshold for ray intersection computations */
@@ -212,7 +212,7 @@ class Sampler;
 class Sampling;
 class Scene;
 class Timer;
-class Shape
+class Shape;
 
 /* Basic data structures (vectors, points, rays, bounding boxes,
 kd-trees) are oblivious to the underlying data type and dimension.

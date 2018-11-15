@@ -2,15 +2,15 @@
 #include <core\Object.hpp>
 #include <core\Vector.hpp>
 
-#if defined(PLATFORM_LINUX)
+#if defined(__PLATFORM_LINUX__)
 #include <malloc.h>
 #endif
 
-#if defined(PLATFORM_WINDOWS)
+#if defined(__PLATFORM_WINDOWS__)
 #include <windows.h>
 #endif
 
-#if defined(PLATFORM_MACOS)
+#if defined(__PLATFORM_MACOS__)
 #include <sys/sysctl.h>
 #endif
 

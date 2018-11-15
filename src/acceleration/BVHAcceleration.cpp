@@ -1,5 +1,6 @@
 #include <acceleration\BVHAcceleration.hpp>
 #include <core\Timer.hpp>
+#include <core\Shape.hpp>
 
 NAMESPACE_BEGIN
 
@@ -21,7 +22,7 @@ struct BVHBuildEntry
 
 struct BVHBucket
 {
-	uint32_t nPrimitive = 0;
+	uint32_t nShape = 0;
 	BoundingBox3f BBox;
 };
 
@@ -54,48 +55,42 @@ void BVHAcceleration::Build()
 
 	// Push the root node
 	Stack[iStackPtr].iStart = 0;
-	Stack[iStackPtr].iEnd = uint32_t(m_Primitives.size());
+	Stack[iStackPtr].iEnd = uint32_t(m_pShapes.size());
 	Stack[iStackPtr].iParent = 0xfffffffc;
 	iStackPtr++;
 
 	std::vector<BVHFlatNode> BuildNodes;
-	BuildNodes.reserve(m_Primitives.size() * 2);
+	BuildNodes.reserve(m_pShapes.size() * 2);
 
 	while (iStackPtr > 0)
 	{
 		const BVHBuildEntry & BuildEntry = (Stack[--iStackPtr]);
 		uint32_t iStart = BuildEntry.iStart;
 		uint32_t iEnd = BuildEntry.iEnd;
-		uint32_t nPrimitives = iEnd - iStart;
+		uint32_t nShapes = iEnd - iStart;
 
 		m_nNodes++;
 
 		BVHFlatNode FlatNode;
 		FlatNode.iStart = iStart;
-		FlatNode.nPrimitives = nPrimitives;
+		FlatNode.nShapes = nShapes;
 		FlatNode.nRightChildOffset = UNTOUCHED;
 
 		// Calculate the bounding box for this node
-		const Primitive & Prim = m_Primitives[iStart];
-		Mesh * pMesh = Prim.pMesh;
-		uint32_t iFacet = Prim.iFacet;
-		BoundingBox3f BBox = pMesh->GetBoundingBox(iFacet);
-		BoundingBox3f Centroid = pMesh->GetCentroid(iFacet);
+		BoundingBox3f BBox = m_pShapes[iStart]->GetBoundingBox();
+		BoundingBox3f Centroid = m_pShapes[iStart]->GetCentroid();
 
 		for (uint32_t i = iStart + 1; i < iEnd; i++)
 		{
-			const Primitive & TempPrim = m_Primitives[i];
-			pMesh = TempPrim.pMesh;
-			iFacet = TempPrim.iFacet;
-			BBox.ExpandBy(pMesh->GetBoundingBox(iFacet));
-			Centroid.ExpandBy(pMesh->GetCentroid(iFacet));
+			BBox.ExpandBy(m_pShapes[i]->GetBoundingBox());
+			Centroid.ExpandBy(m_pShapes[i]->GetCentroid());
 		}
 
 		FlatNode.BBox = BBox;
 
-		// If the number of primitives at this point is less than the leaf
+		// If the number of shapes at this point is less than the leaf
 		// size, then this will become a leaf. (Signified by rightOffset == 0)
-		if (nPrimitives <= m_LeafSize)
+		if (nShapes <= m_LeafSize)
 		{
 			FlatNode.nRightChildOffset = 0;
 			m_nLeafs++;
@@ -135,13 +130,9 @@ void BVHAcceleration::Build()
 			// Partition the list of objects on this split
 			for (uint32_t i = iStart + 1; i < iEnd; i++)
 			{
-				const Primitive & TempPrim = m_Primitives[i];
-				pMesh = TempPrim.pMesh;
-				iFacet = TempPrim.iFacet;
-
-				if (pMesh->GetCentroid(iFacet)[SplitDim] < SplitCoord)
+				if (m_pShapes[i]->GetCentroid()[SplitDim] < SplitCoord)
 				{
-					std::swap(m_Primitives[i], m_Primitives[iMid]);
+					std::swap(m_pShapes[i], m_pShapes[iMid]);
 					iMid++;
 				}
 			}
@@ -163,21 +154,17 @@ void BVHAcceleration::Build()
 			// Divide the bounding box into several buckets
 			for (uint32_t i = iStart; i < iEnd; i++)
 			{
-				const Primitive & TempPrim = m_Primitives[i];
-				pMesh = TempPrim.pMesh;
-				iFacet = TempPrim.iFacet;
-
-				uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (pMesh->GetCentroid(iFacet)[SplitDim] - Centroid.Min[SplitDim]) * InvNorm);
+				uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (m_pShapes[i]->GetCentroid()[SplitDim] - Centroid.Min[SplitDim]) * InvNorm);
 				assert(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
 
-				Buckets[BucketIdx].nPrimitive++;
+				Buckets[BucketIdx].nShape++;
 				if (Buckets[BucketIdx].BBox.IsValid())
 				{
-					Buckets[BucketIdx].BBox.ExpandBy(pMesh->GetBoundingBox(iFacet));
+					Buckets[BucketIdx].BBox.ExpandBy(m_pShapes[i]->GetBoundingBox());
 				}
 				else
 				{
-					Buckets[BucketIdx].BBox = pMesh->GetBoundingBox(iFacet);
+					Buckets[BucketIdx].BBox = m_pShapes[i]->GetBoundingBox();
 				}
 			}
 			
@@ -186,14 +173,14 @@ void BVHAcceleration::Build()
 			for (uint32_t i = 0; i < BUCKET_NUM - 1; i++)
 			{
 				BoundingBox3f LeftBox, RightBox;
-				uint32_t nLeftPrimitives = 0, nRightPrimitives = 0;
+				uint32_t nLeftShapes = 0, nRightShapes = 0;
 
 				// Left
 				LeftBox = Buckets[0].BBox;
 				for (uint32_t j = 0; j <= i; j++)
 				{
 					LeftBox.ExpandBy(Buckets[j].BBox);
-					nLeftPrimitives += Buckets[j].nPrimitive;
+					nLeftShapes += Buckets[j].nShape;
 				}
 
 				// Right
@@ -201,12 +188,12 @@ void BVHAcceleration::Build()
 				for (uint32_t j = i + 1; j <= BUCKET_NUM - 1; j++)
 				{
 					RightBox.ExpandBy(Buckets[j].BBox);
-					nRightPrimitives += Buckets[j].nPrimitive;
+					nRightShapes += Buckets[j].nShape;
 				}
 
 				Cost[i] = 0.125f + (
-					LeftBox.GetSurfaceArea() * nLeftPrimitives + 
-					RightBox.GetSurfaceArea() * nRightPrimitives
+					LeftBox.GetSurfaceArea() * nLeftShapes + 
+					RightBox.GetSurfaceArea() * nRightShapes
 					) * InvSurfaceArea;
 			}
 
@@ -224,19 +211,16 @@ void BVHAcceleration::Build()
 
 			// Split nodes
 			auto iIterMid = std::partition(
-				m_Primitives.begin() + iStart,
-				m_Primitives.begin() + iEnd,
-				[=](const Primitive Prim)
+				m_pShapes.begin() + iStart,
+				m_pShapes.begin() + iEnd,
+				[=](const Shape * pShape)
 				{
-					Mesh * pTempMesh = Prim.pMesh;
-					uint32_t iTempFacet = Prim.iFacet;
-
-					uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (pTempMesh->GetCentroid(iTempFacet)[SplitDim] - Centroid.Min[SplitDim]) * InvNorm);
+					uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (pShape->GetCentroid()[SplitDim] - Centroid.Min[SplitDim]) * InvNorm);
 					assert(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
 					return BucketIdx <= iMinCostSplitBucket;
 				}
 			);
-			iMid = uint32_t(iIterMid - m_Primitives.begin());
+			iMid = uint32_t(iIterMid - m_pShapes.begin());
 		}
 
 		// Right child pushed
@@ -292,11 +276,11 @@ bool BVHAcceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool
 		// Leaf node -> Check intersection
 		if (CurrentFlatNode.nRightChildOffset == 0)
 		{
-			for (uint32_t i = 0; i < CurrentFlatNode.nPrimitives; i++)
+			for (uint32_t i = 0; i < CurrentFlatNode.nShapes; i++)
 			{
 				float U, V, T;
-				Primitive Prim =  m_Primitives[CurrentFlatNode.iStart + i];
-				if (Prim.pMesh->RayIntersect(Prim.iFacet, RayCopy, U, V, T))
+				Shape * pShape =  m_pShapes[CurrentFlatNode.iStart + i];
+				if (pShape->RayIntersect(RayCopy, U, V, T))
 				{
 					if (bShadowRay)
 					{
@@ -305,9 +289,9 @@ bool BVHAcceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool
 
 					RayCopy.MaxT = Isect.T = T;
 					Isect.UV = Point2f(U, V);
-					Isect.pMesh = Prim.pMesh;
+					Isect.pMesh = pShape->GetMesh();
 
-					iFacet = Prim.iFacet;
+					iFacet = pShape->GetFacetIndex();
 					bFoundIntersection = true;
 				}
 			}

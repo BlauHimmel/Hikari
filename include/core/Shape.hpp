@@ -2,7 +2,6 @@
 
 #include <core\Common.hpp>
 #include <core\Object.hpp>
-#include <core\Vector.hpp>
 
 NAMESPACE_BEGIN
 
@@ -19,15 +18,13 @@ public:
 	virtual float SurfaceArea() const = 0;
 
 	/// Return an axis-aligned bounding box of the entire mesh
-	virtual const BoundingBox3f & GetBoundingBox() const = 0;
+	virtual BoundingBox3f GetBoundingBox() const = 0;
 
 	/// Return the centroid of the given triangle
 	virtual Point3f GetCentroid() const = 0;
 
 	/** \brief intersection test
 	*
-	* \param Index
-	*    Index of the triangle that should be intersected
 	* \param Ray
 	*    The ray segment to be used for the intersection query
 	* \param U
@@ -42,7 +39,21 @@ public:
 	* \return
 	*   \c true if an intersection has been detected
 	*/
-	virtual bool RayIntersect(uint32_t Index, const Ray3f & Ray, float & U, float & V, float & T) const = 0;
+	virtual bool RayIntersect(const Ray3f & Ray, float & U, float & V, float & T) const = 0;
+
+	/**
+	* \brief Return the pointer of the mesh that this shape attach
+	* \return
+	*   \c nullptr if the shape does not attach to any mesh
+	*/
+	virtual Mesh * GetMesh() const = 0;
+
+	/**
+	* \brief Return the index of facet in the mesh that this shape attach
+	* \return
+	*   \c uint32_t(-1) if the shape does not attach to any mesh
+	*/
+	virtual uint32_t GetFacetIndex() const = 0;
 
 	/**
 	* \brief Return the type of object (i.e. Mesh/BSDF/etc.)

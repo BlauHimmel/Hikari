@@ -1,4 +1,5 @@
 #include <core\Mesh.hpp>
+#include <core\Shape.hpp>
 
 NAMESPACE_BEGIN
 
@@ -39,6 +40,11 @@ std::string Intersection::ToString() const
 	);
 }
 
+Triangle::Triangle()
+{
+
+}
+
 Triangle::Triangle(Mesh * pMesh, uint32_t * pFacet, uint32_t iFacet) :
 	m_pMesh(pMesh), m_pFacet(pFacet), m_iFacet(iFacet)
 {
@@ -55,7 +61,7 @@ float Triangle::SurfaceArea() const
 	return m_pMesh->SurfaceArea(m_iFacet);
 }
 
-const BoundingBox3f & Triangle::GetBoundingBox() const
+BoundingBox3f Triangle::GetBoundingBox() const
 {
 	return m_pMesh->GetBoundingBox(m_iFacet);
 }
@@ -65,9 +71,19 @@ Point3f Triangle::GetCentroid() const
 	return m_pMesh->GetCentroid(m_iFacet);
 }
 
-bool Triangle::RayIntersect(uint32_t Index, const Ray3f & Ray, float & U, float & V, float & T) const
+bool Triangle::RayIntersect(const Ray3f & Ray, float & U, float & V, float & T) const
 {
-	return m_pMesh->RayIntersect(Index, Ray, U, V, T);
+	return m_pMesh->RayIntersect(m_iFacet, Ray, U, V, T);
+}
+
+Mesh * Triangle::GetMesh() const
+{
+	return m_pMesh;
+}
+
+uint32_t Triangle::GetFacetIndex() const
+{
+	return m_iFacet;
 }
 
 std::string Triangle::ToString() const

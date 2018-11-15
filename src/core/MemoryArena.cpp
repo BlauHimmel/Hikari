@@ -4,7 +4,7 @@ NAMESPACE_BEGIN
 
 void * AllocAligned(size_t Size)
 {
-#if defined(PLATFORM_WINDOWS)
+#if defined(__PLATFORM_WINDOWS__)
 	return _aligned_malloc(Size, 64);
 #else
 	return memalign(64, Size);
@@ -15,7 +15,7 @@ void FreeAligned(void * pPtr)
 {
 	if (pPtr != nullptr)
 	{
-#if defined(PLATFORM_WINDOWS)
+#if defined(__PLATFORM_WINDOWS__)
 		_aligned_free(pPtr);
 #else
 		free(pPtr);

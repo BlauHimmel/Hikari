@@ -7,7 +7,7 @@
 
 NAMESPACE_BEGIN
 
-struct MortonPrimitive;
+struct MortonShape;
 struct BVHBuildNode;
 struct LinearBVHNode;
 
@@ -27,15 +27,15 @@ public:
 private:
 	uint32_t LeftShift3(uint32_t X) const;
 	uint32_t EncodeMorton3(const Vector3f & Vec) const;
-	void RadixSort(std::vector<MortonPrimitive> & MortonPrims) const;
+	void RadixSort(std::vector<MortonShape> & MortonShapes) const;
 	BVHBuildNode * EmitHLBVH(
 		BVHBuildNode *& pBuildNodes,
-		MortonPrimitive * pMortonPrimitives,
-		uint32_t nPrimitive,
+		MortonShape * pMortonShapes,
+		uint32_t nShape,
 		uint32_t * nTotalNodes,
 		uint32_t * nLeafNodes,
-		std::vector<Primitive> & OrderedPrimitives,
-		std::atomic<int> * nOrderedPrimsOffset,
+		std::vector<Shape*> & OrderedShapes,
+		std::atomic<int> * nOrderedShapesOffset,
 		int iFirstBitIdx
 	);
 	BVHBuildNode * BuildUpperSAH(

@@ -24,7 +24,7 @@ private:
 		BoundingBox3f BBox;
 		uint32_t iStart = 0;
 		uint32_t nRightChildOffset = 0;
-		uint32_t nPrimitives = 0;
+		uint32_t nShapes = 0;
 	};
 
 	BVHFlatNode * m_pFlatTree = nullptr;

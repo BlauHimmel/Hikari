@@ -57,6 +57,8 @@ struct Intersection
 class Triangle : public Shape
 {
 public:
+	Triangle();
+
 	Triangle(Mesh * pMesh, uint32_t * pFacet, uint32_t iFacet);
 
 	/**
@@ -69,15 +71,13 @@ public:
 	virtual float SurfaceArea() const override;
 
 	/// Return an axis-aligned bounding box of the entire mesh
-	virtual const BoundingBox3f & GetBoundingBox() const override;
+	virtual BoundingBox3f GetBoundingBox() const override;
 
 	/// Return the centroid of the given triangle
 	virtual Point3f GetCentroid() const override;
 
 	/** \brief intersection test
 	*
-	* \param Index
-	*    Index of the triangle that should be intersected
 	* \param Ray
 	*    The ray segment to be used for the intersection query
 	* \param U
@@ -92,11 +92,24 @@ public:
 	* \return
 	*   \c true if an intersection has been detected
 	*/
-	virtual bool RayIntersect(uint32_t Index, const Ray3f & Ray, float & U, float & V, float & T) const override;
+	virtual bool RayIntersect(const Ray3f & Ray, float & U, float & V, float & T) const override;
+
+	/**
+	* \brief Return the pointer of the mesh that this shape attach
+	* \return
+	*   \c nullptr if the shape does not attach to any mesh
+	*/
+	virtual Mesh * GetMesh() const override;
+
+	/**
+	* \brief Return the index of facet in the mesh that this shape attach
+	* \return
+	*   \c uint32_t(-1) if the shape does not attach to any mesh
+	*/
+	virtual uint32_t GetFacetIndex() const override;
 
 	virtual std::string ToString() const override;
 
-protected:
 	Mesh * m_pMesh = nullptr;
 	uint32_t * m_pFacet = nullptr;
 	uint32_t m_iFacet = 0;

@@ -3,6 +3,7 @@
 #include <core\Common.hpp>
 #include <core\Object.hpp>
 #include <core\Mesh.hpp>
+#include <core\MemoryArena.hpp>
 
 NAMESPACE_BEGIN
 
@@ -62,16 +63,10 @@ public:
 	virtual std::string ToString() const override;
 
 protected:
-	struct Primitive
-	{
-		Mesh * pMesh = nullptr;
-		uint32_t * pFacet = nullptr;
-		uint32_t iFacet = 0;
-	};
-
 	std::vector<Mesh*> m_pMeshes;
-	std::vector<Primitive> m_Primitives;
+	std::vector<Shape*> m_pShapes;
 	BoundingBox3f m_BBox;
+	MemoryArena m_MemoryArena;
 };
 
 NAMESPACE_END
