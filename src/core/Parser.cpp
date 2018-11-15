@@ -59,6 +59,7 @@ Object * LoadFromXML(const std::string & Filename)
 		ETest                 = Object::EClassType::ETest,
 		EReconstructionFilter = Object::EClassType::EReconstructionFilter,
 		EAcceleration         = Object::EClassType::EAcceleration,
+		EShape                = Object::EClassType::EShape,
 
 		/* Properties */
 		EBoolean              = Object::EClassType::EClassTypeCount,
@@ -92,6 +93,7 @@ Object * LoadFromXML(const std::string & Filename)
 	Tags[XML_TEST]                 = ETest;
 	Tags[XML_FILTER]               = EReconstructionFilter;
 	Tags[XML_ACCELERATION]         = EAcceleration;
+	Tags[XML_SHAPE]                = EShape;
 	Tags["boolean"]                = EBoolean;
 	Tags["integer"]                = EInteger;
 	Tags["float"]                  = EFloat;

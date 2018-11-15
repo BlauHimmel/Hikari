@@ -39,6 +39,59 @@ std::string Intersection::ToString() const
 	);
 }
 
+Triangle::Triangle(Mesh * pMesh, uint32_t * pFacet, uint32_t iFacet) :
+	m_pMesh(pMesh), m_pFacet(pFacet), m_iFacet(iFacet)
+{
+
+}
+
+void Triangle::SamplePosition(const Point2f & Sample, Point3f & P, Normal3f & N) const
+{
+	throw HikariException("Triangle::SamplePosition(const Point2f & Sample, Point3f & P, Normal3f & N) const is not yet implemented!");
+}
+
+float Triangle::SurfaceArea() const
+{
+	return m_pMesh->SurfaceArea(m_iFacet);
+}
+
+const BoundingBox3f & Triangle::GetBoundingBox() const
+{
+	return m_pMesh->GetBoundingBox(m_iFacet);
+}
+
+Point3f Triangle::GetCentroid() const
+{
+	return m_pMesh->GetCentroid(m_iFacet);
+}
+
+bool Triangle::RayIntersect(uint32_t Index, const Ray3f & Ray, float & U, float & V, float & T) const
+{
+	return m_pMesh->RayIntersect(Index, Ray, U, V, T);
+}
+
+std::string Triangle::ToString() const
+{
+	const MatrixXf & V = m_pMesh->GetVertexPositions();
+	uint32_t iV0 = m_pFacet[0];
+	uint32_t iV1 = m_pFacet[1];
+	uint32_t iV2 = m_pFacet[2];
+	Point3f P0 = V.col(iV0);
+	Point3f P1 = V.col(iV1);
+	Point3f P2 = V.col(iV2);
+
+	return tfm::format(
+		"Triangle[\n"
+		"  v0 = (%.4f, %.4f, %.4f)\n"
+		"  v1 = (%.4f, %.4f, %.4f)\n"
+		"  v2 = (%.4f, %.4f, %.4f)\n"
+		"]",
+		P0.x(), P0.y(), P0.z(),
+		P1.x(), P1.y(), P1.z(),
+		P2.x(), P2.y(), P2.z()
+	);
+}
+
 Mesh::~Mesh()
 {
 	delete m_pBSDF;

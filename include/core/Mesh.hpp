@@ -2,6 +2,7 @@
 
 #include <core\Common.hpp>
 #include <core\Object.hpp>
+#include <core\Shape.hpp>
 #include <core\Frame.hpp>
 #include <core\BoundingBox.hpp>
 #include <core\Emitter.hpp>
@@ -48,6 +49,57 @@ struct Intersection
 
 	/// Return a human-readable summary of the intersection record
 	std::string ToString() const;
+};
+
+/**
+* \brief Triangle shape
+*/
+class Triangle : public Shape
+{
+public:
+	Triangle(Mesh * pMesh, uint32_t * pFacet, uint32_t iFacet);
+
+	/**
+	* \brief Uniformly sample a position on the mesh with
+	* respect to surface area. Returns both position and normal
+	*/
+	virtual void SamplePosition(const Point2f & Sample, Point3f & P, Normal3f & N) const override;
+
+	/// Return the surface area of the given triangle
+	virtual float SurfaceArea() const override;
+
+	/// Return an axis-aligned bounding box of the entire mesh
+	virtual const BoundingBox3f & GetBoundingBox() const override;
+
+	/// Return the centroid of the given triangle
+	virtual Point3f GetCentroid() const override;
+
+	/** \brief intersection test
+	*
+	* \param Index
+	*    Index of the triangle that should be intersected
+	* \param Ray
+	*    The ray segment to be used for the intersection query
+	* \param U
+	*   Upon success, \c U will contain the 'U' component of the intersection
+	*   in barycentric coordinates
+	* \param V
+	*   Upon success, \c V will contain the 'V' component of the intersection
+	*   in barycentric coordinates
+	* \param T
+	*    Upon success, \a T contains the distance from the ray origin to the
+	*    intersection point,
+	* \return
+	*   \c true if an intersection has been detected
+	*/
+	virtual bool RayIntersect(uint32_t Index, const Ray3f & Ray, float & U, float & V, float & T) const override;
+
+	virtual std::string ToString() const override;
+
+protected:
+	Mesh * m_pMesh = nullptr;
+	uint32_t * m_pFacet = nullptr;
+	uint32_t m_iFacet = 0;
 };
 
 /**

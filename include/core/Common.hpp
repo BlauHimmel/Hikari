@@ -133,6 +133,8 @@
 #define XML_SAMPLER_INDEPENDENT                  "independent"
 #define XML_SAMPLER_INDEPENDENT_SAMPLE_COUNT     "sampleCount"
 
+#define XML_SHAPE                                "shape"
+
 /* Default setting */
 #define DEFAULT_ACCELERATION_BVH_LEAF_SIZE       10
 #define DEFAULT_ACCELERATION_BVH_SPLIT_METHOD    XML_ACCELERATION_BVH_SPLIT_METHOD_SAH
@@ -210,6 +212,7 @@ class Sampler;
 class Sampling;
 class Scene;
 class Timer;
+class Shape
 
 /* Basic data structures (vectors, points, rays, bounding boxes,
 kd-trees) are oblivious to the underlying data type and dimension.
