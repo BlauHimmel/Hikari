@@ -15,9 +15,6 @@ public:
 
 	/// Return a human-readable description for debugging purposes
 	virtual std::string ToString() const override;
-
-protected:
-	std::string m_MyProperty;
 };
 
 NAMESPACE_END

@@ -68,8 +68,10 @@
 #define XML_TRANSFORM_UP                         "up"
 
 #define XML_INTEGRATOR                           "integrator"
-
 #define XML_INTEGRATOR_NORMAL                    "normals"
+#define XML_INTEGRATOR_SIMPLE                    "simple"
+#define XML_INTEGRATOR_SIMPLE_POSITION           "position"
+#define XML_INTEGRATOR_SIMPLE_ENERGY             "energy"
 
 #define XML_EMITTER                              "emitter"
 

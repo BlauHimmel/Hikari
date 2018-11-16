@@ -191,6 +191,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/TentFilter.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/NormalIntegrator.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/SimpleIntegrator.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mesh/WavefrontObjMesh.cpp
 
@@ -245,6 +246,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/TentFilter.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/NormalIntegrator.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/SimpleIntegrator.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mesh/WavefrontObjMesh.hpp
 
