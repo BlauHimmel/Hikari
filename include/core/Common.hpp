@@ -72,6 +72,9 @@
 #define XML_INTEGRATOR_SIMPLE                    "simple"
 #define XML_INTEGRATOR_SIMPLE_POSITION           "position"
 #define XML_INTEGRATOR_SIMPLE_ENERGY             "energy"
+#define XML_INTEGRATOR_AO                        "ao"
+#define XML_INTEGRATOR_AO_ALPHA                  "alpha"
+#define XML_INTEGRATOR_AO_SAMPLE_COUNT           "sampleCount"
 
 #define XML_EMITTER                              "emitter"
 
@@ -171,6 +174,9 @@
 #define DEFAULT_FILTER_MITCHELL_C                (1.0f / 3.0f)
 
 #define DEFAULT_MESH_TO_WORLD                     Transform()
+
+#define DEFAULT_INTEGRATOR_AO_ALPHA               1e6f
+#define DEFAULT_INTEGRATOR_AO_SAMPLE_COUNT        16
 
 #define DEFAULT_SAMPLER_INDEPENDENT_SAMPLE_COUNT 1
 

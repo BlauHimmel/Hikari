@@ -190,6 +190,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/MitchellNetravalFilter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/TentFilter.cpp
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/AoIntegrator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/NormalIntegrator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/SimpleIntegrator.cpp
 
@@ -245,6 +246,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/MitchellNetravalFilter.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/TentFilter.hpp
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/AoIntegrator.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/NormalIntegrator.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/SimpleIntegrator.hpp
 
