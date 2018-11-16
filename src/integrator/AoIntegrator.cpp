@@ -45,8 +45,9 @@ Color3f AoIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ray3f &
 std::string AoIntegrator::ToString() const
 {
 	return tfm::format(
-		"AoIntegrator[alpha = %.4f]",
-		m_Alpha
+		"AoIntegrator[alpha = %.4f, sampleCount=%d]",
+		m_Alpha,
+		m_SampleCount
 	);
 }
 

@@ -64,7 +64,25 @@ Triangle::Triangle(Mesh * pMesh, uint32_t * pFacet, uint32_t iFacet) :
 
 void Triangle::SamplePosition(const Point2f & Sample, Point3f & P, Normal3f & N) const
 {
-	throw HikariException("Triangle::SamplePosition(const Point2f & Sample, Point3f & P, Normal3f & N) const is not yet implemented!");
+	float SqrOneMinusEpsilon1 = std::sqrt(1.0f - Sample.x());
+	float Alpha = 1.0f - SqrOneMinusEpsilon1;
+	float Beta = Sample.y() * SqrOneMinusEpsilon1;
+	float Gamma = 1.0f - Alpha - Beta;
+
+	const MatrixXu & Indices = m_pMesh->GetIndices();
+	const MatrixXf & Positions = m_pMesh->GetVertexPositions();
+	const MatrixXf & Normals = m_pMesh->GetVertexNormals();
+
+	uint32_t Idx0 = Indices(0, m_iFacet), Idx1 = Indices(1, m_iFacet), Idx2 = Indices(2, m_iFacet);
+	Point3f P0 = Positions.col(Idx0), P1 = Positions.col(Idx1), P2 = Positions.col(Idx2);
+
+	P = Gamma * P0 + Alpha * P1 + Beta * P2;
+
+	if (Normals.size() > 0)
+	{
+		Normal3f N0 = Normals.col(Idx0), N1 = Normals.col(Idx1), N2 = Normals.col(Idx2);
+		N = Gamma * N0 + Alpha * N1 + Beta * N2;
+	}
 }
 
 float Triangle::SurfaceArea() const
@@ -131,8 +149,17 @@ void Mesh::Activate()
 	{
 		/* If no material was assigned, instantiate a diffuse BRDF */
 		LOG(WARNING) << "No BSDF was specified, create a default BSDF.";
-		m_pBSDF = (BSDF*)(ObjectFactory::CreateInstance(XML_BSDF_DIFFUSE, PropertyList()));
+		m_pBSDF = (BSDF*)(ObjectFactory::CreateInstance(DEFAULT_MESH_BSDF, PropertyList()));
 	}
+
+	// Create the pdf (defined by the area of each triangle)
+	for (uint32_t i = 0; i < GetTriangleCount(); i++)
+	{
+		float Area = SurfaceArea(i);
+		m_PDF.Append(Area);
+		m_MeshArea += Area;
+	}
+	m_PDF.Normalize();
 }
 
 uint32_t Mesh::GetTriangleCount() const
@@ -145,9 +172,30 @@ uint32_t Mesh::GetVertexCount() const
 	return uint32_t(m_V.cols());
 }
 
-void Mesh::SamplePosition(const Point2f & Sample, Point3f & P, Normal3f & N) const
+void Mesh::SamplePosition(float Sample1D, const Point2f & Sample2D, Point3f & P, Normal3f & N) const
 {
-	throw HikariException("Mesh::SamplePosition(const Point2f & Sample, Point3f & P, Normal3f & N) const is not yet implemented!");
+	size_t TriangleIdx = m_PDF.Sample(Sample1D);
+
+	float SqrOneMinusEpsilon1 = std::sqrt(1.0f - Sample2D.x());
+	float Alpha = 1.0f - SqrOneMinusEpsilon1;
+	float Beta = Sample2D.y() * SqrOneMinusEpsilon1;
+	float Gamma = 1.0f - Alpha - Beta;
+
+	uint32_t Idx0 = m_F(0, TriangleIdx), Idx1 = m_F(1, TriangleIdx), Idx2 = m_F(2, TriangleIdx);
+	Point3f P0 = m_V.col(Idx0), P1 = m_V.col(Idx1), P2 = m_V.col(Idx2);
+
+	P = Gamma * P0 + Alpha * P1 + Beta * P2;
+
+	if (m_N.size() > 0)
+	{
+		Normal3f N0 = m_N.col(Idx0), N1 = m_N.col(Idx1), N2 = m_N.col(Idx2);
+		N = Gamma * N0 + Alpha * N1 + Beta * N2;
+	}
+}
+
+float Mesh::SurfaceArea() const
+{
+	return m_MeshArea;
 }
 
 float Mesh::SurfaceArea(uint32_t Index) const

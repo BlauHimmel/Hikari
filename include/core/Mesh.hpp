@@ -4,6 +4,7 @@
 #include <core\Object.hpp>
 #include <core\Shape.hpp>
 #include <core\Frame.hpp>
+#include <core\DiscretePDF.hpp>
 #include <core\BoundingBox.hpp>
 #include <core\Emitter.hpp>
 #include <core\BSDF.hpp>
@@ -57,7 +58,7 @@ struct Intersection
 };
 
 /**
-* \brief Triangle shape
+* \brief Triangle shape used ONLY in mesh
 */
 class Triangle : public Shape
 {
@@ -69,6 +70,8 @@ public:
 	/**
 	* \brief Uniformly sample a position on the mesh with
 	* respect to surface area. Returns both position and normal
+	* Note : Normally, we use Mesh::SamplePosition() instead of
+	* this function.
 	*/
 	virtual void SamplePosition(const Point2f & Sample, Point3f & P, Normal3f & N) const override;
 
@@ -148,7 +151,10 @@ public:
 	* \brief Uniformly sample a position on the mesh with
 	* respect to surface area. Returns both position and normal
 	*/
-	void SamplePosition(const Point2f & Sample, Point3f & P, Normal3f & N) const;
+	void SamplePosition(float Sample1D, const Point2f & Sample2D, Point3f & P, Normal3f & N) const;
+
+	/// Return the surface area of the mesh
+	float SurfaceArea() const;
 
 	/// Return the surface area of the given triangle
 	float SurfaceArea(uint32_t Index) const;
@@ -241,7 +247,8 @@ protected:
 	BSDF * m_pBSDF = nullptr;                      ///< BSDF of the surface
 	Emitter * m_pEmitter = nullptr;                ///< Associated emitter, if any
 	BoundingBox3f m_BBox;                          ///< Bounding box of the mesh
-
+	DiscretePDF m_PDF;                             ///< Used for sampling triangle of the mesh weighted by its area
+	float m_MeshArea = 0.0f;                       ///< Total surface area of the mesh
 };
 
 NAMESPACE_END
