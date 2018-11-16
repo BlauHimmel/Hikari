@@ -52,6 +52,17 @@ public:
 	bool RayIntersect(const Ray3f & Ray, Intersection & Isect) const;
 
 	/**
+	* \brief Intersect a ray against all triangles stored in the scene
+	*
+	* \param Ray
+	*    A 3-dimensional ray data structure with minimum/maximum
+	*    extent information
+	*
+	* \return \c true if an intersection was found
+	*/
+	bool ShadowRayIntersect(const Ray3f & Ray) const;
+
+	/**
 	* \brief Inherited from \ref Object::Activate()
 	*
 	* Initializes the internal data structures (kd-tree,

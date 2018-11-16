@@ -67,6 +67,12 @@ bool Scene::RayIntersect(const Ray3f & Ray, Intersection & Isect) const
 	return m_pAcceleration->RayIntersect(Ray, Isect, false);
 }
 
+bool Scene::ShadowRayIntersect(const Ray3f & Ray) const
+{
+	Intersection Isect;
+	return m_pAcceleration->RayIntersect(Ray, Isect, true);
+}
+
 void Scene::Activate()
 {
 	if (m_pAcceleration == nullptr)

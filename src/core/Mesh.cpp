@@ -15,6 +15,17 @@ Vector3f Intersection::ToWorld(const Vector3f & Dir) const
 	return ShadingFrame.ToWorld(Dir);
 }
 
+Ray3f Intersection::SpawnShadowRay(const Point3f & Pt) const
+{
+	Ray3f ShadowRay;
+	ShadowRay.Origin = P + GeometricFrame.N * Epsilon;
+	ShadowRay.Direction = Pt - ShadowRay.Origin;
+	ShadowRay.MaxT = 1.0f;
+	ShadowRay.MinT = 0.0f;
+	ShadowRay.Update();
+	return ShadowRay;
+}
+
 std::string Intersection::ToString() const
 {
 	if (pMesh == nullptr)
@@ -98,13 +109,13 @@ std::string Triangle::ToString() const
 
 	return tfm::format(
 		"Triangle[\n"
-		"  v0 = (%.4f, %.4f, %.4f)\n"
-		"  v1 = (%.4f, %.4f, %.4f)\n"
-		"  v2 = (%.4f, %.4f, %.4f)\n"
+		"  v0 = %s\n"
+		"  v1 = %s\n"
+		"  v2 = %s\n"
 		"]",
-		P0.x(), P0.y(), P0.z(),
-		P1.x(), P1.y(), P1.z(),
-		P2.x(), P2.y(), P2.z()
+		P0.ToString(),
+		P1.ToString(),
+		P2.ToString()
 	);
 }
 

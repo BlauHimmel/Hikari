@@ -70,7 +70,7 @@ bool DiffuseBSDF::IsDiffuse() const
 
 std::string DiffuseBSDF::ToString() const
 {
-	return tfm::format("Diffuse[ albedo = %s\n]", m_Albedo.ToString());
+	return tfm::format("Diffuse[albedo = %s]", m_Albedo.ToString());
 }
 
 NAMESPACE_END

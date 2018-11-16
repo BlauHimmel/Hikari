@@ -47,6 +47,11 @@ struct Intersection
 	/// Transform a direction vector from local to world coordinates
 	Vector3f ToWorld(const Vector3f & Dir) const;
 
+	/** \brief Spawn a shadow ray from the intersection to the given point
+	* Note : MinT = 0.0 Max : 1.0 and Dir = Pt - Isect.P in the returned ray
+	*/
+	Ray3f SpawnShadowRay(const Point3f & Pt) const;
+
 	/// Return a human-readable summary of the intersection record
 	std::string ToString() const;
 };
