@@ -32,8 +32,14 @@ Color3f AoIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ray3f &
 		Vector3f W = Sampling::SquareToCosineHemisphere(pSampler->Next2D());
 		Vector3f Pt = Isect.P + m_Alpha * Isect.ShadingFrame.ToWorld(W);
 
-		Ray3f ShadowRay = Isect.SpawnShadowRay(Pt);
-		if (!pScene->ShadowRayIntersect(ShadowRay))
+		Ray3f AoRay;
+		AoRay.Origin = Isect.P + Isect.GeometricFrame.N * float(Epsilon);
+		AoRay.Direction = Pt - AoRay.Origin;
+		AoRay.MaxT = 1.0f;
+		AoRay.MinT = 0.0f;
+		AoRay.Update();
+
+		if (!pScene->ShadowRayIntersect(AoRay))
 		{
 			Li += Color3f(1.0f);
 		}
