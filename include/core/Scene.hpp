@@ -35,6 +35,9 @@ public:
 	/// Return a reference to an array containing all meshes
 	const std::vector<Mesh*> & GetMeshes() const;
 
+	/// Return a reference to an array containing all emitters
+	const std::vector<Emitter*> & GetEmitters() const;
+
 	/**
 	* \brief Intersect a ray against all triangles stored in the scene
 	* and return detailed intersection information
@@ -84,6 +87,7 @@ protected:
 	Sampler * m_pSampler = nullptr;
 	Camera * m_pCamera = nullptr;
 	Acceleration * m_pAcceleration = nullptr;
+	std::vector<Emitter*> m_pEmitters;
 };
 
 NAMESPACE_END

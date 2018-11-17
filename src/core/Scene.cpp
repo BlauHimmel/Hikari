@@ -62,6 +62,11 @@ const std::vector<Mesh*> & Scene::GetMeshes() const
 	return m_pMeshes;
 }
 
+const std::vector<Emitter*>& Scene::GetEmitters() const
+{
+	return m_pEmitters;
+}
+
 bool Scene::RayIntersect(const Ray3f & Ray, Intersection & Isect) const
 {
 	return m_pAcceleration->RayIntersect(Ray, Isect, false);
@@ -122,6 +127,10 @@ void Scene::AddChild(Object * pChildObj)
 		break;
 	case EClassType::EMesh:
 		m_pMeshes.push_back((Mesh*)(pChildObj));
+		if (((Mesh*)(pChildObj))->IsEmitter())
+		{
+			m_pEmitters.push_back(((Mesh*)(pChildObj))->GetEmitter());
+		}
 		break;
 	case EClassType::EEmitter:
 		throw HikariException("Scene::AddChild(): You need to implement this for emitters");

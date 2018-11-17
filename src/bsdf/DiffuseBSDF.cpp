@@ -54,9 +54,8 @@ float DiffuseBSDF::Pdf(const BSDFQueryRecord & Record) const
 		return 0.0f;
 	}
 
-	/* Importance sampling density wrt. solid angles:
+	/* Importance sampling density with respect to solid angles:
 	Cos(Theta) / pi.
-
 	Note that the directions in 'Record' are in local coordinates,
 	so Frame::CosTheta() actually just returns the 'z' component.
 	*/

@@ -28,6 +28,9 @@ struct BSDFQueryRecord
 
 	/// Create a new record for querying the BSDF
 	BSDFQueryRecord(const Vector3f & Wi, const Vector3f & Wo, EMeasure Measure);
+
+	/// Return a human-readable string summary
+	std::string ToString() const;
 };
 
 /**

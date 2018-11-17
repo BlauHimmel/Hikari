@@ -574,7 +574,19 @@ BVHBuildNode * HLBVHAcceleration::BuildUpperSAH(
 	}
 
 	uint32_t iSplitDim = Centroid.GetMajorAxis();
-	assert(Centroid.Max[iSplitDim] != Centroid.Min[iSplitDim]);
+	if (Centroid.Max[iSplitDim] == Centroid.Min[iSplitDim])
+	{
+		uint32_t iMid = (iStart + iEnd) / 2;
+		assert(iMid > iStart && iMid < iEnd);
+
+		pNode->InitInterior(
+			iSplitDim,
+			BuildUpperSAH(TreeletRoots, iStart, iMid),
+			BuildUpperSAH(TreeletRoots, iMid, iEnd)
+		);
+
+		return pNode;
+	}
 
 	constexpr int BUCKET_NUM = 12;
 	BVHBucket Buckets[BUCKET_NUM];

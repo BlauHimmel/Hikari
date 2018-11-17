@@ -18,10 +18,10 @@ Vector3f Intersection::ToWorld(const Vector3f & Dir) const
 Ray3f Intersection::SpawnShadowRay(const Point3f & Pt) const
 {
 	Ray3f ShadowRay;
-	ShadowRay.Origin = P + GeometricFrame.N * Epsilon;
+	ShadowRay.Origin = P;
 	ShadowRay.Direction = Pt - ShadowRay.Origin;
-	ShadowRay.MaxT = 1.0f;
-	ShadowRay.MinT = 0.0f;
+	ShadowRay.MaxT = 1.0f - Epsilon;
+	ShadowRay.MinT = Epsilon;
 	ShadowRay.Update();
 	return ShadowRay;
 }
@@ -160,6 +160,7 @@ void Mesh::Activate()
 		m_MeshArea += Area;
 	}
 	m_PDF.Normalize();
+	m_InvMeshArea = 1.0f / m_MeshArea;
 }
 
 uint32_t Mesh::GetTriangleCount() const
@@ -191,6 +192,15 @@ void Mesh::SamplePosition(float Sample1D, const Point2f & Sample2D, Point3f & P,
 		Normal3f N0 = m_N.col(Idx0), N1 = m_N.col(Idx1), N2 = m_N.col(Idx2);
 		N = Gamma * N0 + Alpha * N1 + Beta * N2;
 	}
+	else
+	{
+		N = (P1 - P0).cross(P2 - P0).normalized();
+	}
+}
+
+float Mesh::Pdf() const
+{
+	return m_InvMeshArea;
 }
 
 float Mesh::SurfaceArea() const

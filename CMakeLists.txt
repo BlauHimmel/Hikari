@@ -185,6 +185,8 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Transform.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Vector.cpp
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/emitter/AreaLight.cpp
+
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/BoxFilter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/GaussianFilter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/MitchellNetravalFilter.cpp
@@ -193,6 +195,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/AoIntegrator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/NormalIntegrator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/SimpleIntegrator.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/WhittedIntegrator.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mesh/WavefrontObjMesh.cpp
 
@@ -241,6 +244,8 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Transform.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Vector.hpp
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/emitter/AreaLight.hpp
+
         ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/BoxFilter.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/GaussianFilter.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/MitchellNetravalFilter.hpp
@@ -249,6 +254,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/AoIntegrator.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/NormalIntegrator.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/SimpleIntegrator.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/WhittedIntegrator.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mesh/WavefrontObjMesh.hpp
 

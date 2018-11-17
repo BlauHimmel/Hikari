@@ -75,8 +75,11 @@
 #define XML_INTEGRATOR_AO                        "ao"
 #define XML_INTEGRATOR_AO_ALPHA                  "alpha"
 #define XML_INTEGRATOR_AO_SAMPLE_COUNT           "sampleCount"
+#define XML_INTEGRATOR_WHITTED                   "whitted"
 
 #define XML_EMITTER                              "emitter"
+#define XML_EMITTER_AREA_LIGHT                   "area"
+#define XML_EMITTER_AREA_LIGHT_RADIANCE          "radiance"
 
 #define XML_ACCELERATION                         "acceleration"
 #define XML_ACCELERATION_BRUTO_LOOP              "bruto"
@@ -320,6 +323,15 @@ enum class EMeasure
 	EUnknownMeasure = 0,
 	ESolidAngle     = 1,
 	EDiscrete       = 2
+};
+
+/// Type of the emitter
+enum class EEmitterType
+{
+	EUnknown = 0,
+	EPoint = 1,
+	EArea = 2,
+	EEnvironment = 3
 };
 
 /// Convert radians to degrees

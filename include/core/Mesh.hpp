@@ -153,6 +153,9 @@ public:
 	*/
 	void SamplePosition(float Sample1D, const Point2f & Sample2D, Point3f & P, Normal3f & N) const;
 
+	///  Compute the probability of sampling point on the mesh
+	float Pdf() const;
+
 	/// Return the surface area of the mesh
 	float SurfaceArea() const;
 
@@ -249,6 +252,7 @@ protected:
 	BoundingBox3f m_BBox;                          ///< Bounding box of the mesh
 	DiscretePDF m_PDF;                             ///< Used for sampling triangle of the mesh weighted by its area
 	float m_MeshArea = 0.0f;                       ///< Total surface area of the mesh
+	float m_InvMeshArea = 0.0f;                    ///< Probability of a sampling point on the mesh
 };
 
 NAMESPACE_END
