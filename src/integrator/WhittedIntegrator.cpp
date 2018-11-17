@@ -34,23 +34,36 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 	Color3f Lr(0.0f);
 	const BSDF * pBSDF = Isect.pMesh->GetBSDF();
 
-	for (Emitter * pEmitter : pScene->GetEmitters())
+	if (pBSDF->IsDiffuse())
 	{
-		EmitterQueryRecord EmitterRecord;
-		EmitterRecord.Ref = Isect.P;
-
-		Color3f Li = pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
-		Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
-
-		if (!pScene->ShadowRayIntersect(ShadowRay))
+		for (Emitter * pEmitter : pScene->GetEmitters())
 		{
-			BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
-			float G = std::abs(
-				EmitterRecord.Wi.dot(Isect.ShadingFrame.N) * (-1.0f * EmitterRecord.Wi).dot(EmitterRecord.N) / 
-				(EmitterRecord.Distance * EmitterRecord.Distance)
-			);
+			EmitterQueryRecord EmitterRecord;
+			EmitterRecord.Ref = Isect.P;
 
-			Lr += pBSDF->Eval(BSDFRecord) * Li * G;
+			Color3f Li = pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
+			Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
+
+			if (!pScene->ShadowRayIntersect(ShadowRay))
+			{
+				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
+				float G = std::abs(
+					EmitterRecord.Wi.dot(Isect.ShadingFrame.N) * (-1.0f * EmitterRecord.Wi).dot(EmitterRecord.N) /
+					(EmitterRecord.Distance * EmitterRecord.Distance)
+				);
+
+				Lr += pBSDF->Eval(BSDFRecord) * Li * G;
+			}
+		}
+	}
+	else
+	{
+		if (pSampler->Next1D() < 0.95f)
+		{
+			constexpr float Inv = 1.0f / 0.95f;
+			BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction));
+			Color3f C = pBSDF->Sample(BSDFRecord, pSampler->Next2D());
+			Lr += C * Li(pScene, pSampler, Ray3f(Isect.P, Isect.ToWorld(BSDFRecord.Wo))) * Inv;
 		}
 	}
 

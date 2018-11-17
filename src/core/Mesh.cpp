@@ -20,8 +20,8 @@ Ray3f Intersection::SpawnShadowRay(const Point3f & Pt) const
 	Ray3f ShadowRay;
 	ShadowRay.Origin = P;
 	ShadowRay.Direction = Pt - ShadowRay.Origin;
-	ShadowRay.MaxT = 1.0f - Epsilon;
-	ShadowRay.MinT = Epsilon;
+	ShadowRay.MaxT = 1.0f - float(Epsilon);
+	ShadowRay.MinT = float(Epsilon);
 	ShadowRay.Update();
 	return ShadowRay;
 }

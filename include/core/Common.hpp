@@ -403,7 +403,7 @@ Point2f SphericalCoordinates(const Vector3f & Dir);
 /**
 * \brief Calculates the unpolarized fresnel reflection coefficient for a
 * dielectric material. Handles incidence from either side (i.e.
-* \code cosThetaI<0 is allowed).
+* \code CosThetaI < 0 is allowed).
 *
 * \param CosThetaI
 *      Cosine of the angle between the normal and the incident ray

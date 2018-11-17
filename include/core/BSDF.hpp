@@ -11,10 +11,10 @@ NAMESPACE_BEGIN
 */
 struct BSDFQueryRecord
 {
-	/// Incident direction (in the local frame)
+	/// Incident direction (in the local frame) Starts from the intersection point
 	Vector3f Wi;
 
-	/// Outgoing direction (in the local frame)
+	/// Outgoing direction (in the local frame) Starts from the intersection point
 	Vector3f Wo;
 
 	/// Relative refractive index in the sampled direction

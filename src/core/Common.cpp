@@ -244,8 +244,8 @@ float Fresnel(float CosThetaI, float ExtIOR, float IntIOR)
 
 	/* Using Snell's law, calculate the squared sine of the
 	angle between the normal and the transmitted ray */
-	float eta = EtaI / EtaT;
-	float SinThetaTSqr = eta * eta * (1.0f - CosThetaI * CosThetaI);
+	float Eta = EtaI / EtaT;
+	float SinThetaTSqr = Eta * Eta * (1.0f - CosThetaI * CosThetaI);
 
 	if (SinThetaTSqr > 1.0f)
 	{
