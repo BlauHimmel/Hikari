@@ -44,7 +44,7 @@ public:
 	* value of the BSDF * Cos(Theta_o) divided by the probability density
 	* of the sample with respect to solid angles).
 	*
-	* \param Record  A BSDF query record
+	* \param Record  A BSDF query record (Wi is needed)
 	* \param Sample  A uniformly distributed sample on \f$[0,1]^2\f$
 	*
 	* \return The BSDF value divided by the probability density of the sample
@@ -58,7 +58,7 @@ public:
 
 	/**
 	* \brief Evaluate the BSDF for a pair of directions and measure
-	* specified in \code bRec
+	* specified in \code Record
 	*
 	* \param Record
 	*     A record with detailed information on the BSDF query

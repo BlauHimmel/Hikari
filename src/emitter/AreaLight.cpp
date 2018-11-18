@@ -32,7 +32,9 @@ Color3f AreaLight::Sample(EmitterQueryRecord & Record, const Point2f & Sample2D,
 		return Color3f(0.0f);
 	}
 
-	return Eval(Record) / Record.Pdf;
+	/* Transform the integration variable from the position domain to solid angle domain */
+	return Eval(Record) / Record.Pdf * 
+		(std::abs((-1.0f * Record.Wi).dot(Record.N)) / (Record.Distance * Record.Distance)); 
 }
 
 float AreaLight::Pdf(const EmitterQueryRecord & Record) const

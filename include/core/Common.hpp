@@ -80,6 +80,9 @@
 #define XML_EMITTER                              "emitter"
 #define XML_EMITTER_AREA_LIGHT                   "area"
 #define XML_EMITTER_AREA_LIGHT_RADIANCE          "radiance"
+#define XML_EMITTER_POINT_LIGHT                   "point"
+#define XML_EMITTER_POINT_LIGHT_POSITION          "position"
+#define XML_EMITTER_POINT_LIGHT_RADIANCE          "radiance"
 
 #define XML_ACCELERATION                         "acceleration"
 #define XML_ACCELERATION_BRUTO_LOOP              "bruto"

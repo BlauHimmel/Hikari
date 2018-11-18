@@ -133,7 +133,15 @@ void Scene::AddChild(Object * pChildObj)
 		}
 		break;
 	case EClassType::EEmitter:
-		throw HikariException("Scene::AddChild(): You need to implement this for emitters");
+		if (((Emitter*)(pChildObj))->GetEmitterType() == EEmitterType::EPoint ||
+			((Emitter*)(pChildObj))->GetEmitterType() == EEmitterType::EEnvironment)
+		{
+			m_pEmitters.push_back((Emitter*)(pChildObj));
+		}
+		else
+		{
+			throw HikariException("Scene::AddChild(): You need to implement this for emitters");
+		}
 		break;
 	case EClassType::ESampler:
 		if (m_pSampler != nullptr)
@@ -174,12 +182,25 @@ std::string Scene::ToString() const
 		MeshesString += "\n";
 	}
 
+	std::string EmitterString;
+	for (size_t i = 0; i<m_pEmitters.size(); ++i)
+	{
+		EmitterString += std::string("  ") + Indent(m_pEmitters[i]->ToString(), 2);
+		if (i + 1 < m_pEmitters.size())
+		{
+			EmitterString += ",";
+		}
+		EmitterString += "\n";
+	}
+
 	return tfm::format(
 		"Scene[\n"
 		"  acceleration = %s,\n"
 		"  integrator = %s,\n"
 		"  sampler = %s\n"
 		"  camera = %s,\n"
+		"  emitters = {\n"
+		"  %s  },\n"
 		"  meshes = {\n"
 		"  %s  }\n"
 		"]",
@@ -187,6 +208,7 @@ std::string Scene::ToString() const
 		Indent(m_pIntegrator->ToString()),
 		Indent(m_pSampler->ToString()),
 		Indent(m_pCamera->ToString()),
+		Indent(EmitterString, 2),
 		Indent(MeshesString, 2)
 	);
 }
