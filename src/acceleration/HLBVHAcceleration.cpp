@@ -238,7 +238,7 @@ bool HLBVHAcceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bo
 
 						RayCopy.MaxT = Isect.T = T;
 						Isect.UV = Point2f(U, V);
-						Isect.pMesh = pShape->GetMesh();
+						Isect.pShape = pShape;
 
 						pFoundShape = pShape;
 						bFoundIntersection = true;

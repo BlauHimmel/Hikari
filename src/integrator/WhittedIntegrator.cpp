@@ -23,16 +23,16 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 	}
 
 	Color3f Le(0.0f);
-	if (Isect.pMesh->IsEmitter())
+	if (Isect.pShape->IsEmitter())
 	{
 		EmitterQueryRecord EmitterRecord;
 		EmitterRecord.N = Isect.ShadingFrame.N;
 		EmitterRecord.Wi = Ray.Direction;
-		Le = Isect.pMesh->GetEmitter()->Eval(EmitterRecord);
+		Le = Isect.pEmitter->Eval(EmitterRecord);
 	}
 
 	Color3f Lr(0.0f);
-	const BSDF * pBSDF = Isect.pMesh->GetBSDF();
+	const BSDF * pBSDF = Isect.pBSDF;
 
 	if (pBSDF->IsDiffuse())
 	{

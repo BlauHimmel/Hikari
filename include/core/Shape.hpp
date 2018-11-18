@@ -2,6 +2,7 @@
 
 #include <core\Common.hpp>
 #include <core\Object.hpp>
+#include <core\Intersection.hpp>
 
 NAMESPACE_BEGIN
 
@@ -57,6 +58,18 @@ public:
 	*   \c uint32_t(-1) if the shape does not attach to any mesh
 	*/
 	virtual uint32_t GetFacetIndex() const;
+
+	/// Is this mesh an area emitter?
+	virtual bool IsEmitter() const;
+
+	/// Return a pointer to an attached area emitter instance
+	virtual Emitter * GetEmitter();
+
+	/// Return a pointer to an attached area emitter instance (const version)
+	virtual const Emitter * GetEmitter() const;
+
+	/// Return a pointer to the BSDF associated with this mesh
+	virtual const BSDF * GetBSDF() const = 0;
 
 	/**
 	* \brief Return the type of object (i.e. Mesh/BSDF/etc.)

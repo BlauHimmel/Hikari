@@ -12,52 +12,6 @@
 NAMESPACE_BEGIN
 
 /**
-* \brief Intersection data structure
-*
-* This data structure records local information about a ray-triangle intersection.
-* This includes the position, traveled ray distance, uv coordinates, as well
-* as well as two local coordinate frames (one that corresponds to the true
-* geometry, and one that is used for shading computations).
-*/
-struct Intersection
-{
-	/// Position of the surface intersection
-	Point3f P;
-
-	/// Unoccluded distance along the ray
-	float T = std::numeric_limits<float>::max();
-
-	/// UV coordinates, if any
-	Point2f UV;
-
-	/// Shading frame (based on the shading normal)
-	Frame ShadingFrame;
-
-	/// Geometric frame (based on the true geometry)
-	Frame GeometricFrame;
-
-	/// Pointer to the associated mesh
-	const Mesh * pMesh = nullptr;
-
-	/// Create an uninitialized intersection record
-	Intersection();
-
-	/// Transform a direction vector into the local shading frame
-	Vector3f ToLocal(const Vector3f & Dir) const;
-
-	/// Transform a direction vector from local to world coordinates
-	Vector3f ToWorld(const Vector3f & Dir) const;
-
-	/** \brief Spawn a shadow ray from the intersection to the given point
-	* Note : MinT = 0.0 Max : 1.0 and Dir = Pt - Isect.P in the returned ray
-	*/
-	Ray3f SpawnShadowRay(const Point3f & Pt) const;
-
-	/// Return a human-readable summary of the intersection record
-	std::string ToString() const;
-};
-
-/**
 * \brief Triangle shape used ONLY in mesh
 */
 class Triangle : public Shape
@@ -118,6 +72,18 @@ public:
 	*   \c uint32_t(-1) if the shape does not attach to any mesh
 	*/
 	virtual uint32_t GetFacetIndex() const override;
+
+	/// Is this mesh an area emitter?
+	virtual bool IsEmitter() const override;
+
+	/// Return a pointer to an attached area emitter instance
+	virtual Emitter * GetEmitter() override;
+
+	/// Return a pointer to an attached area emitter instance (const version)
+	virtual const Emitter * GetEmitter() const override;
+
+	/// Return a pointer to the BSDF associated with this mesh
+	virtual const BSDF * GetBSDF() const override;
 
 	virtual std::string ToString() const override;
 

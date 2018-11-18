@@ -3,54 +3,6 @@
 
 NAMESPACE_BEGIN
 
-Intersection::Intersection() { }
-
-Vector3f Intersection::ToLocal(const Vector3f & Dir) const
-{
-	return ShadingFrame.ToLocal(Dir);
-}
-
-Vector3f Intersection::ToWorld(const Vector3f & Dir) const
-{
-	return ShadingFrame.ToWorld(Dir);
-}
-
-Ray3f Intersection::SpawnShadowRay(const Point3f & Pt) const
-{
-	Ray3f ShadowRay;
-	ShadowRay.Origin = P;
-	ShadowRay.Direction = Pt - ShadowRay.Origin;
-	ShadowRay.MaxT = 1.0f - float(Epsilon);
-	ShadowRay.MinT = float(Epsilon);
-	ShadowRay.Update();
-	return ShadowRay;
-}
-
-std::string Intersection::ToString() const
-{
-	if (pMesh == nullptr)
-	{
-		return "Intersection[invalid]";
-	}
-
-	return tfm::format(
-		"Intersection[\n"
-		"  p = %s,\n"
-		"  t = %f,\n"
-		"  uv = %s,\n"
-		"  shadingFrame = %s,\n"
-		"  geometricFrame = %s,\n"
-		"  mesh = %s\n"
-		"]",
-		P.ToString(),
-		T,
-		UV.ToString(),
-		Indent(ShadingFrame.ToString()),
-		Indent(GeometricFrame.ToString()),
-		pMesh->ToString()
-	);
-}
-
 Triangle::Triangle()
 {
 
@@ -114,12 +66,15 @@ void Triangle::PostIntersect(Intersection & Isect)
 	characterize the intersection (normals, texture coordinates, etc..)
 	*/
 
+	Isect.pEmitter = Isect.pShape->GetEmitter();
+	Isect.pBSDF = Isect.pShape->GetBSDF();
+
 	/* Find the barycentric coordinates */
 	Vector3f Barycentric;
 	Barycentric << 1 - Isect.UV.sum(), Isect.UV;
 
 	/* References to all relevant mesh buffers */
-	const Mesh * pMesh = Isect.pMesh;
+	const Mesh * pMesh = Isect.pShape->GetMesh();
 	const MatrixXf & V = pMesh->GetVertexPositions();
 	const MatrixXf & N = pMesh->GetVertexNormals();
 	const MatrixXf & UV = pMesh->GetVertexTexCoords();
@@ -169,6 +124,26 @@ uint32_t Triangle::GetFacetIndex() const
 	return m_iFacet;
 }
 
+bool Triangle::IsEmitter() const
+{
+	return m_pMesh->IsEmitter();
+}
+
+Emitter * Triangle::GetEmitter()
+{
+	return m_pMesh->GetEmitter();
+}
+
+const Emitter * Triangle::GetEmitter() const
+{
+	return m_pMesh->GetEmitter();
+}
+
+const BSDF * Triangle::GetBSDF() const
+{
+	return m_pMesh->GetBSDF();
+}
+
 std::string Triangle::ToString() const
 {
 	const MatrixXf & V = m_pMesh->GetVertexPositions();
@@ -181,13 +156,15 @@ std::string Triangle::ToString() const
 
 	return tfm::format(
 		"Triangle[\n"
-		"  v0 = %s\n"
-		"  v1 = %s\n"
-		"  v2 = %s\n"
+		"  v0 = %s, v1 = %s, v2 = %s,\n"
+		"  emmiter = %s,\n"
+		"  BSDF = %s"
 		"]",
 		P0.ToString(),
 		P1.ToString(),
-		P2.ToString()
+		P2.ToString(),
+		IsEmitter() ? Indent(GetEmitter()->ToString()) : "<null>",
+		Indent(GetBSDF()->ToString())
 	);
 }
 

@@ -58,7 +58,7 @@ bool Acceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool bS
 
 			RayCopy.MaxT = Isect.T = T;
 			Isect.UV = Point2f(U, V);
-			Isect.pMesh = m_pShapes[i]->GetMesh();
+			Isect.pShape = m_pShapes[i];
 
 			pFoundShape = m_pShapes[i];
 			bFoundIntersection = true;
