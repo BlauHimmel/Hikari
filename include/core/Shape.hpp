@@ -41,19 +41,22 @@ public:
 	*/
 	virtual bool RayIntersect(const Ray3f & Ray, float & U, float & V, float & T) const = 0;
 
+	/// After intersection test passed, compute the detail information of the intersection point.
+	virtual void PostIntersect(Intersection & Isect) = 0;
+
 	/**
 	* \brief Return the pointer of the mesh that this shape attach
 	* \return
 	*   \c nullptr if the shape does not attach to any mesh
 	*/
-	virtual Mesh * GetMesh() const = 0;
+	virtual Mesh * GetMesh() const;
 
 	/**
 	* \brief Return the index of facet in the mesh that this shape attach
 	* \return
 	*   \c uint32_t(-1) if the shape does not attach to any mesh
 	*/
-	virtual uint32_t GetFacetIndex() const = 0;
+	virtual uint32_t GetFacetIndex() const;
 
 	/**
 	* \brief Return the type of object (i.e. Mesh/BSDF/etc.)

@@ -63,7 +63,6 @@ public:
 	virtual std::string ToString() const override;
 
 protected:
-	std::vector<Mesh*> m_pMeshes;
 	std::vector<Shape*> m_pShapes;
 	BoundingBox3f m_BBox;
 	MemoryArena m_MemoryArena;
