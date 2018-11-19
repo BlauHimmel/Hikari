@@ -6,7 +6,7 @@ REGISTER_CLASS(PointLight, XML_EMITTER_POINT_LIGHT)
 
 PointLight::PointLight(const PropertyList & PropList)
 {
-	m_Radiance = PropList.GetColor(XML_EMITTER_POINT_LIGHT_RADIANCE);
+	m_Power = PropList.GetColor(XML_EMITTER_POINT_LIGHT_POWER);
 	m_Position = PropList.GetPoint(XML_EMITTER_POINT_LIGHT_POSITION);
 	m_Type = EEmitterType::EPoint;
 }
@@ -28,9 +28,7 @@ Color3f PointLight::Sample(EmitterQueryRecord & Record, const Point2f & Sample2D
 		return Color3f(0.0f);
 	}
 
-	/* Transform the integration variable from the position domain to solid angle domain */
-	return m_Radiance * 
-		(1.0f / (Record.Distance * Record.Distance));
+	return m_Power * (1.0f / ((4.0f * float(M_PI)) * (Record.Distance * Record.Distance)));
 }
 
 float PointLight::Pdf(const EmitterQueryRecord & Record) const
@@ -46,8 +44,8 @@ Color3f PointLight::Eval(const EmitterQueryRecord & Record) const
 std::string PointLight::ToString() const
 {
 	return tfm::format(
-		"PointLight=[radiance = %s, position = %s]",
-		m_Radiance.ToString(),
+		"PointLight=[power = %s, position = %s]",
+		m_Power.ToString(),
 		m_Position.ToString()
 	);
 }

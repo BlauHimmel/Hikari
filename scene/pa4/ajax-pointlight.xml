@@ -8,7 +8,7 @@
 
 	<emitter type="point">
 		<point name="position" value="-20, 40, 20"/>
-		<color name="radiance" value="1700, 1700, 1700"/>
+		<color name="power" value="3.76e4, 3.76e4, 3.76e4"/>
 	</emitter>
 
 	<acceleration type="hlbvh">
@@ -18,7 +18,9 @@
     <!-- Load the ajax -->
 	<mesh type="obj">
 		<string name="filename" value="meshes/ajax.obj"/>
-		<bsdf type="diffuse"/>
+		<bsdf type="diffuse">
+			<color name="albedo" value="1.0, 1.0, 1.0"/>
+		</bsdf>
 	</mesh>
 
 	<!-- Render the scene viewed by a perspective camera -->

@@ -9,7 +9,7 @@ REGISTER_CLASS(SimpleIntegrator, XML_INTEGRATOR_SIMPLE);
 SimpleIntegrator::SimpleIntegrator(const PropertyList & PropList)
 {
 	m_Position = PropList.GetPoint(XML_INTEGRATOR_SIMPLE_POSITION);
-	m_Energy = PropList.GetColor(XML_INTEGRATOR_SIMPLE_ENERGY);
+	m_Power = PropList.GetColor(XML_INTEGRATOR_SIMPLE_POWER);
 }
 
 Color3f SimpleIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ray3f & Ray) const
@@ -30,7 +30,7 @@ Color3f SimpleIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ray
 	float CosTheta = Frame::CosTheta(Isect.ShadingFrame.ToLocal(ShadowRay.Direction).normalized());
 
 	/* Return the component-wise absolute value of the shading normal as a color */
-	return m_Energy / (4.0f * float(M_PI * M_PI)) * std::max(0.0f, CosTheta) / ShadowRay.Direction.squaredNorm();
+	return m_Power / ((4.0f * float(M_PI * M_PI)) * ShadowRay.Direction.squaredNorm()) * std::max(0.0f, CosTheta);
 }
 
 std::string SimpleIntegrator::ToString() const
@@ -38,10 +38,10 @@ std::string SimpleIntegrator::ToString() const
 	return tfm::format(
 		"SimpleIntegrator[\n"
 		"  position = %s\n"
-		"  energy = %s\n"
+		"  power = %s\n"
 		"]",
 		m_Position.ToString(),
-		m_Energy.ToString()
+		m_Power.ToString()
 	);
 }
 

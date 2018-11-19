@@ -6,7 +6,7 @@
 
 	<integrator type="simple">
 		<point name="position" value="-20, 40, 20"/>
-		<color name="energy" value="3.76e4, 3.76e4, 3.76e4"/>
+		<color name="power" value="3.76e4, 3.76e4, 3.76e4"/>
 	</integrator>
 
 	<acceleration type="hlbvh">

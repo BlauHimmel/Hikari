@@ -22,7 +22,7 @@ public:
 
 protected:
 	Point3f m_Position;
-	Color3f m_Energy;
+	Color3f m_Power;
 };
 
 NAMESPACE_END
