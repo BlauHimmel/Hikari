@@ -20,6 +20,14 @@ Scene::~Scene()
 		delete pPtr;
 	}
 	m_pMeshes.clear();
+	m_pMeshes.shrink_to_fit();
+
+	for (auto pPtr : m_pEmitters)
+	{
+		delete pPtr;
+	}
+	m_pEmitters.clear();
+	m_pEmitters.shrink_to_fit();
 
 	delete m_pAcceleration;
 	delete m_pSampler;

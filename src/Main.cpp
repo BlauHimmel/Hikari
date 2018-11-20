@@ -129,7 +129,7 @@ int main(int argc, char ** argv)
 
 	if (argc != 2)
 	{
-		LOG(ERROR) << "Syntax: " << argv[0] << " <scene.xml>";
+		LOG(ERROR) << "Syntax: " << argv[0] << " <scene.xml> or <image.exr>";
 		return -1;
 	}
 

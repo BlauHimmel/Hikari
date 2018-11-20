@@ -171,7 +171,6 @@ std::string Triangle::ToString() const
 Mesh::~Mesh()
 {
 	delete m_pBSDF;
-	delete m_pEmitter;
 }
 
 void Mesh::Activate()
