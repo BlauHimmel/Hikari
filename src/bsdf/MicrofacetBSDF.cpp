@@ -74,4 +74,34 @@ std::string MicrofacetBSDF::ToString() const
 	);
 }
 
+float MicrofacetBSDF::ChiPlus(float C) const
+{
+	throw HikariException("MicrofacetBRDF::ChiPlus(float C) const: not implemented!");
+}
+
+float MicrofacetBSDF::Wh(const Vector3f & Wi, const Vector3f & Wo) const
+{
+	throw HikariException("MicrofacetBRDF::Wh(const Vector3f & Wi, const Vector3f & Wo) const: not implemented!");
+}
+
+float MicrofacetBSDF::B(float ThetaV) const
+{
+	throw HikariException("MicrofacetBRDF::B(float ThetaV) const: not implemented!");
+}
+
+float MicrofacetBSDF::G1(const Vector3f & Wv, const Vector3f & Wh) const
+{
+	throw HikariException("MicrofacetBRDF::G1(const Vector3f & Wv, const Vector3f & Wh) const: not implemented!");
+}
+
+float MicrofacetBSDF::G(const Vector3f & Wi, const Vector3f & Wo, const Vector3f & Wh) const
+{
+	throw HikariException("MicrofacetBRDF::G(const Vector3f & Wi, const Vector3f & Wo, const Vector3f & Wh) const: not implemented!");
+}
+
+float MicrofacetBSDF::D(float Theta, float Phi) const
+{
+	throw HikariException("MicrofacetBRDF::D(float Theta, float Phi) const: not implemented!");
+}
+
 NAMESPACE_END

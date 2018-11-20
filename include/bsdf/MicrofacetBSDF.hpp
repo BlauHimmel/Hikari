@@ -20,6 +20,19 @@ public:
 
 	virtual std::string ToString() const override;
 
+private:
+	float ChiPlus(float C) const;
+	
+	float Wh(const Vector3f & Wi, const Vector3f & Wo) const;
+	
+	float B(float ThetaV) const;
+	
+	float G1(const Vector3f & Wv, const Vector3f & Wh) const;
+	
+	float G(const Vector3f & Wi, const Vector3f & Wo, const Vector3f & Wh) const;
+
+	float D(float Theta, float Phi) const;
+
 protected:
 	float m_Alpha;
 	float m_IntIOR;
