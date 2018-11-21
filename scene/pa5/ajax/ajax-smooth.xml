@@ -4,6 +4,10 @@
 		<integer name="sampleCount" value="64"/>
 	</sampler>
 
+	<acceleration type="hlbvh">
+		<integer name="leafSize" value="10"/>
+	</acceleration>
+
 	<!-- Use the simple point light integrator -->
     <integrator type="whitted"/>
 
