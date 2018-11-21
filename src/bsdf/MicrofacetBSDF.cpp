@@ -42,26 +42,23 @@ Color3f MicrofacetBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample)
 
 	Record.Measure = EMeasure::ESolidAngle;
 
-	float PDF = 0.0f;
 	if (Sample.x() < m_Ks)
 	{
 		// Specular reflection
 		float ReuseSampleX = Sample.x() / m_Ks;
 		Normal3f Wh = Sampling::SquareToBeckmann(Point2f(ReuseSampleX, Sample.y()), m_Alpha);
-		Record.Wo = Vector3f(-Record.Wi.x(), -Record.Wi.y(), Record.Wi.z());
-		float J = 0.25f / Wh.dot(Record.Wo);
-		PDF = m_Ks * Sampling::SquareToBeckmannPdf(Wh, m_Alpha) * J;
+		Record.Wo = 2.0f * Wh.dot(Record.Wi) * Wh - Record.Wi;
 	}
 	else
 	{
 		// Diffuse
 		float ReuseSampleX = (Sample.x() - m_Ks) / (1.0f - m_Ks);
 		Record.Wo = Sampling::SquareToCosineHemisphere(Point2f(ReuseSampleX, Sample.y()));
-		PDF = (1.0f - m_Ks) * Sampling::SquareToCosineHemispherePdf(Record.Wo);
 	}
 
 	Record.Eta = 1.0f;
 
+	float PDF = Pdf(Record);
 	if (PDF == 0.0f)
 	{
 		return Color3f(0.0f);
@@ -107,8 +104,9 @@ float MicrofacetBSDF::Pdf(const BSDFQueryRecord & Record) const
 
 	Vector3f Wh = (Record.Wi + Record.Wo).normalized();
 	float J = 0.25f / Wh.dot(Record.Wo);
-	return m_Ks * Sampling::SquareToBeckmannPdf(Wh, m_Alpha) * J +
-		(1.0f - m_Ks) * Sampling::SquareToCosineHemispherePdf(Record.Wo);
+	float SpecularPDF = m_Ks * Sampling::SquareToBeckmannPdf(Wh, m_Alpha) * J;
+	float DiffusePDF = (1.0f - m_Ks) * Sampling::SquareToCosineHemispherePdf(Record.Wo);
+	return SpecularPDF + DiffusePDF;
 }
 
 bool MicrofacetBSDF::IsDiffuse() const
