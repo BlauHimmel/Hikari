@@ -109,7 +109,7 @@ Vector3f Sampling::SquareToBeckmann(const Point2f & Sample, float Alpha)
 	float Ln = std::logf(1.0f - Sample.x());
 	if (std::isnan(Ln))
 	{
-		Ln = 0.0f;
+		Ln = 1.0f;
 	}
 
 	float Tan2Theta = -1.0f * Alpha * Alpha * Ln;
