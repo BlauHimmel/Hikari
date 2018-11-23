@@ -196,6 +196,9 @@ set(
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/AoIntegrator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/NormalIntegrator.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/PathEMSIntegrator.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/PathMATSIntegrator.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/PathMISIntegrator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/SimpleIntegrator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/integrator/WhittedIntegrator.cpp
 
@@ -257,6 +260,9 @@ set(
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/AoIntegrator.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/NormalIntegrator.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/PathEMSIntegrator.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/PathMATSIntegrator.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/PathMISIntegrator.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/SimpleIntegrator.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/integrator/WhittedIntegrator.hpp
 
