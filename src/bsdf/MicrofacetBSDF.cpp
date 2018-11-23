@@ -63,7 +63,7 @@ Color3f MicrofacetBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample)
 	{
 		return Color3f(0.0f);
 	}
-	return Eval(Record) / PDF;
+	return Eval(Record) * Frame::CosTheta(Record.Wo) / PDF;
 }
 
 Color3f MicrofacetBSDF::Eval(const BSDFQueryRecord & Record) const

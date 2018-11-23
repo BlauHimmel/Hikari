@@ -26,6 +26,8 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 	if (Isect.pShape->IsEmitter())
 	{
 		EmitterQueryRecord EmitterRecord;
+		EmitterRecord.Ref = Ray.Origin;
+		EmitterRecord.P = Isect.P;
 		EmitterRecord.N = Isect.ShadingFrame.N;
 		EmitterRecord.Wi = Ray.Direction;
 		Le = Isect.pEmitter->Eval(EmitterRecord);

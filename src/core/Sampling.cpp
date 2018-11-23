@@ -113,7 +113,7 @@ Vector3f Sampling::SquareToBeckmann(const Point2f & Sample, float Alpha)
 	}
 
 	float Tan2Theta = -1.0f * Alpha * Alpha * Ln;
-	float CosTheta = 1.0f / std::sqrtf(1 + Tan2Theta);
+	float CosTheta = 1.0f / std::sqrtf(1.0f + Tan2Theta);
 	float SinTheta = std::sqrtf(1.0f - CosTheta * CosTheta);
 	float Phi = 2.0f * float(M_PI) * Sample.y();
 
