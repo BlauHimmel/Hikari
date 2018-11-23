@@ -15,6 +15,9 @@ public:
 
 	/// Return a human-readable description for debugging purposes
 	virtual std::string ToString() const override;
+
+protected:
+	uint32_t m_Depth;
 };
 
 NAMESPACE_END

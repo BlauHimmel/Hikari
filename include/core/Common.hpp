@@ -77,8 +77,11 @@
 #define XML_INTEGRATOR_AO_SAMPLE_COUNT           "sampleCount"
 #define XML_INTEGRATOR_WHITTED                   "whitted"
 #define XML_INTEGRATOR_PATH_EMS                  "pathEMS"
+#define XML_INTEGRATOR_PATH_EMS_DEPTH            "depth"
 #define XML_INTEGRATOR_PATH_MATS                 "pathMATS"
+#define XML_INTEGRATOR_PATH_MATS_DEPTH           "depth"
 #define XML_INTEGRATOR_PATH_MIS                  "pathMIS"
+#define XML_INTEGRATOR_PATH_MIS_DEPTH            "depth"
 
 #define XML_EMITTER                              "emitter"
 #define XML_EMITTER_AREA_LIGHT                   "area"
@@ -286,6 +289,46 @@ public:
 	template <typename... Args>
 	HikariException(const char * pFmt, const Args &... Arg) : std::runtime_error(tfm::format(pFmt, Arg...)) { }
 };
+
+template<class T>
+void CheckRange(const std::string & ObjName, const std::string & FieldName, T Var, T Min, T Max)
+{
+	if (Var >= Min && Var <= Max)
+	{
+		return;
+	}
+	throw HikariException(tfm::format("Field %s in object %s out of range. (%s, %s)"), FieldName, ObjName, Min.ToString(), Max.ToString());
+}
+
+template<>
+void CheckRange<int>(const std::string & ObjName, const std::string & FieldName, int Var, int Min, int Max)
+{
+	if (Var >= Min && Var <= Max)
+	{
+		return;
+	}
+	throw HikariException("Field %s in object %s out of range (%d, %d).", FieldName, ObjName, Min, Max);
+}
+
+template<>
+void CheckRange<uint32_t>(const std::string & ObjName, const std::string & FieldName, uint32_t Var, uint32_t Min, uint32_t Max)
+{
+	if (Var >= Min && Var <= Max)
+	{
+		return;
+	}
+	throw HikariException("Field %s in object %s out of range (%u, %u).", FieldName, ObjName, Min, Max);
+}
+
+template<>
+void CheckRange<float>(const std::string & ObjName, const std::string & FieldName, float Var, float Min, float Max)
+{
+	if (Var >= Min && Var <= Max)
+	{
+		return;
+	}
+	throw HikariException("Field %s in object %s out of range (%f, %f).", FieldName, ObjName, Min, Max);
+}
 
 /// Return the number of cores (real and virtual)
 int GetCoreCount();
