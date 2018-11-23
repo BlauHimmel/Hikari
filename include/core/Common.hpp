@@ -76,6 +76,9 @@
 #define XML_INTEGRATOR_AO_ALPHA                  "alpha"
 #define XML_INTEGRATOR_AO_SAMPLE_COUNT           "sampleCount"
 #define XML_INTEGRATOR_WHITTED                   "whitted"
+#define XML_INTEGRATOR_PATH_EMS                  "pathEMS"
+#define XML_INTEGRATOR_PATH_MATS                 "pathMATS"
+#define XML_INTEGRATOR_PATH_MIS                  "pathMIS"
 
 #define XML_EMITTER                              "emitter"
 #define XML_EMITTER_AREA_LIGHT                   "area"
