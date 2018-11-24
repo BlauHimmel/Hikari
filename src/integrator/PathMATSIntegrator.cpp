@@ -18,7 +18,7 @@ Color3f PathMATSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const R
 	Intersection Isect;
 	Ray3f TracingRay(Ray);
 	Color3f Li(0.0f);
-	Color3f C(1.0f);
+	Color3f Beta(1.0f);
 	uint32_t Depth = 0;
 
 	while (Depth < m_Depth)
@@ -36,14 +36,14 @@ Color3f PathMATSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const R
 			EmitterRecord.N = Isect.ShadingFrame.N;
 			EmitterRecord.Wi = TracingRay.Direction;
 			Color3f Le = Isect.pEmitter->Eval(EmitterRecord);
-			Li += Le * C;
+			Li += Le * Beta;
 		}
 
 		const BSDF * pBSDF = Isect.pBSDF;
 		BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction));
-		C *= pBSDF->Sample(BSDFRecord, pSampler->Next2D());
+		Beta *= pBSDF->Sample(BSDFRecord, pSampler->Next2D());
 
-		if (C.isZero())
+		if (Beta.isZero())
 		{
 			break;
 		}
@@ -52,7 +52,7 @@ Color3f PathMATSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const R
 		if (pSampler->Next1D() < 0.95f)
 		{
 			constexpr float Inv = 1.0f / 0.95f;
-			C *= Inv;
+			Beta *= Inv;
 		}
 		else
 		{

@@ -1,0 +1,42 @@
+<scene>
+    <!-- Independent sample generator, one sample per pixel -->
+	<sampler type="independent">
+		<integer name="sampleCount" value="16"/>
+	</sampler>
+
+	<integrator type="whitted"/>
+
+	<emitter type="point">
+		<point name="position" value="-20, 40, 20"/>
+		<color name="power" value="3.76e4, 3.76e4, 3.76e4"/>
+	</emitter>
+
+	<acceleration type="hlbvh">
+		<integer name="leafSize" value="10"/>
+	</acceleration>
+
+    <!-- Load the ajax -->
+	<mesh type="obj">
+		<string name="filename" value="meshes/ajax.obj"/>
+		<bsdf type="diffuse">
+			<color name="albedo" value="1.0, 1.0, 1.0"/>
+		</bsdf>
+	</mesh>
+
+	<!-- Render the scene viewed by a perspective camera -->
+	<camera type="perspective">
+        <!-- 3D origin, target point, and 'up' vector -->
+		<transform name="toWorld">
+            <lookat target="-64.8161, 47.2211, 23.8576"
+                    origin="-65.6055, 47.5762, 24.3583"
+                    up="0.299858, 0.934836, -0.190177"/>
+		</transform>
+
+		<!-- Field of view: 30 degrees -->
+		<float name="fov" value="30"/>
+
+		<!-- 768 x 768 pixels -->
+		<integer name="width" value="768"/>
+		<integer name="height" value="768"/>
+	</camera>
+</scene>
