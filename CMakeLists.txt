@@ -118,6 +118,7 @@ set(
         ${PCG32_INCLUDE_DIR}
         ${GLOG_INCLUDE_DIR}
         ${FILESYSTEM_INCLUDE_DIR}
+        ${HYPOTHESIS_INCLUDE_DIR}
 )
 
 set(

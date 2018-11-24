@@ -144,6 +144,11 @@ set(
     ${CMAKE_CURRENT_SOURCE_DIR}/filesystem
 )
 
+set(
+    HYPOTHESIS_INCLUDE_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}/hypothesis
+)
+
 # Compile remainder of the codebase with compiler warnings turned on
 if(MSVC)
     if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
@@ -175,6 +180,7 @@ set(CompilerFlags
     PCG32_INCLUDE_DIR
     GLOG_INCLUDE_DIR
     FILESYSTEM_INCLUDE_DIR
+    HYPOTHESIS_INCLUDE_DIR
 )
 
 foreach(CompilerFlag ${CompilerFlags})
