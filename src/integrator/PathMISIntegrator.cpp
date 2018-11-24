@@ -16,7 +16,7 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 
 std::string PathMISIntegrator::ToString() const
 {
-	return "PathMISIntegrator[]";
+	return tfm::format("PathMISIntegrator[depth = %u]", m_Depth);
 }
 
 NAMESPACE_END

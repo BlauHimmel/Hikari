@@ -70,7 +70,7 @@ const std::vector<Mesh*> & Scene::GetMeshes() const
 	return m_pMeshes;
 }
 
-const std::vector<Emitter*>& Scene::GetEmitters() const
+const std::vector<Emitter*> & Scene::GetEmitters() const
 {
 	return m_pEmitters;
 }

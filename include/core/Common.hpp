@@ -301,7 +301,7 @@ void CheckRange(const std::string & ObjName, const std::string & FieldName, T Va
 }
 
 template<>
-void CheckRange<int>(const std::string & ObjName, const std::string & FieldName, int Var, int Min, int Max)
+inline void CheckRange<int>(const std::string & ObjName, const std::string & FieldName, int Var, int Min, int Max)
 {
 	if (Var >= Min && Var <= Max)
 	{
@@ -311,7 +311,7 @@ void CheckRange<int>(const std::string & ObjName, const std::string & FieldName,
 }
 
 template<>
-void CheckRange<uint32_t>(const std::string & ObjName, const std::string & FieldName, uint32_t Var, uint32_t Min, uint32_t Max)
+inline void CheckRange<uint32_t>(const std::string & ObjName, const std::string & FieldName, uint32_t Var, uint32_t Min, uint32_t Max)
 {
 	if (Var >= Min && Var <= Max)
 	{
@@ -321,7 +321,7 @@ void CheckRange<uint32_t>(const std::string & ObjName, const std::string & Field
 }
 
 template<>
-void CheckRange<float>(const std::string & ObjName, const std::string & FieldName, float Var, float Min, float Max)
+inline void CheckRange<float>(const std::string & ObjName, const std::string & FieldName, float Var, float Min, float Max)
 {
 	if (Var >= Min && Var <= Max)
 	{

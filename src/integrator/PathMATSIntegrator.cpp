@@ -1,4 +1,8 @@
 #include <integrator\PathMATSIntegrator.hpp>
+#include <core\Scene.hpp>
+#include <core\Mesh.hpp>
+#include <core\Sampler.hpp>
+#include <core\BSDF.hpp>
 
 NAMESPACE_BEGIN
 
@@ -11,12 +15,60 @@ PathMATSIntegrator::PathMATSIntegrator(const PropertyList & PropList)
 
 Color3f PathMATSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ray3f & Ray) const
 {
-	return Color3f();
+	Intersection Isect;
+	Ray3f TracingRay(Ray);
+	Color3f Li(0.0f);
+	Color3f C(1.0f);
+	uint32_t Depth = 0;
+
+	while (Depth < m_Depth)
+	{
+		if (!pScene->RayIntersect(TracingRay, Isect))
+		{
+			break;
+		}
+
+		if (Isect.pShape->IsEmitter())
+		{
+			EmitterQueryRecord EmitterRecord;
+			EmitterRecord.Ref = TracingRay.Origin;
+			EmitterRecord.P = Isect.P;
+			EmitterRecord.N = Isect.ShadingFrame.N;
+			EmitterRecord.Wi = TracingRay.Direction;
+			Color3f Le = Isect.pEmitter->Eval(EmitterRecord);
+			Li += Le * C;
+		}
+
+		const BSDF * pBSDF = Isect.pBSDF;
+		BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction));
+		C *= pBSDF->Sample(BSDFRecord, pSampler->Next2D());
+
+		if (C.isZero())
+		{
+			break;
+		}
+
+		// Russian roulette
+		if (pSampler->Next1D() < 0.95f)
+		{
+			constexpr float Inv = 1.0f / 0.95f;
+			C *= Inv;
+		}
+		else
+		{
+			break;
+		}
+
+		TracingRay = Ray3f(Isect.P, Isect.ToWorld(BSDFRecord.Wo));
+		Depth++;
+	}
+
+	return Li;
 }
 
 std::string PathMATSIntegrator::ToString() const
 {
-	return "PathMATSIntegrator[]";
+	return tfm::format("PathMATSIntegrator[depth = %u]", m_Depth);
 }
 
 NAMESPACE_END

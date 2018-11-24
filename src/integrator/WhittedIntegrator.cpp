@@ -40,6 +40,11 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 	{
 		for (Emitter * pEmitter : pScene->GetEmitters())
 		{
+			if (pEmitter == Isect.pEmitter)
+			{
+				continue;
+			}
+
 			EmitterQueryRecord EmitterRecord;
 			EmitterRecord.Ref = Isect.P;
 
@@ -49,7 +54,7 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			if (!pScene->ShadowRayIntersect(ShadowRay))
 			{
 				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
-				Lr += pBSDF->Eval(BSDFRecord) * std::max(0.0f, Frame::CosTheta(BSDFRecord.Wo)) * Li;
+				Lr += pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Li;
 			}
 		}
 	}
