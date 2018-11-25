@@ -42,6 +42,8 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		{
 			if (pEmitter == Isect.pEmitter)
 			{
+				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(Isect.ShadingFrame.N), EMeasure::ESolidAngle);
+				Lr += pBSDF->Eval(BSDFRecord) / pBSDF->Pdf(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Le;
 				continue;
 			}
 

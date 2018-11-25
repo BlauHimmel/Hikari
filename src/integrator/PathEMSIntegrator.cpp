@@ -29,9 +29,9 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			break;
 		}
 
-		// Only the first ray from the camera or from the specular reflection/refraction
-		// need to account for the emmiter term. In other cases, it has been computed 
-		// during the direct light computing part.
+		// Only the first ray from the camera or the ray from the specular reflection
+		// /refraction need to account for the emmiter term. In other cases, it has 
+		// been computed during the direct light computing part.
 		if ((Depth == 0 || bLastPathSpecular))
 		{
 			if (Isect.pShape->IsEmitter())
