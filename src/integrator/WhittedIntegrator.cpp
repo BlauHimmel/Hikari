@@ -42,9 +42,13 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		{
 			if (pEmitter == Isect.pEmitter)
 			{
-				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(Isect.ShadingFrame.N), EMeasure::ESolidAngle);
-				Lr += pBSDF->Eval(BSDFRecord) / pBSDF->Pdf(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Le;
-				continue;
+				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), Isect.ToLocal(Isect.ShadingFrame.N), EMeasure::ESolidAngle);
+				float Pdf = pBSDF->Pdf(BSDFRecord);
+				if (Pdf != 0.0f)
+				{
+					Lr += pBSDF->Eval(BSDFRecord) / Pdf * Frame::CosTheta(BSDFRecord.Wo) * Le;
+					continue;
+				}
 			}
 
 			EmitterQueryRecord EmitterRecord;
