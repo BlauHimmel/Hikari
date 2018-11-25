@@ -134,6 +134,17 @@
 #define XML_CAMERA_PERSPECTIVE_FAR_CLIP          "farClip"
 
 #define XML_TEST                                 "test"
+#define XML_TEST_STUDENT_T                       "ttest"
+#define XML_TEST_STUDENT_T_SIGNIFICANCE_LEVEL    "significanceLevel"
+#define XML_TEST_STUDENT_T_ANGLES                "angles"
+#define XML_TEST_STUDENT_T_REFERENCES            "references"
+#define XML_TEST_STUDENT_T_SAMPLE_COUNT          "sampleCount"
+#define XML_TEST_CHI2                            "chi2test"
+#define XML_TEST_CHI2_SIGNIFICANCE_LEVEL         "significanceLevel"
+#define XML_TEST_CHI2_RESOLUTION                 "resolution"
+#define XML_TEST_CHI2_MIN_EXP_FREQUENCY          "minExpFrequency"
+#define XML_TEST_CHI2_SAMPLE_COUNT               "sampleCount"
+#define XML_TEST_CHI2_TEST_COUNT                 "testCount"
 
 #define XML_FILTER                               "rfilter"
 #define XML_FILTER_BOX                           "box"
@@ -193,6 +204,17 @@
 #define DEFAULT_SAMPLER_INDEPENDENT_SAMPLE_COUNT  1
 
 #define DEFAULT_MESH_BSDF                         XML_BSDF_DIFFUSE
+
+#define DEFAULT_TEST_STUDENT_T_SIGNIFICANCE_LEVEL 0.01f
+#define DEFAULT_TEST_STUDENT_T_ANGLES             ""
+#define DEFAULT_TEST_STUDENT_T_REFERENCES         ""
+#define DEFAULT_TEST_STUDENT_T_SAMPLE_COUNT       100000
+
+#define DEFAULT_TEST_CHI2_SIGNIFICANCE_LEVEL      0.01f
+#define DEFAULT_TEST_CHI2_RESOLUTION              10
+#define DEFAULT_TEST_CHI2_MIN_EXP_FREQUENCY       5
+#define DEFAULT_TEST_CHI2_SAMPLE_COUNT            -1
+#define DEFAULT_TEST_CHI2_TEST_COUNT              5
 
 NAMESPACE_BEGIN
 

@@ -8,7 +8,9 @@
 
 
 	<scene>
-		<integrator type="pathEMS"/>
+		<integrator type="pathEMS">
+			<integer name="depth" value="32"/>
+		</integrator>
 
 		<camera type="perspective">
 		        <transform name="toWorld">
@@ -40,7 +42,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathEMS"/>
+		<integrator type="pathEMS">
+			<integer name="depth" value="32"/>
+		</integrator>
 
 		<camera type="perspective">
 		        <transform name="toWorld">
@@ -72,7 +76,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathEMS"/>
+		<integrator type="pathEMS">
+			<integer name="depth" value="32"/>
+		</integrator>
 
 		<camera type="perspective">
 		        <transform name="toWorld">
@@ -104,7 +110,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathEMS"/>
+		<integrator type="pathEMS">
+			<integer name="depth" value="32"/>
+		</integrator>
 
 		<camera type="perspective">
 		        <transform name="toWorld">
@@ -136,7 +144,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathEMS"/>
+		<integrator type="pathEMS">
+			<integer name="depth" value="32"/>
+		</integrator>
 
 		<camera type="perspective">
 		        <transform name="toWorld">
@@ -168,7 +178,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathMATS"/>
+		<integrator type="pathMATS">
+			<integer name="depth" value="32"/>
+		</integrator>
 
 		<camera type="perspective">
 		        <transform name="toWorld">
@@ -200,7 +212,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathMATS"/>
+		<integrator type="pathMATS">
+			<integer name="depth" value="32"/>
+		</integrator>
 
 		<camera type="perspective">
 		        <transform name="toWorld">
@@ -232,7 +246,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathMATS"/>
+		<integrator type="pathMATS">
+			<integer name="depth" value="32"/>
+		</integrator>
 
 		<camera type="perspective">
 		        <transform name="toWorld">
@@ -264,7 +280,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathMATS"/>
+		<integrator type="pathMATS">
+			<integer name="depth" value="32"/>
+		</integrator>
 
 		<camera type="perspective">
 		        <transform name="toWorld">
@@ -296,7 +314,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathMATS"/>
+		<integrator type="pathMATS">
+			<integer name="depth" value="32"/>
+		</integrator>
 
 		<camera type="perspective">
 		        <transform name="toWorld">
@@ -328,7 +348,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathMIS"/>
+		<integrator type="pathMIS">
+			<integer name="depth" value="32"/>
+		</integrator>
 
 		<camera type="perspective">
 		        <transform name="toWorld">
@@ -360,7 +382,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathMIS"/>
+		<integrator type="pathMIS">
+			<integer name="depth" value="32"/>
+		</integrator>
 
 		<camera type="perspective">
 		        <transform name="toWorld">
@@ -392,8 +416,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathMIS"/>
-
+		<integrator type="pathMIS">
+			<integer name="depth" value="32"/>
+		</integrator>
 		<camera type="perspective">
 		        <transform name="toWorld">
 			        <lookat origin="0, 0.01, 0"
@@ -424,8 +449,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathMIS"/>
-
+		<integrator type="pathMIS">
+			<integer name="depth" value="32"/>
+		</integrator>
 		<camera type="perspective">
 		        <transform name="toWorld">
 			        <lookat origin="0, 0.01, 0"
@@ -456,8 +482,9 @@
 	</scene>
 
 	<scene>
-		<integrator type="pathMIS"/>
-
+		<integrator type="pathMIS">
+			<integer name="depth" value="32"/>
+		</integrator>
 		<camera type="perspective">
 		        <transform name="toWorld">
 			        <lookat origin="0, 0.01, 0"

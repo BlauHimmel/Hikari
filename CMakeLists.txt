@@ -163,6 +163,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/BoundingBox.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/BSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Camera.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Chi2Test.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Color.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Common.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/DiscretePDF.cpp
@@ -183,6 +184,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Scene.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Screen.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Shape.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/StudentTTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Timer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Transform.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Vector.cpp
@@ -227,6 +229,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/BoundingBox.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/BSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Camera.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Chi2Test.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Color.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Common.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/DiscretePDF.hpp
@@ -247,6 +250,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Scene.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Screen.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Shape.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/StudentTTest.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Timer.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Transform.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Vector.hpp
