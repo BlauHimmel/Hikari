@@ -21,6 +21,7 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 	Color3f Beta(1.0f);
 	uint32_t Depth = 0;
 	bool bLastPathSpecular = false;
+	const Emitter * pLastEmitter = nullptr;
 
 	while (Depth < m_Depth)
 	{
@@ -52,14 +53,11 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 				// Only the first ray from the camera or the ray from the specular reflection
 				// /refraction need to account for the emmiter term. In other cases, it has 
 				// been computed during the direct light computing part.
-				if ((Depth == 0 || bLastPathSpecular) && pEmitter == Isect.pEmitter)
+				// There also exists a special case such that the ray hit the emissive object
+				// continuously.
+				if ((Depth == 0 || bLastPathSpecular || pLastEmitter == pEmitter) && pEmitter == Isect.pEmitter)
 				{
-					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), Isect.ToLocal(Isect.ShadingFrame.N), EMeasure::ESolidAngle);
-					float Pdf = pBSDF->Pdf(BSDFRecord);
-					if (Pdf != 0.0f)
-					{
-						Li += Beta * pBSDF->Eval(BSDFRecord) / Pdf * Frame::CosTheta(BSDFRecord.Wo) * Le;
-					}
+					Li += Beta * Le;
 					continue;
 				}
 
@@ -81,8 +79,6 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			bLastPathSpecular = true;
 		}
 
-		Li += Beta * Le;
-
 		BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction));
 		Beta *= pBSDF->Sample(BSDFRecord, pSampler->Next2D());
 
@@ -102,6 +98,7 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			break;
 		}
 
+		pLastEmitter = Isect.pEmitter;
 		TracingRay = Ray3f(Isect.P, Isect.ToWorld(BSDFRecord.Wo));
 		Depth++;
 	}

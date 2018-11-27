@@ -21,6 +21,7 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 	Color3f Beta(1.0f);
 	uint32_t Depth = 0;
 	bool bLastPathSpecular = false;
+	const Emitter * pLastEmitter = nullptr;
 
 	while (Depth < m_Depth)
 	{
@@ -29,21 +30,16 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			break;
 		}
 
-		// Only the first ray from the camera or from the specular reflection/refraction
-		// need to account for the emmiter term. In other cases, it has been computed 
-		// during the direct light computing part.
-		if ((Depth == 0 || bLastPathSpecular))
+		Color3f Le(0.0f);
+
+		if (Isect.pShape->IsEmitter())
 		{
-			if (Isect.pShape->IsEmitter())
-			{
-				EmitterQueryRecord EmitterRecord;
-				EmitterRecord.Ref = TracingRay.Origin;
-				EmitterRecord.P = Isect.P;
-				EmitterRecord.N = Isect.ShadingFrame.N;
-				EmitterRecord.Wi = TracingRay.Direction;
-				Color3f Le = Isect.pEmitter->Eval(EmitterRecord);
-				Li += Le * Beta;
-			}
+			EmitterQueryRecord EmitterRecord;
+			EmitterRecord.Ref = TracingRay.Origin;
+			EmitterRecord.P = Isect.P;
+			EmitterRecord.N = Isect.ShadingFrame.N;
+			EmitterRecord.Wi = TracingRay.Direction;
+			Le = Isect.pEmitter->Eval(EmitterRecord);
 		}
 
 		const BSDF * pBSDF = Isect.pBSDF;
@@ -54,8 +50,14 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 
 			for (Emitter * pEmitter : pScene->GetEmitters())
 			{
-				if (pEmitter == Isect.pEmitter)
+				// Only the first ray from the camera or the ray from the specular reflection
+				// /refraction need to account for the emmiter term. In other cases, it has 
+				// been computed during the direct light computing part.
+				// There also exists a special case such that the ray hit the emissive object
+				// continuously.
+				if ((Depth == 0 || bLastPathSpecular || pLastEmitter == pEmitter) && pEmitter == Isect.pEmitter)
 				{
+					Li += Beta * Le;
 					continue;
 				}
 
@@ -96,6 +98,7 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			break;
 		}
 
+		pLastEmitter = Isect.pEmitter;
 		TracingRay = Ray3f(Isect.P, Isect.ToWorld(BSDFRecord.Wo));
 		Depth++;
 	}
