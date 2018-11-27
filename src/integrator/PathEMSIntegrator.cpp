@@ -32,7 +32,12 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 
 		Color3f Le(0.0f);
 
-		if (Isect.pShape->IsEmitter())
+		// Only the first ray from the camera or the ray from the specular reflection
+		// /refraction need to account for the emmiter term. In other cases, it has 
+		// been computed during the direct light computing part.
+		// There also exists a special case such that the ray hit the emissive object
+		// continuously.
+		if (Isect.pShape->IsEmitter() && (Depth == 0 || bLastPathSpecular || pLastEmitter == Isect.pEmitter))
 		{
 			EmitterQueryRecord EmitterRecord;
 			EmitterRecord.Ref = TracingRay.Origin;
@@ -40,6 +45,7 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			EmitterRecord.N = Isect.ShadingFrame.N;
 			EmitterRecord.Wi = TracingRay.Direction;
 			Le = Isect.pEmitter->Eval(EmitterRecord);
+			Li += Beta * Le;
 		}
 
 		const BSDF * pBSDF = Isect.pBSDF;
@@ -50,14 +56,8 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 
 			for (Emitter * pEmitter : pScene->GetEmitters())
 			{
-				// Only the first ray from the camera or the ray from the specular reflection
-				// /refraction need to account for the emmiter term. In other cases, it has 
-				// been computed during the direct light computing part.
-				// There also exists a special case such that the ray hit the emissive object
-				// continuously.
-				if ((Depth == 0 || bLastPathSpecular || pLastEmitter == pEmitter) && pEmitter == Isect.pEmitter)
+				if (pEmitter == Isect.pEmitter)
 				{
-					Li += Beta * Le;
 					continue;
 				}
 
