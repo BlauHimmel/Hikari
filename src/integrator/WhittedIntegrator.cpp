@@ -47,8 +47,8 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 				if (Pdf != 0.0f)
 				{
 					Lr += pBSDF->Eval(BSDFRecord) / Pdf * Frame::CosTheta(BSDFRecord.Wo) * Le;
-					continue;
 				}
+				continue;
 			}
 
 			EmitterQueryRecord EmitterRecord;

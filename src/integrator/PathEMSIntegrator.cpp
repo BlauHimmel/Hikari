@@ -29,21 +29,16 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			break;
 		}
 
-		// Only the first ray from the camera or the ray from the specular reflection
-		// /refraction need to account for the emmiter term. In other cases, it has 
-		// been computed during the direct light computing part.
-		if ((Depth == 0 || bLastPathSpecular))
+		Color3f Le(0.0f);
+
+		if (Isect.pShape->IsEmitter())
 		{
-			if (Isect.pShape->IsEmitter())
-			{
-				EmitterQueryRecord EmitterRecord;
-				EmitterRecord.Ref = TracingRay.Origin;
-				EmitterRecord.P = Isect.P;
-				EmitterRecord.N = Isect.ShadingFrame.N;
-				EmitterRecord.Wi = TracingRay.Direction;
-				Color3f Le = Isect.pEmitter->Eval(EmitterRecord);
-				Li += Le * Beta;
-			}
+			EmitterQueryRecord EmitterRecord;
+			EmitterRecord.Ref = TracingRay.Origin;
+			EmitterRecord.P = Isect.P;
+			EmitterRecord.N = Isect.ShadingFrame.N;
+			EmitterRecord.Wi = TracingRay.Direction;
+			Le = Isect.pEmitter->Eval(EmitterRecord);
 		}
 
 		const BSDF * pBSDF = Isect.pBSDF;
@@ -54,8 +49,17 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 
 			for (Emitter * pEmitter : pScene->GetEmitters())
 			{
-				if (pEmitter == Isect.pEmitter)
+				// Only the first ray from the camera or the ray from the specular reflection
+				// /refraction need to account for the emmiter term. In other cases, it has 
+				// been computed during the direct light computing part.
+				if ((Depth == 0 || bLastPathSpecular) && pEmitter == Isect.pEmitter)
 				{
+					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), Isect.ToLocal(Isect.ShadingFrame.N), EMeasure::ESolidAngle);
+					float Pdf = pBSDF->Pdf(BSDFRecord);
+					if (Pdf != 0.0f)
+					{
+						Li += Beta * pBSDF->Eval(BSDFRecord) / Pdf * Frame::CosTheta(BSDFRecord.Wo) * Le;
+					}
 					continue;
 				}
 
@@ -76,6 +80,8 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		{
 			bLastPathSpecular = true;
 		}
+
+		Li += Beta * Le;
 
 		BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction));
 		Beta *= pBSDF->Sample(BSDFRecord, pSampler->Next2D());
