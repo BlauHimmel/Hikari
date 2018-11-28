@@ -34,32 +34,32 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 
 		const BSDF * pBSDF = Isect.pBSDF;
 
+		Color3f Le(0.0f);
+
+		// Only the first ray from the camera or the ray from the specular reflection
+		// /refraction need to account for the emmiter term. In other cases, it has 
+		// been computed during the direct light computing part.
+		// There also exists a special case such that the ray hit the emissive object
+		// continuously.
+		if (Isect.pShape->IsEmitter() && (Depth == 0 || bLastPathSpecular || pLastEmitter == Isect.pEmitter))
+		{
+			EmitterQueryRecord EmitterRecord;
+			EmitterRecord.Ref = TracingRay.Origin;
+			EmitterRecord.P = Isect.P;
+			EmitterRecord.N = Isect.ShadingFrame.N;
+			EmitterRecord.Wi = TracingRay.Direction;
+			Le = Isect.pEmitter->Eval(EmitterRecord);
+			Li += Beta * Le;
+		}
+
 		if (pBSDF->IsDiffuse())
 		{
 			bLastPathSpecular = false;
 
 			for (Emitter * pEmitter : pScene->GetEmitters())
 			{
-				// Only the first ray from the camera or the ray from the specular reflection
-				// /refraction need to account for the emmiter term. In other cases, it has 
-				// been computed during the direct light computing part.
-				// There also exists a special case such that the ray hit the emissive object
-				// continuously.
-				if (pEmitter == Isect.pEmitter && (Depth == 0 || bLastPathSpecular || pLastEmitter == Isect.pEmitter))
+				if (pEmitter == Isect.pEmitter)
 				{
-					EmitterQueryRecord EmitterRecord;
-					EmitterRecord.Ref = TracingRay.Origin;
-					EmitterRecord.P = Isect.P;
-					EmitterRecord.N = Isect.ShadingFrame.N;
-					EmitterRecord.Wi = TracingRay.Direction;
-					Color3f Le = Isect.pEmitter->Eval(EmitterRecord);
-
-					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction), Isect.ToLocal(Isect.ShadingFrame.N), EMeasure::ESolidAngle);
-					
-					PdfBSDF = pBSDF->Pdf(BSDFRecord);
-					PdfLight = EmitterRecord.Pdf;
-
-					Li += Beta * pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Le * (PdfLight / (PdfLight + PdfBSDF));
 					continue;
 				}
 
@@ -97,12 +97,12 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			EmitterRecord.P = Isect.P;
 			EmitterRecord.N = Isect.ShadingFrame.N;
 			EmitterRecord.Wi = TracingRay.Direction;
-			
+
 			Color3f Ldirect = Isect.pEmitter->Eval(EmitterRecord);
 
 			PdfLight = Isect.pEmitter->Pdf(EmitterRecord);
 			PdfBSDF = pBSDF->Pdf(BSDFRecord);
-			
+
 			Li += Beta * F * Ldirect * (PdfBSDF / (PdfLight + PdfBSDF));
 		}
 
