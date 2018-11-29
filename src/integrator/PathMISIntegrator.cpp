@@ -20,8 +20,7 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 	Color3f Li(0.0f);
 	Color3f Beta(1.0f);
 	uint32_t Depth = 0;
-	bool bLastPathSpecular = false;
-	const Emitter * pLastEmitter = nullptr;
+	float WeightEMS = 1.0f, WeightMATS = 1.0f;
 
 	while (Depth < m_Depth)
 	{
@@ -30,93 +29,63 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			break;
 		}
 
-		float PdfLight = 0.5f, PdfBSDF = 0.5f;
+		float PdfLightEMS = 0.0f, PdfBSDFEMS = 0.0f;
+		float PdfLightMATS = 0.0f, PdfBSDFMATS = 0.0f;
 
 		const BSDF * pBSDF = Isect.pBSDF;
-
-		Color3f Le(0.0f);
 
 		// Only the first ray from the camera or the ray from the specular reflection
 		// /refraction need to account for the emmiter term. In other cases, it has 
 		// been computed during the direct light computing part.
 		// There also exists a special case such that the ray hit the emissive object
 		// continuously.
-		if (Isect.pShape->IsEmitter() && (Depth == 0 || bLastPathSpecular || pLastEmitter == Isect.pEmitter))
+		if (Isect.pShape->IsEmitter())
 		{
-			EmitterQueryRecord EmitterRecord;
-			EmitterRecord.Ref = TracingRay.Origin;
-			EmitterRecord.P = Isect.P;
-			EmitterRecord.N = Isect.ShadingFrame.N;
-			EmitterRecord.Wi = TracingRay.Direction;
+			EmitterQueryRecord EmitterRecord(Isect.pEmitter, TracingRay.Origin, Isect.P, Isect.ShadingFrame.N);
 
-			Le = Isect.pEmitter->Eval(EmitterRecord);
-			Li += Beta * Le;
+			Color3f Le = Isect.pEmitter->Eval(EmitterRecord);
+			Li += Beta * WeightMATS * Le;
 		}
 
-		if (pBSDF->IsDiffuse())
-		{
-			bLastPathSpecular = false;
+		const std::vector<Emitter*> & pEmitters = pScene->GetEmitters();
+		Emitter * pEmitter = pEmitters[size_t((pEmitters.size() - 1) * pSampler->Next1D())];
+		EmitterQueryRecord EmitterRecord(Isect.P);
 
-			for (Emitter * pEmitter : pScene->GetEmitters())
+		Color3f Ldirect = pEmitters.size() * pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
+		PdfLightEMS = EmitterRecord.Pdf;
+
+		Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
+
+		if (!pScene->ShadowRayIntersect(ShadowRay))
+		{
+			BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
+			PdfBSDFEMS = pBSDF->Pdf(BSDFRecord);
+			if (PdfLightEMS + PdfBSDFEMS != 0.0f)
 			{
-				if (pEmitter == Isect.pEmitter)
-				{
-					continue;
-				}
-
-				EmitterQueryRecord EmitterRecord;
-				EmitterRecord.Ref = Isect.P;
-
-				Color3f Ldirect = pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
-				PdfLight = EmitterRecord.Pdf;
-
-				Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
-
-				if (!pScene->ShadowRayIntersect(ShadowRay))
-				{
-					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * TracingRay.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
-					PdfBSDF = pBSDF->Pdf(BSDFRecord);
-					Li += Beta * pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Ldirect * (PdfLight / (PdfLight + PdfBSDF));
-				}
+				WeightEMS = PdfLightEMS / (PdfLightEMS + PdfBSDFEMS);
 			}
-		}
-		else
-		{
-			bLastPathSpecular = true;
+			Li += Beta * pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Ldirect * WeightEMS;
 		}
 
 		BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction));
 		Color3f F = pBSDF->Sample(BSDFRecord, pSampler->Next2D());
 
 		TracingRay = Ray3f(Isect.P, Isect.ToWorld(BSDFRecord.Wo));
-		pLastEmitter = Isect.pEmitter;
-
-		if (pScene->RayIntersect(TracingRay, Isect) && Isect.pEmitter != nullptr)
-		{
-			EmitterQueryRecord EmitterRecord;
-			EmitterRecord.Ref = TracingRay.Origin;
-			EmitterRecord.P = Isect.P;
-			EmitterRecord.N = Isect.ShadingFrame.N;
-			EmitterRecord.Wi = TracingRay.Direction;
-			EmitterRecord.Distance = (EmitterRecord.P - EmitterRecord.Ref).norm();
-
-			Color3f Ldirect = Isect.pEmitter->Eval(EmitterRecord);
-
-			PdfLight = Isect.pEmitter->Pdf(EmitterRecord);
-
-			if (Isect.pBSDF->IsDiffuse())
-			{
-				PdfBSDF = pBSDF->Pdf(BSDFRecord);
-			}
-			else
-			{
-				PdfBSDF = 1.0f;
-			}
-
-			Li += Beta * F * Ldirect * (PdfBSDF / (PdfLight + PdfBSDF));
-		}
-
 		Beta *= F;
+
+		Intersection IsectNext;
+		if (pScene->RayIntersect(TracingRay, IsectNext) && IsectNext.pEmitter != nullptr)
+		{
+			EmitterQueryRecord EmitterRecord(IsectNext.pEmitter, Isect.P, IsectNext.P, IsectNext.ShadingFrame.N);
+
+			PdfLightMATS = IsectNext.pEmitter->Pdf(EmitterRecord);
+			PdfBSDFMATS = pBSDF->Pdf(BSDFRecord);
+			
+			if (PdfBSDFMATS + PdfLightMATS != 0.0f)
+			{
+				WeightMATS = PdfBSDFMATS / (PdfBSDFMATS + PdfLightMATS);
+			}
+		}
 
 		if (Beta.isZero())
 		{
