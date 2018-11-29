@@ -32,9 +32,7 @@ Color3f AreaLight::Sample(EmitterQueryRecord & Record, const Point2f & Sample2D,
 		return Color3f(0.0f);
 	}
 
-	/* Transform the integration variable from the position domain to solid angle domain */
-	return Eval(Record) / Record.Pdf * 
-		(std::abs((-1.0f * Record.Wi).dot(Record.N)) / (Record.Distance * Record.Distance)); 
+	return Eval(Record) / Record.Pdf;
 }
 
 float AreaLight::Pdf(const EmitterQueryRecord & Record) const
@@ -44,7 +42,18 @@ float AreaLight::Pdf(const EmitterQueryRecord & Record) const
 		throw HikariException("There is no shape attached to this AreaLight!");
 	}
 
-	return m_pMesh->Pdf();
+	/* Transform the integration variable from the position domain to solid angle domain */
+	float GDenominator = std::abs((-1.0f * Record.Wi).dot(Record.N));
+	
+	if (GDenominator == 0.0f)
+	{
+		return 0.0f;
+	}
+
+	float GNumerator = Record.Distance * Record.Distance;
+
+	return m_pMesh->Pdf() *
+		(GNumerator / GDenominator);
 }
 
 Color3f AreaLight::Eval(const EmitterQueryRecord & Record) const

@@ -48,6 +48,7 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			EmitterRecord.P = Isect.P;
 			EmitterRecord.N = Isect.ShadingFrame.N;
 			EmitterRecord.Wi = TracingRay.Direction;
+
 			Le = Isect.pEmitter->Eval(EmitterRecord);
 			Li += Beta * Le;
 		}
@@ -97,11 +98,20 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			EmitterRecord.P = Isect.P;
 			EmitterRecord.N = Isect.ShadingFrame.N;
 			EmitterRecord.Wi = TracingRay.Direction;
+			EmitterRecord.Distance = (EmitterRecord.P - EmitterRecord.Ref).norm();
 
 			Color3f Ldirect = Isect.pEmitter->Eval(EmitterRecord);
 
 			PdfLight = Isect.pEmitter->Pdf(EmitterRecord);
-			PdfBSDF = pBSDF->Pdf(BSDFRecord);
+
+			if (Isect.pBSDF->IsDiffuse())
+			{
+				PdfBSDF = pBSDF->Pdf(BSDFRecord);
+			}
+			else
+			{
+				PdfBSDF = 1.0f;
+			}
 
 			Li += Beta * F * Ldirect * (PdfBSDF / (PdfLight + PdfBSDF));
 		}
