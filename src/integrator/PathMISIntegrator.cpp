@@ -15,6 +15,9 @@ PathMISIntegrator::PathMISIntegrator(const PropertyList & PropList)
 
 Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ray3f & Ray) const
 {
+	Intersection IsectNext;
+	bool bFoundIntersectionNext = false;
+
 	Intersection Isect;
 	Ray3f TracingRay(Ray);
 	Color3f Li(0.0f);
@@ -24,9 +27,23 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 
 	while (Depth < m_Depth)
 	{
-		if (!pScene->RayIntersect(TracingRay, Isect))
+		if (Depth == 0)
 		{
-			break;
+			if (!pScene->RayIntersect(TracingRay, Isect))
+			{
+				break;
+			}
+		}
+		else
+		{
+			if (bFoundIntersectionNext)
+			{
+				Isect = IsectNext;
+			}
+			else
+			{
+				break;
+			}
 		}
 
 		float PdfLightEMS = 0.0f, PdfBSDFEMS = 0.0f;
@@ -47,25 +64,26 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			Li += Beta * WeightMATS * Le;
 		}
 
-		const std::vector<Emitter*> & pEmitters = pScene->GetEmitters();
-		Emitter * pEmitter = pEmitters[size_t((pEmitters.size() - 1) * pSampler->Next1D())];
-		EmitterQueryRecord EmitterRecord(Isect.P);
-
-		Color3f Ldirect = float(pEmitters.size()) * pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
-		PdfLightEMS = EmitterRecord.Pdf;
-
-		if (!Ldirect.isZero())
+		for (Emitter * pEmitter : pScene->GetEmitters())
 		{
-			Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
-			if (!pScene->ShadowRayIntersect(ShadowRay))
+			EmitterQueryRecord EmitterRecord(Isect.P);
+
+			Color3f Ldirect = pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
+			PdfLightEMS = EmitterRecord.Pdf;
+
+			if (!Ldirect.isZero())
 			{
-				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
-				PdfBSDFEMS = pBSDF->Pdf(BSDFRecord);
-				if (PdfLightEMS + PdfBSDFEMS != 0.0f)
+				Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
+				if (!pScene->ShadowRayIntersect(ShadowRay))
 				{
-					WeightEMS = PdfLightEMS / (PdfLightEMS + PdfBSDFEMS);
+					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
+					PdfBSDFEMS = pBSDF->Pdf(BSDFRecord);
+					if (PdfLightEMS + PdfBSDFEMS != 0.0f)
+					{
+						WeightEMS = PdfLightEMS / (PdfLightEMS + PdfBSDFEMS);
+					}
+					Li += Beta * pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Ldirect * WeightEMS;
 				}
-				Li += Beta * pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Ldirect * WeightEMS;
 			}
 		}
 
@@ -80,10 +98,10 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			break;
 		}
 
-		Intersection IsectNext;
-		if (pScene->RayIntersect(TracingRay, IsectNext) && IsectNext.pEmitter != nullptr)
+		bFoundIntersectionNext = pScene->RayIntersect(TracingRay, IsectNext);
+		if (bFoundIntersectionNext && IsectNext.pEmitter != nullptr)
 		{
-			EmitterRecord = EmitterQueryRecord(IsectNext.pEmitter, Isect.P, IsectNext.P, IsectNext.ShadingFrame.N);
+			EmitterQueryRecord EmitterRecord(IsectNext.pEmitter, Isect.P, IsectNext.P, IsectNext.ShadingFrame.N);
 
 			PdfLightMATS = IsectNext.pEmitter->Pdf(EmitterRecord);
 			PdfBSDFMATS = pBSDF->Pdf(BSDFRecord);
