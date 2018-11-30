@@ -54,17 +54,19 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		Color3f Ldirect = float(pEmitters.size()) * pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
 		PdfLightEMS = EmitterRecord.Pdf;
 
-		Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
-
-		if (!pScene->ShadowRayIntersect(ShadowRay))
+		if (!Ldirect.isZero())
 		{
-			BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
-			PdfBSDFEMS = pBSDF->Pdf(BSDFRecord);
-			if (PdfLightEMS + PdfBSDFEMS != 0.0f)
+			Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
+			if (!pScene->ShadowRayIntersect(ShadowRay))
 			{
-				WeightEMS = PdfLightEMS / (PdfLightEMS + PdfBSDFEMS);
+				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
+				PdfBSDFEMS = pBSDF->Pdf(BSDFRecord);
+				if (PdfLightEMS + PdfBSDFEMS != 0.0f)
+				{
+					WeightEMS = PdfLightEMS / (PdfLightEMS + PdfBSDFEMS);
+				}
+				Li += Beta * pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Ldirect * WeightEMS;
 			}
-			Li += Beta * pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Ldirect * WeightEMS;
 		}
 
 		BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction));
@@ -73,6 +75,11 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		TracingRay = Ray3f(Isect.P, Isect.ToWorld(BSDFRecord.Wo));
 		Beta *= F;
 
+		if (Beta.isZero())
+		{
+			break;
+		}
+
 		Intersection IsectNext;
 		if (pScene->RayIntersect(TracingRay, IsectNext) && IsectNext.pEmitter != nullptr)
 		{
@@ -80,22 +87,17 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 
 			PdfLightMATS = IsectNext.pEmitter->Pdf(EmitterRecord);
 			PdfBSDFMATS = pBSDF->Pdf(BSDFRecord);
-			
+
 			if (PdfBSDFMATS + PdfLightMATS != 0.0f)
 			{
 				WeightMATS = PdfBSDFMATS / (PdfBSDFMATS + PdfLightMATS);
 			}
 		}
 
-		if (!Isect.pBSDF->IsDiffuse())
+		if (BSDFRecord.Measure == EMeasure::EDiscrete)
 		{
 			WeightEMS = 0.0f;
 			WeightMATS = 1.0f;
-		}
-
-		if (Beta.isZero())
-		{
-			break;
 		}
 
 		// Russian roulette
