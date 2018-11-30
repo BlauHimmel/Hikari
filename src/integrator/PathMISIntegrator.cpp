@@ -51,7 +51,7 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		Emitter * pEmitter = pEmitters[size_t((pEmitters.size() - 1) * pSampler->Next1D())];
 		EmitterQueryRecord EmitterRecord(Isect.P);
 
-		Color3f Ldirect = pEmitters.size() * pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
+		Color3f Ldirect = float(pEmitters.size()) * pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
 		PdfLightEMS = EmitterRecord.Pdf;
 
 		Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
@@ -76,7 +76,7 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		Intersection IsectNext;
 		if (pScene->RayIntersect(TracingRay, IsectNext) && IsectNext.pEmitter != nullptr)
 		{
-			EmitterQueryRecord EmitterRecord(IsectNext.pEmitter, Isect.P, IsectNext.P, IsectNext.ShadingFrame.N);
+			EmitterRecord = EmitterQueryRecord(IsectNext.pEmitter, Isect.P, IsectNext.P, IsectNext.ShadingFrame.N);
 
 			PdfLightMATS = IsectNext.pEmitter->Pdf(EmitterRecord);
 			PdfBSDFMATS = pBSDF->Pdf(BSDFRecord);
@@ -85,6 +85,12 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			{
 				WeightMATS = PdfBSDFMATS / (PdfBSDFMATS + PdfLightMATS);
 			}
+		}
+
+		if (!Isect.pBSDF->IsDiffuse())
+		{
+			WeightEMS = 0.0f;
+			WeightMATS = 1.0f;
 		}
 
 		if (Beta.isZero())
