@@ -89,6 +89,10 @@
 #define XML_EMITTER_POINT_LIGHT                  "point"
 #define XML_EMITTER_POINT_LIGHT_POSITION         "position"
 #define XML_EMITTER_POINT_LIGHT_POWER            "power"
+#define XML_EMITTER_ENVIRONMENT_LIGHT            "env"
+#define XML_EMITTER_ENVIRONMENT_LIGHT_FILENAME   "filename"
+#define XML_EMITTER_ENVIRONMENT_LIGHT_SCALE      "scale"
+#define XML_EMITTER_ENVIRONMENT_LIGHT_TO_WORLD   "toWorld"
 
 #define XML_ACCELERATION                         "acceleration"
 #define XML_ACCELERATION_BRUTO_LOOP              "bruto"
@@ -164,37 +168,37 @@
 #define XML_SHAPE                                "shape"
 
 /* Default setting */
-#define DEFAULT_ACCELERATION_BVH_LEAF_SIZE       10
-#define DEFAULT_ACCELERATION_BVH_SPLIT_METHOD    XML_ACCELERATION_BVH_SPLIT_METHOD_SAH
+#define DEFAULT_ACCELERATION_BVH_LEAF_SIZE        10
+#define DEFAULT_ACCELERATION_BVH_SPLIT_METHOD     XML_ACCELERATION_BVH_SPLIT_METHOD_SAH
 
-#define DEFAULT_ACCELERATION_HLBVH_LEAF_SIZE     10
+#define DEFAULT_ACCELERATION_HLBVH_LEAF_SIZE      10
 
-#define DEFAULT_SCENE_ACCELERATION               XML_ACCELERATION_BRUTO_LOOP
+#define DEFAULT_SCENE_ACCELERATION                XML_ACCELERATION_BRUTO_LOOP
 
-#define DEFAULT_SCENE_SAMPLER                    XML_SAMPLER_INDEPENDENT
+#define DEFAULT_SCENE_SAMPLER                     XML_SAMPLER_INDEPENDENT
 
-#define DEFAULT_CAMERA_OUTPUTSIZE_X              1280
-#define DEFAULT_CAMERA_OUTPUTSIZE_Y              720
-#define DEFAULT_CAMERA_CAMERA_TO_WORLD           Transform()
-#define DEFAULT_CAMERA_FOV                       30.0f
-#define DEFAULT_CAMERA_NEAR_CLIP                 1e-4f
-#define DEFAULT_CAMERA_FAR_CLIP                  1e4f
-#define DEFAULT_CAMERA_FAR_CLIP                  1e4f
-#define DEFAULT_CAMERA_RFILTER                   XML_FILTER_GAUSSION
+#define DEFAULT_CAMERA_OUTPUTSIZE_X               1280
+#define DEFAULT_CAMERA_OUTPUTSIZE_Y               720
+#define DEFAULT_CAMERA_CAMERA_TO_WORLD            Transform()
+#define DEFAULT_CAMERA_FOV                        30.0f
+#define DEFAULT_CAMERA_NEAR_CLIP                  1e-4f
+#define DEFAULT_CAMERA_FAR_CLIP                   1e4f
+#define DEFAULT_CAMERA_FAR_CLIP                   1e4f
+#define DEFAULT_CAMERA_RFILTER                    XML_FILTER_GAUSSION
 
-#define DEFAULT_BSDF_DIELECTRIC_INT_IOR          1.5046f /* (default: BK7 borosilicate optical glass) */
-#define DEFAULT_BSDF_DIELECTRIC_EXT_IOR          1.000277f /* Air */
-#define DEFAULT_BSDF_DIFFUSE_ALBEDO              Color3f(0.5f)
-#define DEFAULT_BSDF_MICROFACET_ALPHA            0.1f
-#define DEFAULT_BSDF_MICROFACET_INT_IOR          1.5046f /* (default: BK7 borosilicate optical glass) */
-#define DEFAULT_BSDF_MICROFACET_EXT_IOR          1.000277f /* Air */
-#define DEFAULT_BSDF_MICROFACET_ALBEDO           Color3f(0.5f)
+#define DEFAULT_BSDF_DIELECTRIC_INT_IOR           1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_DIELECTRIC_EXT_IOR           1.000277f /* Air */
+#define DEFAULT_BSDF_DIFFUSE_ALBEDO               Color3f(0.5f)
+#define DEFAULT_BSDF_MICROFACET_ALPHA             0.1f
+#define DEFAULT_BSDF_MICROFACET_INT_IOR           1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_MICROFACET_EXT_IOR           1.000277f /* Air */
+#define DEFAULT_BSDF_MICROFACET_ALBEDO            Color3f(0.5f)
 
-#define DEFAULT_FILTER_GAUSSIAN_RADIUS           2.0f
-#define DEFAULT_FILTER_GAUSSIAN_STDDEV           0.5f
-#define DEFAULT_FILTER_MITCHELL_RADIUS           2.0f
-#define DEFAULT_FILTER_MITCHELL_B                (1.0f / 3.0f)
-#define DEFAULT_FILTER_MITCHELL_C                (1.0f / 3.0f)
+#define DEFAULT_FILTER_GAUSSIAN_RADIUS            2.0f
+#define DEFAULT_FILTER_GAUSSIAN_STDDEV            0.5f
+#define DEFAULT_FILTER_MITCHELL_RADIUS            2.0f
+#define DEFAULT_FILTER_MITCHELL_B                 (1.0f / 3.0f)
+#define DEFAULT_FILTER_MITCHELL_C                 (1.0f / 3.0f)
 
 #define DEFAULT_MESH_TO_WORLD                     Transform()
 
@@ -204,6 +208,9 @@
 #define DEFAULT_SAMPLER_INDEPENDENT_SAMPLE_COUNT  1
 
 #define DEFAULT_MESH_BSDF                         XML_BSDF_DIFFUSE
+
+#define DEFAULT_EMITTER_ENVIRONMENT_SCALE         1.0f
+#define DEFAULT_EMITTER_ENVIRONMENT_TO_WORLD      Transform()
 
 #define DEFAULT_TEST_STUDENT_T_SIGNIFICANCE_LEVEL 0.01f
 #define DEFAULT_TEST_STUDENT_T_ANGLES             ""

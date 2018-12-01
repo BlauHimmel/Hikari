@@ -190,6 +190,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Vector.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/emitter/AreaLight.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/emitter/EnvironmentLight.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/emitter/PointLight.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/filter/BoxFilter.cpp
@@ -256,6 +257,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Vector.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/emitter/AreaLight.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/emitter/EnvironmentLight.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/emitter/PointLight.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/filter/BoxFilter.hpp

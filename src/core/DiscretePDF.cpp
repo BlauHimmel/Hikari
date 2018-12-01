@@ -158,7 +158,7 @@ Point2i DiscretePDF2D::Sample(Point2f Sample) const
 {
 	size_t IdxY = m_pMarginalCol->Sample(Sample.y());
 	size_t IdxX = m_pConditionalRow[IdxY]->Sample(Sample.x());
-	return Point2i(IdxX, IdxY);
+	return Point2i(int(IdxX), int(IdxY));
 }
 
 Point2i DiscretePDF2D::Sample(Point2f Sample, float & Pdf) const
@@ -167,14 +167,14 @@ Point2i DiscretePDF2D::Sample(Point2f Sample, float & Pdf) const
 	size_t IdxY = m_pMarginalCol->Sample(Sample.y(), PdfY);
 	size_t IdxX = m_pConditionalRow[IdxY]->Sample(Sample.x(), PdfX);
 	Pdf = PdfX * PdfY;
-	return Point2i(IdxX, IdxY);
+	return Point2i(int(IdxX), int(IdxY));
 }
 
 Point2i DiscretePDF2D::SampleReuse(Point2f & Sample) const
 {
 	size_t IdxY = m_pMarginalCol->SampleReuse(Sample.y());
 	size_t IdxX = m_pConditionalRow[IdxY]->SampleReuse(Sample.x());
-	return Point2i(IdxX, IdxY);
+	return Point2i(int(IdxX), int(IdxY));
 }
 
 Point2i DiscretePDF2D::SampleReuse(Point2f & Sample, float & Pdf) const
@@ -183,7 +183,7 @@ Point2i DiscretePDF2D::SampleReuse(Point2f & Sample, float & Pdf) const
 	size_t IdxY = m_pMarginalCol->SampleReuse(Sample.y(), PdfY);
 	size_t IdxX = m_pConditionalRow[IdxY]->SampleReuse(Sample.x(), PdfX);
 	Pdf = PdfX * PdfY;
-	return Point2i(IdxX, IdxY);
+	return Point2i(int(IdxX), int(IdxY));
 }
 
 NAMESPACE_END
