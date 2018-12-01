@@ -28,6 +28,7 @@ float Sampling::SquareToTentPdf(const Point2f & Pt)
 
 Point2f Sampling::SquareToUniformDisk(const Point2f & Sample)
 {
+	// PBRT : P776-779
 	Point2f OffsetSample = 2.0f * Sample - Point2f(1.0f);
 	if (OffsetSample.x() == 0.0f && OffsetSample.y() == 0.0f)
 	{
@@ -55,6 +56,7 @@ Point2f Sampling::SquareToUniformDisk(const Point2f & Sample)
 
 float Sampling::SquareToUniformDiskPdf(const Point2f & Pt)
 {
+	// PBRT : P776-779
 	return (Pt.norm() <= 1.0f) ? 1.0f / float(M_PI) : 0.0f;
 }
 
