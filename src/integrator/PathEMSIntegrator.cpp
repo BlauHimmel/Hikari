@@ -65,12 +65,14 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 				EmitterRecord.Ref = Isect.P;
 
 				Color3f Ldirect = pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
-				Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
-
-				if (!pScene->ShadowRayIntersect(ShadowRay))
+				if (!Ldirect.isZero())
 				{
-					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * TracingRay.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
-					Li += Beta * pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Ldirect;
+					Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
+					if (!pScene->ShadowRayIntersect(ShadowRay))
+					{
+						BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * TracingRay.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
+						Li += Beta * pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Ldirect;
+					}
 				}
 			}
 		}
