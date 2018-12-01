@@ -1,4 +1,5 @@
 #include <emitter\EnvironmentLight.hpp>
+#include <core\DiscretePDF.hpp>
 
 NAMESPACE_BEGIN
 
@@ -11,7 +12,26 @@ EnvironmentLight::EnvironmentLight(const PropertyList & PropList)
 	m_ToWorld = PropList.GetTransform(XML_EMITTER_ENVIRONMENT_LIGHT_TO_WORLD, DEFAULT_EMITTER_ENVIRONMENT_TO_WORLD);
 	m_Type = EEmitterType::EEnvironment;
 
-	/*Load the texture from disk*/
+	m_pEnvironmentMap = new Bitmap(m_Name);
+	m_pEnvironmentMap->data();
+
+	std::unique_ptr<float[]> pLuminance(new float[m_pEnvironmentMap->size()]);
+	
+	for (std::ptrdiff_t y = 0; y < m_pEnvironmentMap->rows(); y++)
+	{
+		for (std::ptrdiff_t x = 0; x < m_pEnvironmentMap->cols(); x++)
+		{
+			pLuminance[y * m_pEnvironmentMap->cols() + x] = m_pEnvironmentMap->coeff(y, x).GetLuminance();
+		}
+	}
+
+	m_pPdf = new DiscretePDF2D(pLuminance.get(), m_pEnvironmentMap->cols(), m_pEnvironmentMap->rows());
+}
+
+EnvironmentLight::~EnvironmentLight()
+{
+	delete m_pEnvironmentMap;
+	delete m_pPdf;
 }
 
 Color3f EnvironmentLight::Sample(EmitterQueryRecord & Record, const Point2f & Sample2D, float Sample1D) const

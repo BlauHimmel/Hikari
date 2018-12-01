@@ -3,6 +3,7 @@
 #include <core\Common.hpp>
 #include <core\Emitter.hpp>
 #include <core\Transform.hpp>
+#include <core\Bitmap.hpp>
 
 NAMESPACE_BEGIN
 
@@ -10,6 +11,8 @@ class EnvironmentLight : public Emitter
 {
 public:
 	EnvironmentLight(const PropertyList & PropList);
+
+	virtual ~EnvironmentLight();
 
 	virtual Color3f Sample(EmitterQueryRecord & Record, const Point2f & Sample2D, float Sample1D) const override;
 
@@ -23,6 +26,8 @@ protected:
 	std::string m_Name;
 	float m_Scale;
 	Transform m_ToWorld;
+	Bitmap * m_pEnvironmentMap = nullptr;
+	DiscretePDF2D * m_pPdf = nullptr;
 };
 
 NAMESPACE_END
