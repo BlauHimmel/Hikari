@@ -242,7 +242,7 @@ struct BSDFQueryRecord;
 class Camera;
 struct Color3f;
 struct Color4f;
-struct DiscretePDF;
+struct DiscretePDF1D;
 class Emitter;
 struct Frame;
 class Integrator;

@@ -219,7 +219,7 @@ protected:
 	BSDF * m_pBSDF = nullptr;                      ///< BSDF of the surface
 	Emitter * m_pEmitter = nullptr;                ///< Associated emitter, if any
 	BoundingBox3f m_BBox;                          ///< Bounding box of the mesh
-	DiscretePDF m_PDF;                             ///< Used for sampling triangle of the mesh weighted by its area
+	DiscretePDF1D m_PDF;                           ///< Used for sampling triangle of the mesh weighted by its area
 	float m_MeshArea = 0.0f;                       ///< Total surface area of the mesh
 	float m_InvMeshArea = 0.0f;                    ///< Probability of a sampling point on the mesh
 };
