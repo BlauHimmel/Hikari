@@ -250,6 +250,7 @@ class Camera;
 struct Color3f;
 struct Color4f;
 struct DiscretePDF1D;
+struct DiscretePDF2D;
 class Emitter;
 struct Frame;
 class Integrator;

@@ -149,8 +149,8 @@ DiscretePDF2D::DiscretePDF2D(float * pDatas, int Width, int Height)
 
 float DiscretePDF2D::Pdf(Point2i Idx) const
 {
-	float PdfX = (*m_pMarginalCol)[Idx.y()];
-	float PdfY = (*m_pConditionalRow[Idx.y()])[Idx.x()];
+	float PdfY = (*m_pMarginalCol)[Idx.y()];
+	float PdfX = (*m_pConditionalRow[Idx.y()])[Idx.x()];
 	return PdfX * PdfY;
 }
 
