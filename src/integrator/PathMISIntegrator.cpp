@@ -51,11 +51,6 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 
 		const BSDF * pBSDF = Isect.pBSDF;
 
-		// Only the first ray from the camera or the ray from the specular reflection
-		// /refraction need to account for the emmiter term. In other cases, it has 
-		// been computed during the direct light computing part.
-		// There also exists a special case such that the ray hit the emissive object
-		// continuously.
 		if (Isect.pShape->IsEmitter())
 		{
 			EmitterQueryRecord EmitterRecord(Isect.pEmitter, TracingRay.Origin, Isect.P, Isect.ShadingFrame.N);
