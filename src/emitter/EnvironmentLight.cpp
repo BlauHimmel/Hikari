@@ -7,10 +7,11 @@ REGISTER_CLASS(EnvironmentLight, XML_EMITTER_ENVIRONMENT_LIGHT);
 
 EnvironmentLight::EnvironmentLight(const PropertyList & PropList)
 {
-	m_Name = PropList.GetString(XML_EMITTER_ENVIRONMENT_LIGHT_FILENAME);
 	m_Scale = PropList.GetFloat(XML_EMITTER_ENVIRONMENT_LIGHT_SCALE, DEFAULT_EMITTER_ENVIRONMENT_SCALE);
 	m_ToWorld = PropList.GetTransform(XML_EMITTER_ENVIRONMENT_LIGHT_TO_WORLD, DEFAULT_EMITTER_ENVIRONMENT_TO_WORLD);
 	m_Type = EEmitterType::EEnvironment;
+	filesystem::path Filename = GetFileResolver()->resolve(PropList.GetString(XML_EMITTER_ENVIRONMENT_LIGHT_FILENAME));
+	m_Name = Filename.str();
 
 	m_pEnvironmentMap = new Bitmap(m_Name);
 	m_pEnvironmentMap->data();

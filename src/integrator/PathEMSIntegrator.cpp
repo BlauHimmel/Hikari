@@ -22,11 +22,19 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 	uint32_t Depth = 0;
 	bool bLastPathSpecular = false;
 	const Emitter * pLastEmitter = nullptr;
+	const Emitter * pEnvironmentEmitter = pScene->GetEnvironmentEmitter();
 
 	while (Depth < m_Depth)
 	{
 		if (!pScene->RayIntersect(TracingRay, Isect))
 		{
+			if (pEnvironmentEmitter != nullptr)
+			{
+				EmitterQueryRecord EmitterRecord;
+				EmitterRecord.Ref = TracingRay.Origin;
+				EmitterRecord.Wi = TracingRay.Direction;
+				Li += pEnvironmentEmitter->Eval(EmitterRecord) / 1.0f;
+			}
 			break;
 		}
 

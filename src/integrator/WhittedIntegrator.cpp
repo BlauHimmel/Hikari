@@ -15,11 +15,23 @@ WhittedIntegrator::WhittedIntegrator(const PropertyList & PropList)
 
 Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ray3f & Ray) const
 {
+	const Emitter * pEnvironmentEmitter = pScene->GetEnvironmentEmitter();
+
 	/* Find the surface that is visible in the requested direction */
 	Intersection Isect;
 	if (!pScene->RayIntersect(Ray, Isect))
 	{
-		return Color3f(0.0f);
+		if (pEnvironmentEmitter != nullptr)
+		{
+			EmitterQueryRecord EmitterRecord;
+			EmitterRecord.Ref = Ray.Origin;
+			EmitterRecord.Wi = Ray.Direction;
+			return pEnvironmentEmitter->Eval(EmitterRecord) / 1.0f;
+		}
+		else
+		{
+			return Color3f(0.0f);
+		}
 	}
 
 	Color3f Le(0.0f);
@@ -50,17 +62,19 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 				}
 				continue;
 			}
-
-			EmitterQueryRecord EmitterRecord;
-			EmitterRecord.Ref = Isect.P;
-
-			Color3f Li = pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
-			Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
-
-			if (!pScene->ShadowRayIntersect(ShadowRay))
+			else
 			{
-				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
-				Lr += pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Li;
+				EmitterQueryRecord EmitterRecord;
+				EmitterRecord.Ref = Isect.P;
+
+				Color3f Li = pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
+				Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
+
+				if (!pScene->ShadowRayIntersect(ShadowRay))
+				{
+					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
+					Lr += pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Li;
+				}
 			}
 		}
 	}

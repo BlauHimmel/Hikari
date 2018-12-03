@@ -40,6 +40,11 @@ const Acceleration * Scene::GetAccel() const
 	return m_pAcceleration;
 }
 
+Acceleration * Scene::GetAccel()
+{
+	return m_pAcceleration;
+}
+
 const Integrator * Scene::GetIntegrator() const
 {
 	return m_pIntegrator;
@@ -51,6 +56,11 @@ Integrator * Scene::GetIntegrator()
 }
 
 const Camera * Scene::GetCamera() const
+{
+	return m_pCamera;
+}
+
+Camera * Scene::GetCamera()
 {
 	return m_pCamera;
 }
@@ -73,6 +83,16 @@ const std::vector<Mesh*> & Scene::GetMeshes() const
 const std::vector<Emitter*> & Scene::GetEmitters() const
 {
 	return m_pEmitters;
+}
+
+const Emitter * Scene::GetEnvironmentEmitter() const
+{
+	return m_pEnvironmentEmitter;
+}
+
+Emitter * Scene::GetEnvironmentEmitter()
+{
+	return m_pEnvironmentEmitter;
 }
 
 bool Scene::RayIntersect(const Ray3f & Ray, Intersection & Isect) const
@@ -141,10 +161,21 @@ void Scene::AddChild(Object * pChildObj)
 		}
 		break;
 	case EClassType::EEmitter:
-		if (((Emitter*)(pChildObj))->GetEmitterType() == EEmitterType::EPoint ||
-			((Emitter*)(pChildObj))->GetEmitterType() == EEmitterType::EEnvironment)
+		if (((Emitter*)(pChildObj))->GetEmitterType() == EEmitterType::EPoint)
 		{
 			m_pEmitters.push_back((Emitter*)(pChildObj));
+		}
+		else if (((Emitter*)(pChildObj))->GetEmitterType() == EEmitterType::EEnvironment)
+		{
+			if (m_pEnvironmentEmitter == nullptr)
+			{
+				m_pEnvironmentEmitter = (Emitter*)(pChildObj);
+				m_pEmitters.push_back((Emitter*)(pChildObj));
+			}
+			else
+			{
+				throw HikariException("Scene::AddChild(): Only one environment emiiter is allowed for the entire scene");
+			}
 		}
 		else
 		{

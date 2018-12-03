@@ -20,11 +20,19 @@ Color3f PathMATSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const R
 	Color3f Li(0.0f);
 	Color3f Beta(1.0f);
 	uint32_t Depth = 0;
+	const Emitter * pEnvironmentEmitter = pScene->GetEnvironmentEmitter();
 
 	while (Depth < m_Depth)
 	{
 		if (!pScene->RayIntersect(TracingRay, Isect))
 		{
+			if (pEnvironmentEmitter != nullptr)
+			{
+				EmitterQueryRecord EmitterRecord;
+				EmitterRecord.Ref = TracingRay.Origin;
+				EmitterRecord.Wi = TracingRay.Direction;
+				Li += pEnvironmentEmitter->Eval(EmitterRecord) / 1.0f;
+			}
 			break;
 		}
 

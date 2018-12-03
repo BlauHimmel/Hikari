@@ -24,6 +24,7 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 	Color3f Beta(1.0f);
 	uint32_t Depth = 0;
 	float WeightEMS = 1.0f, WeightMATS = 1.0f;
+	const Emitter * pEnvironmentEmitter = pScene->GetEnvironmentEmitter();
 
 	while (Depth < m_Depth)
 	{
@@ -31,6 +32,13 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		{
 			if (!pScene->RayIntersect(TracingRay, Isect))
 			{
+				if (pEnvironmentEmitter != nullptr)
+				{
+					EmitterQueryRecord EmitterRecord;
+					EmitterRecord.Ref = TracingRay.Origin;
+					EmitterRecord.Wi = TracingRay.Direction;
+					Li += pEnvironmentEmitter->Eval(EmitterRecord) / 1.0f;
+				}
 				break;
 			}
 		}
@@ -42,6 +50,13 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			}
 			else
 			{
+				if (pEnvironmentEmitter != nullptr)
+				{
+					EmitterQueryRecord EmitterRecord;
+					EmitterRecord.Ref = TracingRay.Origin;
+					EmitterRecord.Wi = TracingRay.Direction;
+					Li += pEnvironmentEmitter->Eval(EmitterRecord) / 1.0f;
+				}
 				break;
 			}
 		}

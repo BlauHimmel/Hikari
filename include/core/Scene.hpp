@@ -17,6 +17,9 @@ public:
 	/// Return a pointer to the scene's acceleration structure
 	const Acceleration * GetAccel() const;
 
+	/// Return a pointer to the scene's acceleration structure
+	Acceleration * GetAccel();
+
 	/// Return a pointer to the scene's integrator
 	const Integrator * GetIntegrator() const;
 
@@ -25,6 +28,9 @@ public:
 
 	/// Return a pointer to the scene's camera
 	const Camera * GetCamera() const;
+
+	/// Return a pointer to the scene's camera
+	Camera * GetCamera();
 
 	/// Return a pointer to the scene's sample generator (const version)
 	const Sampler * GetSampler() const;
@@ -37,6 +43,12 @@ public:
 
 	/// Return a reference to an array containing all emitters
 	const std::vector<Emitter*> & GetEmitters() const;
+
+	/// Return a pointer to the scene's environment emitter
+	const Emitter * GetEnvironmentEmitter() const;
+
+	/// Return a pointer to the scene's environment emitter
+	Emitter * GetEnvironmentEmitter();
 
 	/**
 	* \brief Intersect a ray against all triangles stored in the scene
@@ -88,6 +100,7 @@ protected:
 	Camera * m_pCamera = nullptr;
 	Acceleration * m_pAcceleration = nullptr;
 	std::vector<Emitter*> m_pEmitters;
+	Emitter * m_pEnvironmentEmitter = nullptr;
 };
 
 NAMESPACE_END
