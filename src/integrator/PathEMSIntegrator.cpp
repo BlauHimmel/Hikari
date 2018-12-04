@@ -33,7 +33,7 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 				EmitterQueryRecord EmitterRecord;
 				EmitterRecord.Ref = TracingRay.Origin;
 				EmitterRecord.Wi = TracingRay.Direction;
-				Li += pEnvironmentEmitter->Eval(EmitterRecord) / 1.0f;
+				Li += Beta * pEnvironmentEmitter->Eval(EmitterRecord) / 1.0f;
 			}
 			break;
 		}
@@ -71,6 +71,11 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 
 				EmitterQueryRecord EmitterRecord;
 				EmitterRecord.Ref = Isect.P;
+
+				if (pEmitter->GetEmitterType() == EEmitterType::EEnvironment)
+				{
+					EmitterRecord.Distance = pScene->GetBoundingBox().GetRadius();
+				}
 
 				Color3f Ldirect = pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
 				if (!Ldirect.isZero())

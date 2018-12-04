@@ -61,7 +61,10 @@ public:
 	* value of the Emitter divided by the probability density
 	* of the sample with respect to solid angles).
 	*
-	* \param Record    An emitter query record (only Ref is needed)
+	* \param Record    An emitter query record (only Ref is needed except for 
+	*                  infinity emitter such as EnvironmentLight. In such cases
+	*                  Distance is needed as the radius of bounding sphere of the
+	*                  entire scene.)
 	* \param Sample2D  A uniformly distributed sample on \f$[0,1]^2\f$
 	* \param Sample1D  Another optional sample that might be used in some scenarios.
 	*
@@ -77,7 +80,9 @@ public:
 	* is realized by the \ref Sample() method.
 	*
 	* \param Record
-	*     A record with detailed information on the emitter query
+	*     A record with detailed information on the emitter query.
+	*     In most cases, Wi is needed. N and Distance are need for
+	*     the AreaLight. 
 	*
 	* \return
 	*     A probability/density value
@@ -88,7 +93,8 @@ public:
 	* \brief Evaluate the emitter
 	*
 	* \param Record
-	*     A record with detailed information on the emitter query
+	*     A record with detailed information on the emitter query.
+	*     In most cases, Wi is needed. N is needed for AreaLight.
 	* \return
 	*     The emitter value, evaluated for each color channel
 	*/

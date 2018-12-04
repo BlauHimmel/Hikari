@@ -95,6 +95,11 @@ Emitter * Scene::GetEnvironmentEmitter()
 	return m_pEnvironmentEmitter;
 }
 
+BoundingBox3f Scene::GetBoundingBox() const
+{
+	return m_BBox;
+}
+
 bool Scene::RayIntersect(const Ray3f & Ray, Intersection & Isect) const
 {
 	return m_pAcceleration->RayIntersect(Ray, Isect, false);
@@ -121,6 +126,7 @@ void Scene::Activate()
 	}
 
 	m_pAcceleration->Build();
+	m_BBox = m_pAcceleration->GetBoundingBox();
 
 	if (m_pIntegrator == nullptr)
 	{

@@ -31,7 +31,7 @@ Color3f PathMATSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const R
 				EmitterQueryRecord EmitterRecord;
 				EmitterRecord.Ref = TracingRay.Origin;
 				EmitterRecord.Wi = TracingRay.Direction;
-				Li += pEnvironmentEmitter->Eval(EmitterRecord) / 1.0f;
+				Li += Beta * pEnvironmentEmitter->Eval(EmitterRecord) / 1.0f;
 			}
 			break;
 		}

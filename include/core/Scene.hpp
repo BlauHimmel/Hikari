@@ -2,6 +2,7 @@
 
 #include <core\Common.hpp>
 #include <core\Object.hpp>
+#include <core\BoundingBox.hpp>
 
 NAMESPACE_BEGIN
 
@@ -49,6 +50,9 @@ public:
 
 	/// Return a pointer to the scene's environment emitter
 	Emitter * GetEnvironmentEmitter();
+
+	/// Return a axis-aligned box that bounds the scene
+	BoundingBox3f GetBoundingBox() const;
 
 	/**
 	* \brief Intersect a ray against all triangles stored in the scene
@@ -101,6 +105,7 @@ protected:
 	Acceleration * m_pAcceleration = nullptr;
 	std::vector<Emitter*> m_pEmitters;
 	Emitter * m_pEnvironmentEmitter = nullptr;
+	BoundingBox3f m_BBox;
 };
 
 NAMESPACE_END

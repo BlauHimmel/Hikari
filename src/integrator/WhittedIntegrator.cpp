@@ -26,7 +26,7 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			EmitterQueryRecord EmitterRecord;
 			EmitterRecord.Ref = Ray.Origin;
 			EmitterRecord.Wi = Ray.Direction;
-			return pEnvironmentEmitter->Eval(EmitterRecord) / 1.0f;
+			return pEnvironmentEmitter->Eval(EmitterRecord);
 		}
 		else
 		{
@@ -66,6 +66,11 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			{
 				EmitterQueryRecord EmitterRecord;
 				EmitterRecord.Ref = Isect.P;
+
+				if (pEmitter->GetEmitterType() == EEmitterType::EEnvironment)
+				{
+					EmitterRecord.Distance = pScene->GetBoundingBox().GetRadius();
+				}
 
 				Color3f Li = pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
 				Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);

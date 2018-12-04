@@ -59,15 +59,14 @@ Color3f EnvironmentLight::Sample(EmitterQueryRecord & Record, const Point2f & Sa
 	}
 	else
 	{
-		Record.Pdf = 0.0f;
+		return Color3f(0.0f);
 	}
 
 	float Phi = UV.x() * float(2.0 * M_PI);
 	Record.Wi = m_ToWorld * SphericalDirection(Theta, Phi);
 	Record.N = -Record.Wi;
 	Record.pEmitter = this;
-	Record.Distance = INFINITY * 0.45f;
-	Record.P = Record.Ref + Record.Wi * INFINITY * 0.45f;
+	Record.P = Record.Ref + Record.Wi * Record.Distance;
 
 	return m_pEnvironmentMap->coeff(Idx.y(), Idx.x()) * m_Scale / Record.Pdf;
 }
@@ -83,7 +82,7 @@ float EnvironmentLight::Pdf(const EmitterQueryRecord & Record) const
 	{
 		return 0.0f;
 	}
-	return m_pPdf->Pdf(Point2f(Phi / float(2.0 * M_PI), Theta / float(M_PI))) / (2.0f * float(M_PI * M_PI) * SinTheta);
+	return m_pPdf->Pdf(Point2f(Phi / float(2.0 * M_PI), 1.0f - Theta / float(M_PI))) / (2.0f * float(M_PI * M_PI) * SinTheta);
 }
 
 Color3f EnvironmentLight::Eval(const EmitterQueryRecord & Record) const
@@ -92,7 +91,7 @@ Color3f EnvironmentLight::Eval(const EmitterQueryRecord & Record) const
 	float Theta = Spherical.x();
 	float Phi = Spherical.y();
 	float X = Phi / float(2.0 * M_PI) * m_pEnvironmentMap->cols();
-	float Y = Theta / float(M_PI) * m_pEnvironmentMap->rows();
+	float Y = m_pEnvironmentMap->rows() - Theta / float(M_PI) * m_pEnvironmentMap->rows();
 	return m_pEnvironmentMap->coeff(int(Y), int(X)) * m_Scale;
 }
 

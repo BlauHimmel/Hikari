@@ -449,6 +449,12 @@ public:
 		return true;
 	}
 
+	/// Return half the length of diagonal line of the bounding box
+	float GetRadius() const
+	{
+		return (Max - Min).norm() * 0.5f;
+	}
+
 	/// Return a string representation of the bounding box
 	std::string ToString() const
 	{
