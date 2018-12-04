@@ -2,131 +2,92 @@
 
 NAMESPACE_BEGIN
 
-DiscretePDF1D::DiscretePDF1D(float * pDatas, int nEntries, bool bNormalize)
+DiscretePDF1D::DiscretePDF1D(const float * pFunc, int Count) :
+	m_Func(pFunc, pFunc + Count), m_Cdf(Count + 1)
 {
-	Reserve(nEntries);
-	Clear();
-
-	for (int i = 0; i < nEntries; i++)
+	m_Cdf[0] = 0.0f;
+	for (int i = 1; i < Count + 1; i++)
 	{
-		Append(pDatas[i]);
+		m_Cdf[i] = m_Cdf[i - 1] + m_Func[i - 1] / Count;
 	}
 
-	if (bNormalize)
+	m_FuncIntegral = m_Cdf[Count];
+
+	if (m_FuncIntegral == 0.0f)
 	{
-		Normalize();
-	}
-}
-
-DiscretePDF1D::DiscretePDF1D(size_t nEntries)
-{
-	Reserve(nEntries);
-	Clear();
-}
-
-void DiscretePDF1D::Clear()
-{
-	m_Cdf.clear();
-	m_Cdf.push_back(0.0f);
-	m_bNormalized = false;
-}
-
-void DiscretePDF1D::Reserve(size_t nEntries)
-{
-	m_Cdf.reserve(nEntries + 1);
-}
-
-void DiscretePDF1D::Append(float PdfValue)
-{
-	m_Cdf.push_back(m_Cdf[m_Cdf.size() - 1] + PdfValue);
-}
-
-size_t DiscretePDF1D::Size() const
-{
-	return m_Cdf.size() - 1;
-}
-
-float DiscretePDF1D::operator[](size_t iEntry) const
-{
-	return m_Cdf[iEntry + 1] - m_Cdf[iEntry];
-}
-
-bool DiscretePDF1D::IsNormalized() const
-{
-	return m_bNormalized;
-}
-
-float DiscretePDF1D::GetSum() const
-{
-	return m_Sum;
-}
-
-float DiscretePDF1D::GetNormalization() const
-{
-	return m_Normalization;
-}
-
-float DiscretePDF1D::Normalize()
-{
-	m_Sum = m_Cdf[m_Cdf.size() - 1];
-	if (m_Sum > 0)
-	{
-		m_Normalization = 1.0f / m_Sum;
-		for (size_t i = 1; i < m_Cdf.size(); ++i)
+		for (int i = 1; i < Count + 1; i++)
 		{
-			m_Cdf[i] *= m_Normalization;
+			m_Cdf[i] = float(i) / float(Count);
 		}
-		m_Cdf[m_Cdf.size() - 1] = 1.0f;
-		m_bNormalized = true;
 	}
 	else
 	{
-		m_Normalization = 0.0f;
-	}
-	return m_Sum;
-}
-
-size_t DiscretePDF1D::Sample(float SampleValue) const
-{
-	auto Iter = std::lower_bound(m_Cdf.begin(), m_Cdf.end(), SampleValue);
-	size_t Index = size_t(std::max(ptrdiff_t(0), Iter - m_Cdf.begin() - 1));
-	return std::min(Index, m_Cdf.size() - 2);
-}
-
-size_t DiscretePDF1D::Sample(float SampleValue, float & Pdf) const
-{
-	size_t Index = Sample(SampleValue);
-	Pdf = operator[](Index);
-	return Index;
-}
-
-size_t DiscretePDF1D::SampleReuse(float & SampleValue) const
-{
-	size_t Index = Sample(SampleValue);
-	SampleValue = (SampleValue - m_Cdf[Index]) / (m_Cdf[Index + 1] - m_Cdf[Index]);
-	return Index;
-}
-
-size_t DiscretePDF1D::SampleReuse(float & SampleValue, float & Pdf) const
-{
-	size_t Index = Sample(SampleValue, Pdf);
-	SampleValue = (SampleValue - m_Cdf[Index]) / (m_Cdf[Index + 1] - m_Cdf[Index]);
-	return Index;
-}
-
-std::string DiscretePDF1D::ToString() const
-{
-	std::string Result = tfm::format("DiscretePDF1D[sum = %f, normalized = %f, pdf = {", m_Sum, m_bNormalized);
-
-	for (size_t i = 0; i < m_Cdf.size(); ++i)
-	{
-		Result += std::to_string(operator[](i));
-		if (i != m_Cdf.size() - 1)
+		for (int i = 1; i < Count + 1; i++)
 		{
-			Result += ", ";
+			m_Cdf[i] /= m_FuncIntegral;
 		}
 	}
-	return Result + "}]";
+}
+
+int DiscretePDF1D::Count() const
+{
+	return int(m_Func.size());
+}
+
+float DiscretePDF1D::SampleContinuous(float Sample, float * pPdf, int * pIdx) const
+{
+	auto Iter = std::lower_bound(m_Cdf.begin(), m_Cdf.end(), Sample);
+	int Idx = int(std::min(
+		size_t(std::max(std::ptrdiff_t(0), Iter - m_Cdf.begin() - 1)), 
+		m_Cdf.size() - 2
+	));
+
+	if (pIdx != nullptr)
+	{
+		*pIdx = Idx;
+	}
+
+	float Du = Sample - m_Cdf[Idx];
+	if (m_Cdf[Idx + 1] - m_Cdf[Idx] > 0.0f)
+	{
+		Du /= (m_Cdf[Idx + 1] - m_Cdf[Idx]);
+	}
+	assert(!std::isnan(Du));
+
+	if (pPdf != nullptr)
+	{
+		*pPdf = m_Func[Idx] / m_FuncIntegral;
+	}
+
+	return (float(Idx) + Du) / float(Count());
+}
+
+int DiscretePDF1D::SampleDiscrete(float Sample, float * pPdf, float * pSampleRemapped) const
+{
+	auto Iter = std::lower_bound(m_Cdf.begin(), m_Cdf.end(), Sample);
+	int Idx = int(std::min(
+		size_t(std::max(std::ptrdiff_t(0), Iter - m_Cdf.begin() - 1)),
+		m_Cdf.size() - 2
+	));
+
+	if (pPdf != nullptr)
+	{
+		*pPdf = m_Func[Idx] / (m_FuncIntegral * float(Count()));
+	}
+
+	if (pSampleRemapped != nullptr)
+	{
+		*pSampleRemapped = (Sample - m_Cdf[Idx]) / (m_Cdf[Idx + 1] - m_Cdf[Idx]);
+		assert(*pSampleRemapped <= 1.0f && *pSampleRemapped >= 0.0f);
+	}
+
+	return Idx;
+}
+
+float DiscretePDF1D::Pdf(int Index) const
+{
+	assert(Index >= 0 && Index < Count());
+	return m_Func[Index] / (m_FuncIntegral * float(Count()));
 }
 
 DiscretePDF2D::DiscretePDF2D(float * pDatas, int Width, int Height)
@@ -134,56 +95,40 @@ DiscretePDF2D::DiscretePDF2D(float * pDatas, int Width, int Height)
 	m_pConditionalRow.reserve(Height);
 	for (int i = 0; i < Height; i++)
 	{
-		m_pConditionalRow.push_back(std::make_unique<DiscretePDF1D>(&pDatas[i * Width], Width));
+		m_pConditionalRow.emplace_back(new DiscretePDF1D(&pDatas[i * Width], Width));
 	}
 
 	std::vector<float> Marginal;
 	Marginal.reserve(Height);
 	for (int i = 0; i < Height; i++)
 	{
-		Marginal.push_back(m_pConditionalRow[i]->GetSum());
+		Marginal.push_back(m_pConditionalRow[i]->m_FuncIntegral);
 	}
-
-	m_pMarginalCol.reset(new DiscretePDF1D(Marginal.data(), int(Marginal.size())));
+	m_pMarginalCol.reset(new DiscretePDF1D(Marginal.data(), Height));
 }
 
-float DiscretePDF2D::Pdf(Point2i Idx) const
-{
-	float PdfY = (*m_pMarginalCol)[Idx.y()];
-	float PdfX = (*m_pConditionalRow[Idx.y()])[Idx.x()];
-	return PdfX * PdfY;
-}
-
-Point2i DiscretePDF2D::Sample(Point2f Sample) const
-{
-	size_t IdxY = m_pMarginalCol->Sample(Sample.y());
-	size_t IdxX = m_pConditionalRow[IdxY]->Sample(Sample.x());
-	return Point2i(int(IdxX), int(IdxY));
-}
-
-Point2i DiscretePDF2D::Sample(Point2f Sample, float & Pdf) const
+Point2f DiscretePDF2D::SampleContinuous(Point2f Sample, float * pPdf, Point2i * Idx) const
 {
 	float PdfX, PdfY;
-	size_t IdxY = m_pMarginalCol->Sample(Sample.y(), PdfY);
-	size_t IdxX = m_pConditionalRow[IdxY]->Sample(Sample.x(), PdfX);
-	Pdf = PdfX * PdfY;
-	return Point2i(int(IdxX), int(IdxY));
+	int IdxX, IdxY;
+	float Dy = m_pMarginalCol->SampleContinuous(Sample.y(), &PdfY, &IdxY);
+	float Dx = m_pConditionalRow[IdxY]->SampleContinuous(Sample.x(), &PdfX, &IdxX);
+	if (pPdf != nullptr)
+	{
+		*pPdf = PdfX * PdfY;
+	}
+	if (Idx != nullptr)
+	{
+		*Idx = Point2i(IdxX, IdxY);
+	}
+	return Point2f(Dx, Dy);
 }
 
-Point2i DiscretePDF2D::SampleReuse(Point2f & Sample) const
+float DiscretePDF2D::Pdf(Point2f Point) const
 {
-	size_t IdxY = m_pMarginalCol->SampleReuse(Sample.y());
-	size_t IdxX = m_pConditionalRow[IdxY]->SampleReuse(Sample.x());
-	return Point2i(int(IdxX), int(IdxY));
-}
-
-Point2i DiscretePDF2D::SampleReuse(Point2f & Sample, float & Pdf) const
-{
-	float PdfX, PdfY;
-	size_t IdxY = m_pMarginalCol->SampleReuse(Sample.y(), PdfY);
-	size_t IdxX = m_pConditionalRow[IdxY]->SampleReuse(Sample.x(), PdfX);
-	Pdf = PdfX * PdfY;
-	return Point2i(int(IdxX), int(IdxY));
+	int X = Clamp(int(Point.x() * m_pConditionalRow[0]->Count()), 0, m_pConditionalRow[0]->Count() - 1);
+	int Y = Clamp(int(Point.y() * m_pMarginalCol->Count()), 0, m_pMarginalCol->Count() - 1);
+	return m_pConditionalRow[Y]->m_Func[X] / m_pMarginalCol->m_FuncIntegral;
 }
 
 NAMESPACE_END

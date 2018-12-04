@@ -26,6 +26,7 @@ protected:
 	std::string m_Name;
 	float m_Scale;
 	Transform m_ToWorld;
+	Transform m_ToLocal;
 	Bitmap * m_pEnvironmentMap = nullptr;
 	DiscretePDF2D * m_pPdf = nullptr;
 };

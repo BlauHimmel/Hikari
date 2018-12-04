@@ -183,15 +183,17 @@ void Mesh::Activate()
 		m_pBSDF = (BSDF*)(ObjectFactory::CreateInstance(DEFAULT_MESH_BSDF, PropertyList()));
 	}
 
+	std::vector<float> Areas(GetTriangleCount());
 	// Create the pdf (defined by the area of each triangle)
 	for (uint32_t i = 0; i < GetTriangleCount(); i++)
 	{
 		float Area = SurfaceArea(i);
-		m_PDF.Append(Area);
+		Areas[i] = Area;
 		m_MeshArea += Area;
 	}
-	m_PDF.Normalize();
 	m_InvMeshArea = 1.0f / m_MeshArea;
+
+	m_pPDF.reset(new DiscretePDF1D(Areas.data(), int(Areas.size())));
 }
 
 uint32_t Mesh::GetTriangleCount() const
@@ -206,7 +208,7 @@ uint32_t Mesh::GetVertexCount() const
 
 void Mesh::SamplePosition(float Sample1D, const Point2f & Sample2D, Point3f & P, Normal3f & N) const
 {
-	size_t TriangleIdx = m_PDF.Sample(Sample1D);
+	size_t TriangleIdx = m_pPDF->SampleDiscrete(Sample1D);
 
 	// Ref : https://blog.csdn.net/noahzuo/article/details/52886447 or <<Graphics Gems>>
 	float SqrY = Sample2D.y();
