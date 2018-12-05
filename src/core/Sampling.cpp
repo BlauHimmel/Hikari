@@ -98,6 +98,12 @@ Vector3f Sampling::SquareToCosineHemisphere(const Point2f & Sample)
 {
 	Point2f Disk = SquareToUniformDisk(Sample);
 	float Z = std::sqrt(1.0f - Disk.x() * Disk.x() - Disk.y() * Disk.y());
+
+	if (std::isnan(Z))
+	{
+		Z = 0.0f;
+	}
+
 	return Vector3f(Disk.x(), Disk.y(), Z);
 }
 

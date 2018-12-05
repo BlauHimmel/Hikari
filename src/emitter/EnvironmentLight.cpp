@@ -90,8 +90,9 @@ Color3f EnvironmentLight::Eval(const EmitterQueryRecord & Record) const
 	Point2f Spherical = SphericalCoordinates(m_ToLocal * Record.Wi);
 	float Theta = Spherical.x();
 	float Phi = Spherical.y();
-	float X = Phi / float(2.0 * M_PI) * m_pEnvironmentMap->cols();
-	float Y = m_pEnvironmentMap->rows() - Theta / float(M_PI) * m_pEnvironmentMap->rows();
+	float X = Clamp(Phi / float(2.0 * M_PI) * m_pEnvironmentMap->cols(), 0.0f, float(m_pEnvironmentMap->cols() - 1.0f));
+	float Y = Clamp(m_pEnvironmentMap->rows() - Theta / float(M_PI) * m_pEnvironmentMap->rows(), 0.0f, float(m_pEnvironmentMap->rows() - 1.0f));
+	
 	return m_pEnvironmentMap->coeff(int(Y), int(X)) * m_Scale;
 }
 
