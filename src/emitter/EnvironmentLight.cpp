@@ -67,8 +67,12 @@ Color3f EnvironmentLight::Sample(EmitterQueryRecord & Record, const Point2f & Sa
 	Record.N = -Record.Wi;
 	Record.pEmitter = this;
 	Record.P = Record.Ref + Record.Wi * Record.Distance;
-
-	return m_pEnvironmentMap->coeff(Idx.y(), Idx.x()) * m_Scale / Record.Pdf;
+	Color3f Radiance = m_pEnvironmentMap->coeff(Idx.y(), Idx.x());
+	if (!Radiance.IsValid())
+	{
+		return Color3f(0.0f);
+	}
+	return Radiance * m_Scale / Record.Pdf;
 }
 
 float EnvironmentLight::Pdf(const EmitterQueryRecord & Record) const
@@ -82,7 +86,7 @@ float EnvironmentLight::Pdf(const EmitterQueryRecord & Record) const
 	{
 		return 0.0f;
 	}
-	return m_pPdf->Pdf(Point2f(Phi / float(2.0 * M_PI), 1.0f - Theta / float(M_PI))) / (2.0f * float(M_PI * M_PI) * SinTheta);
+	return m_pPdf->Pdf(Point2f(Phi / float(2.0 * M_PI), Theta / float(M_PI))) / (2.0f * float(M_PI * M_PI) * SinTheta);
 }
 
 Color3f EnvironmentLight::Eval(const EmitterQueryRecord & Record) const
@@ -91,9 +95,13 @@ Color3f EnvironmentLight::Eval(const EmitterQueryRecord & Record) const
 	float Theta = Spherical.x();
 	float Phi = Spherical.y();
 	float X = Clamp(Phi / float(2.0 * M_PI) * m_pEnvironmentMap->cols(), 0.0f, float(m_pEnvironmentMap->cols() - 1.0f));
-	float Y = Clamp(m_pEnvironmentMap->rows() - Theta / float(M_PI) * m_pEnvironmentMap->rows(), 0.0f, float(m_pEnvironmentMap->rows() - 1.0f));
-	
-	return m_pEnvironmentMap->coeff(int(Y), int(X)) * m_Scale;
+	float Y = Clamp(Theta / float(M_PI) * m_pEnvironmentMap->rows(), 0.0f, float(m_pEnvironmentMap->rows() - 1.0f));
+	Color3f Radiance = m_pEnvironmentMap->coeff(int(Y), int(X));
+	if (!Radiance.IsValid())
+	{
+		return Color3f(0.0f);
+	}
+	return Radiance * m_Scale;
 }
 
 std::string EnvironmentLight::ToString() const
