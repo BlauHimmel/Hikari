@@ -1,0 +1,2 @@
+# Hikari
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6f6e0daae63443b38dce105843629ef5)](https://app.codacy.com/app/BlauHimmel/Hikari?utm_source=github.com&utm_medium=referral&utm_content=BlauHimmel/Hikari&utm_campaign=Badge_Grade_Settings)
