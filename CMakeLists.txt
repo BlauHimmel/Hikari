@@ -98,12 +98,6 @@ endif()
 # add extension libraries
 add_subdirectory(ext)
 
-# vulkan
-find_package(Vulkan)
-if(Vulkan_FOUND)
-    include_directories(${Vulkan_INCLUDE_DIRS})
-endif()
-
 set(
         EXTENSION_INCLUDE_DIRS
 
@@ -131,7 +125,6 @@ set(
         IlmImf
         pugixml
         glog
-        ${Vulkan_LIBRARIES}
 )
 
 #########################################################################
