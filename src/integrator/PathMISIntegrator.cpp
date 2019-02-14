@@ -78,13 +78,13 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		{
 			EmitterQueryRecord EmitterRecord(Isect.P);
 
-			Color3f Ldirect = pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
-			PdfLightEMS = EmitterRecord.Pdf;
-
 			if (pEmitter->GetEmitterType() == EEmitterType::EEnvironment)
 			{
 				EmitterRecord.Distance = pScene->GetBoundingBox().GetRadius();
 			}
+
+			Color3f Ldirect = pEmitter->Sample(EmitterRecord, pSampler->Next2D(), pSampler->Next1D());
+			PdfLightEMS = EmitterRecord.Pdf;
 
 			if (!Ldirect.isZero())
 			{
