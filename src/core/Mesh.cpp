@@ -16,11 +16,17 @@ Triangle::Triangle(Mesh * pMesh, uint32_t * pFacet, uint32_t iFacet) :
 
 void Triangle::SamplePosition(const Point2f & Sample, Point3f & P, Normal3f & N) const
 {
-	// Ref : https://blog.csdn.net/noahzuo/article/details/52886447 or <<Graphics Gems>>
-	float SqrY = Sample.y();
-	float Alpha = 1.0f - SqrY;
-	float Beta = (1.0f - Sample.x()) * SqrY;
-	float Gamma = Sample.x() * SqrY;
+	/** This method is correct theoretically, but won't pass test */
+	//// Ref : https://blog.csdn.net/noahzuo/article/details/52886447 or <<Graphics Gems>>
+	//float SqrY = Sample.y();
+	//float Alpha = 1.0f - SqrY;
+	//float Beta = (1.0f - Sample.x()) * SqrY;
+	//float Gamma = Sample.x() * SqrY;
+
+	float SqrOneMinusEpsilon1 = std::sqrt(1.0f - Sample.x());
+	float Alpha = 1.0f - SqrOneMinusEpsilon1;
+	float Beta = Sample.y() * SqrOneMinusEpsilon1;
+	float Gamma = 1.0f - Alpha - Beta;
 
 	const MatrixXu & Indices = m_pMesh->GetIndices();
 	const MatrixXf & Positions = m_pMesh->GetVertexPositions();
@@ -210,11 +216,17 @@ void Mesh::SamplePosition(float Sample1D, const Point2f & Sample2D, Point3f & P,
 {
 	size_t TriangleIdx = m_pPDF->SampleDiscrete(Sample1D);
 
-	// Ref : https://blog.csdn.net/noahzuo/article/details/52886447 or <<Graphics Gems>>
-	float SqrY = Sample2D.y();
-	float Alpha = 1.0f - SqrY;
-	float Beta = (1.0f - Sample2D.x()) * SqrY;
-	float Gamma = Sample2D.x() * SqrY;
+	/** This method is correct theoretically, but won't pass test */
+	//// Ref : https://blog.csdn.net/noahzuo/article/details/52886447 or <<Graphics Gems>>
+	//float SqrY = Sample2D.y();
+	//float Alpha = 1.0f - SqrY;
+	//float Beta = (1.0f - Sample2D.x()) * SqrY;
+	//float Gamma = Sample2D.x() * SqrY;
+
+	float SqrOneMinusEpsilon1 = std::sqrt(1.0f - Sample2D.x());
+	float Alpha = 1.0f - SqrOneMinusEpsilon1;
+	float Beta = Sample2D.y() * SqrOneMinusEpsilon1;
+	float Gamma = 1.0f - Alpha - Beta;
 
 	uint32_t Idx0 = m_F(0, TriangleIdx), Idx1 = m_F(1, TriangleIdx), Idx2 = m_F(2, TriangleIdx);
 	Point3f P0 = m_V.col(Idx0), P1 = m_V.col(Idx1), P2 = m_V.col(Idx2);
