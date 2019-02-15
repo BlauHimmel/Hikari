@@ -19,7 +19,7 @@ Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample)
 	Record.Measure = EMeasure::EDiscrete;
 
 	float CosThetaI = Frame::CosTheta(Record.Wi);
-	float FresnelTerm = Fresnel(CosThetaI, m_ExtIOR, m_IntIOR);
+	float FresnelTerm = FresnelDielectric(CosThetaI, m_ExtIOR, m_IntIOR);
 
 	float ExtIOR = m_ExtIOR;
 	float IntIOR = m_IntIOR;

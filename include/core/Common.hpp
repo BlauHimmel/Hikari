@@ -491,7 +491,10 @@ Point2f SphericalCoordinates(const Vector3f & Dir);
 * \param IntIOR
 *      Refractive index of the interior
 */
-float Fresnel(float CosThetaI, float ExtIOR, float IntIOR);
+float FresnelDielectric(float CosThetaI, float ExtIOR, float IntIOR);
+
+/// Fresnel coefficient for conductor material. \Ref FresnelDielectric()
+Vector3f FresnelConductor(float CosThetaI, const Vector3f & ExtIOR, const Vector3f & IntIOR, const Vector3f & K);
 
 /// Complete the set {a} to an orthonormal base
 void CoordinateSystem(const Vector3f & Va, Vector3f & Vb, Vector3f & Vc);

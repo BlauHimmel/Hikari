@@ -225,7 +225,7 @@ Point2f SphericalCoordinates(const Vector3f & Dir)
 	return Result;
 }
 
-float Fresnel(float CosThetaI, float ExtIOR, float IntIOR)
+float FresnelDielectric(float CosThetaI, float ExtIOR, float IntIOR)
 {
 	float EtaI = ExtIOR, EtaT = IntIOR;
 
@@ -234,32 +234,61 @@ float Fresnel(float CosThetaI, float ExtIOR, float IntIOR)
 		return 0.0f;
 	}
 
+	CosThetaI = (CosThetaI < -1.0f ? -1.0f : (CosThetaI > 1.0f ? 1.0f : CosThetaI));
+
 	/* Swap the indices of refraction if the interaction starts
 	at the inside of the object */
 	if (CosThetaI < 0.0f)
 	{
 		std::swap(EtaI, EtaT);
-		CosThetaI = -CosThetaI;
+		CosThetaI = std::abs(CosThetaI);
 	}
 
 	/* Using Snell's law, calculate the squared sine of the
 	angle between the normal and the transmitted ray */
 	float Eta = EtaI / EtaT;
-	float SinThetaTSqr = Eta * Eta * (1.0f - CosThetaI * CosThetaI);
+	float SinThetaTSqr = Eta * Eta * std::max(0.0f, 1.0f - CosThetaI * CosThetaI);
 
 	if (SinThetaTSqr > 1.0f)
 	{
 		return 1.0f;  /* Total internal reflection! */
 	}
 
-	float CosThetaT = std::sqrt(1.0f - SinThetaTSqr);
+	float CosThetaT = std::sqrt(std::max(0.0f, 1.0f - SinThetaTSqr));
 
 	float Rs = (EtaI * CosThetaI - EtaT * CosThetaT)
 		/ (EtaI * CosThetaI + EtaT * CosThetaT);
 	float Rp = (EtaT * CosThetaI - EtaI * CosThetaT)
 		/ (EtaT * CosThetaI + EtaI * CosThetaT);
 
-	return (Rs * Rs + Rp * Rp) / 2.0f;
+	return (Rs * Rs + Rp * Rp) * 0.5f;
+}
+
+Vector3f FresnelConductor(float CosThetaI, const Vector3f & ExtIOR, const Vector3f & IntIOR, const Vector3f & K)
+{
+	CosThetaI = (CosThetaI < -1.0f ? -1.0f : (CosThetaI > 1.0f ? 1.0f : CosThetaI));
+
+	Vector3f EtaI = ExtIOR, EtaT = IntIOR;
+	Vector3f Eta = EtaT.cwiseQuotient(EtaI);
+	Vector3f EtaK = K.cwiseQuotient(EtaI);
+
+	float CosThetaI2 = CosThetaI * CosThetaI;
+	float SinThetaI2 = 1.0f - CosThetaI2;
+	Vector3f Eta2 = Eta * Eta;
+	Vector3f EtaK2 = EtaK * EtaK;
+
+	Vector3f T0 = Eta2 - EtaK2 - Vector3f(SinThetaI2);
+	Vector3f A2PlusB2 = (T0 * T0 + 4.0f * Eta2 * EtaK2).cwiseSqrt();
+	Vector3f T1 = A2PlusB2 + Vector3f(CosThetaI2);
+	Vector3f A = (0.5f * (A2PlusB2 + T0)).cwiseSqrt();
+	Vector3f T2 = 2.0f * CosThetaI * A;
+	Vector3f Rs = (T1 - T2).cwiseQuotient(T1 + T2);
+
+	Vector3f T3 = CosThetaI2 * A2PlusB2 + Vector3f(SinThetaI2 * SinThetaI2);
+	Vector3f T4 = T2 * SinThetaI2;
+	Vector3f Rp = Rs * (T3 - T4).cwiseQuotient(T3 + T4);
+
+	return 0.5f * (Rp + Rs);
 }
 
 void CoordinateSystem(const Vector3f & Va, Vector3f & Vb, Vector3f & Vc)
