@@ -123,6 +123,11 @@
 #define XML_BSDF_MICROFACET_INT_IOR              "intIOR"
 #define XML_BSDF_MICROFACET_EXT_IOR              "extIOR"
 #define XML_BSDF_MICROFACET_KD                   "kd"
+#define XML_BSDF_CONDUCTOR                       "conductor"
+#define XML_BSDF_CONDUCTOR_INT_IOR               "intIOR"
+#define XML_BSDF_CONDUCTOR_EXT_IOR               "extIOR"
+#define XML_BSDF_CONDUCTOR_K                     "k"
+#define XML_BSDF_CONDUCTOR_KS                    "ks"
 
 #define XML_MEDIUM                               "medium"
 
@@ -193,6 +198,9 @@
 #define DEFAULT_BSDF_MICROFACET_INT_IOR           1.5046f /* (default: BK7 borosilicate optical glass) */
 #define DEFAULT_BSDF_MICROFACET_EXT_IOR           1.000277f /* Air */
 #define DEFAULT_BSDF_MICROFACET_ALBEDO            Color3f(0.5f)
+#define DEFAULT_BSDF_CONDUCTOR_INT_IOR            1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_CONDUCTOR_EXT_IOR            1.000277f /* Air */
+#define DEFAULT_BSDF_CONDUCTOR_K                  Color3f(1.0f)
 
 #define DEFAULT_FILTER_GAUSSIAN_RADIUS            2.0f
 #define DEFAULT_FILTER_GAUSSIAN_STDDEV            0.5f
@@ -494,7 +502,7 @@ Point2f SphericalCoordinates(const Vector3f & Dir);
 float FresnelDielectric(float CosThetaI, float ExtIOR, float IntIOR);
 
 /// Fresnel coefficient for conductor material. \Ref FresnelDielectric()
-Vector3f FresnelConductor(float CosThetaI, const Vector3f & ExtIOR, const Vector3f & IntIOR, const Vector3f & K);
+Color3f FresnelConductor(float CosThetaI, float ExtIOR, float IntIOR, const Color3f & K);
 
 /// Complete the set {a} to an orthonormal base
 void CoordinateSystem(const Vector3f & Va, Vector3f & Vb, Vector3f & Vc);

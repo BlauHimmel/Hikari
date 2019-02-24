@@ -264,29 +264,29 @@ float FresnelDielectric(float CosThetaI, float ExtIOR, float IntIOR)
 	return (Rs * Rs + Rp * Rp) * 0.5f;
 }
 
-Vector3f FresnelConductor(float CosThetaI, const Vector3f & ExtIOR, const Vector3f & IntIOR, const Vector3f & K)
+Color3f FresnelConductor(float CosThetaI, float ExtIOR, float IntIOR, const Color3f & K)
 {
 	CosThetaI = (CosThetaI < -1.0f ? -1.0f : (CosThetaI > 1.0f ? 1.0f : CosThetaI));
 
-	Vector3f EtaI = ExtIOR, EtaT = IntIOR;
-	Vector3f Eta = EtaT.cwiseQuotient(EtaI);
-	Vector3f EtaK = K.cwiseQuotient(EtaI);
+	Color3f EtaI = ExtIOR, EtaT = IntIOR;
+	Color3f Eta = EtaT.cwiseQuotient(EtaI);
+	Color3f EtaK = K.cwiseQuotient(EtaI);
 
 	float CosThetaI2 = CosThetaI * CosThetaI;
 	float SinThetaI2 = 1.0f - CosThetaI2;
-	Vector3f Eta2 = Eta * Eta;
-	Vector3f EtaK2 = EtaK * EtaK;
+	Color3f Eta2 = Eta * Eta;
+	Color3f EtaK2 = EtaK * EtaK;
 
-	Vector3f T0 = Eta2 - EtaK2 - Vector3f(SinThetaI2);
-	Vector3f A2PlusB2 = (T0 * T0 + 4.0f * Eta2 * EtaK2).cwiseSqrt();
-	Vector3f T1 = A2PlusB2 + Vector3f(CosThetaI2);
-	Vector3f A = (0.5f * (A2PlusB2 + T0)).cwiseSqrt();
-	Vector3f T2 = 2.0f * CosThetaI * A;
-	Vector3f Rs = (T1 - T2).cwiseQuotient(T1 + T2);
+	Color3f T0 = Eta2 - EtaK2 - Color3f(SinThetaI2);
+	Color3f A2PlusB2 = (T0 * T0 + 4.0f * Eta2 * EtaK2).cwiseSqrt();
+	Color3f T1 = A2PlusB2 + Color3f(CosThetaI2);
+	Color3f A = (0.5f * (A2PlusB2 + T0)).cwiseSqrt();
+	Color3f T2 = 2.0f * CosThetaI * A;
+	Color3f Rs = (T1 - T2).cwiseQuotient(T1 + T2);
 
-	Vector3f T3 = CosThetaI2 * A2PlusB2 + Vector3f(SinThetaI2 * SinThetaI2);
-	Vector3f T4 = T2 * SinThetaI2;
-	Vector3f Rp = Rs * (T3 - T4).cwiseQuotient(T3 + T4);
+	Color3f T3 = CosThetaI2 * A2PlusB2 + Color3f(SinThetaI2 * SinThetaI2);
+	Color3f T4 = T2 * SinThetaI2;
+	Color3f Rp = Rs * (T3 - T4).cwiseQuotient(T3 + T4);
 
 	return 0.5f * (Rp + Rs);
 }
