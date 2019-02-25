@@ -94,6 +94,12 @@ Color3f EnvironmentLight::Eval(const EmitterQueryRecord & Record) const
 	Point2f Spherical = SphericalCoordinates(m_ToLocal * Record.Wi);
 	float Theta = Spherical.x();
 	float Phi = Spherical.y();
+
+	if (std::isnan(Theta) || std::isnan(Phi))
+	{
+		return Color3f(0.0f);
+	}
+
 	float X = Clamp(Phi / float(2.0 * M_PI) * m_pEnvironmentMap->cols(), 0.0f, float(m_pEnvironmentMap->cols() - 1.0f));
 	float Y = Clamp(Theta / float(M_PI) * m_pEnvironmentMap->rows(), 0.0f, float(m_pEnvironmentMap->rows() - 1.0f));
 	Color3f Radiance = m_pEnvironmentMap->coeff(int(Y), int(X));
