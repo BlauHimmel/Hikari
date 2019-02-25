@@ -21,6 +21,7 @@ public:
 
 protected:
 	float m_IntIOR, m_ExtIOR;
+	Color3f m_KsReflect, m_KsRefract;
 };
 
 NAMESPACE_END

@@ -12,6 +12,12 @@ DielectricBSDF::DielectricBSDF(const PropertyList & PropList)
 
 	/* Exterior IOR */
 	m_ExtIOR = PropList.GetFloat(XML_BSDF_DIELECTRIC_EXT_IOR, DEFAULT_BSDF_DIELECTRIC_EXT_IOR);
+
+	/* Specular reflectance */
+	m_KsReflect = PropList.GetColor(XML_BSDF_DIELECTRIC_KS_REFLECT, DEFAULT_BSDF_DIELECTRIC_KS_REFLECT);
+
+	/* Specular transmittance */
+	m_KsRefract = PropList.GetColor(XML_BSDF_DIELECTRIC_KS_REFRACT, DEFAULT_BSDF_DIELECTRIC_KS_REFRACT);
 }
 
 Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
@@ -37,6 +43,8 @@ Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample)
 	{
 		Record.Wo = Vector3f(-Record.Wi.x(), -Record.Wi.y(), Record.Wi.z());
 		Record.Eta = 1.0f;
+
+		return m_KsReflect;
 	}
 	// Refraction
 	else
@@ -45,9 +53,10 @@ Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample)
 		float SinThetaT2 = Eta * Eta * (1.0f - CosThetaI * CosThetaI);
 		Record.Wo = Eta * -1.0f * Record.Wi + N * (Eta * CosThetaI - std::sqrt(1.0f - SinThetaT2));
 		Record.Eta = 1.0f / Eta;
-	}
 
-	return Color3f(1.0f);
+		float Factor = Eta * Eta;
+		return m_KsRefract * Factor;
+	}
 }
 
 Color3f DielectricBSDF::Eval(const BSDFQueryRecord & Record) const

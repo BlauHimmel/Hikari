@@ -17,7 +17,7 @@ ConductorBSDF::ConductorBSDF(const PropertyList & PropList)
 	m_K = PropList.GetColor(XML_BSDF_CONDUCTOR_K, DEFAULT_BSDF_CONDUCTOR_K);
 
 	/* Speculer reflectance  */
-	m_Ks = PropList.GetColor(XML_BSDF_CONDUCTOR_KS);
+	m_Ks = PropList.GetColor(XML_BSDF_CONDUCTOR_KS, DEFAULT_BSDF_CONDUCTOR_KS);
 }
 
 Color3f ConductorBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
