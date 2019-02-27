@@ -116,7 +116,7 @@
 #define XML_BSDF_DIELECTRIC_INT_IOR              "intIOR"
 #define XML_BSDF_DIELECTRIC_EXT_IOR              "extIOR"
 #define XML_BSDF_DIELECTRIC_KS_REFLECT           "ksReflect"
-#define XML_BSDF_DIELECTRIC_KS_REFRACT           "ksrefract"
+#define XML_BSDF_DIELECTRIC_KS_REFRACT           "ksRefract"
 #define XML_BSDF_DIFFUSE                         "diffuse"
 #define XML_BSDF_DIFFUSE_ALBEDO                  "albedo"
 #define XML_BSDF_MIRROR                          "mirror"
@@ -130,6 +130,12 @@
 #define XML_BSDF_CONDUCTOR_EXT_IOR               "extIOR"
 #define XML_BSDF_CONDUCTOR_K                     "k"
 #define XML_BSDF_CONDUCTOR_KS                    "ks"
+#define XML_BSDF_PLASTIC                         "plastic"
+#define XML_BSDF_PLASTIC_INT_IOR                 "intIOR"
+#define XML_BSDF_PLASTIC_EXT_IOR                 "extIOR"
+#define XML_BSDF_PLASTIC_KS                      "ks"
+#define XML_BSDF_PLASTIC_KD                      "kd"
+#define XML_BSDF_PLASTIC_NONLINEAR               "nonlinear"
 
 #define XML_MEDIUM                               "medium"
 
@@ -206,6 +212,11 @@
 #define DEFAULT_BSDF_CONDUCTOR_EXT_IOR            1.000277f /* Air */
 #define DEFAULT_BSDF_CONDUCTOR_K                  Color3f(1.0f)
 #define DEFAULT_BSDF_CONDUCTOR_KS                 Color3f(1.0f)
+#define DEFAULT_BSDF_PLASTIC_INT_IOR              1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_PLASTIC_EXT_IOR              1.000277f /* Air */
+#define DEFAULT_BSDF_PLASTIC_KS                   Color3f(1.0f)
+#define DEFAULT_BSDF_PLASTIC_KD                   Color3f(0.5f)
+#define DEFAULT_BSDF_PLASTIC_NONLINEAR            false
 
 #define DEFAULT_FILTER_GAUSSIAN_RADIUS            2.0f
 #define DEFAULT_FILTER_GAUSSIAN_STDDEV            0.5f
@@ -497,6 +508,8 @@ float FresnelDielectric(float CosThetaI, float Eta, float InvEta, float & CosThe
 
 /// Fresnel coefficient for conductor material. Eta = IntIOR / ExtIOR, EtaK = K / ExtIOR
 Color3f FresnelConductor(float CosThetaI, const Color3f & Eta, const Color3f & EtaK);
+
+float ApproxFresnelDiffuseReflectance(float Eta);
 
 /// Complete the set {a} to an orthonormal base
 void CoordinateSystem(const Vector3f & Va, Vector3f & Vb, Vector3f & Vc);

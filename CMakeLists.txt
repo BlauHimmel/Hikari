@@ -148,6 +148,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/DiffuseBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/MicrofacetBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/MirrorBSDF.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/PlasticBSDF.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/camera/PerspectiveCamera.cpp
         
@@ -216,6 +217,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/DiffuseBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/MicrofacetBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/MirrorBSDF.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/PlasticBSDF.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/camera/PerspectiveCamera.hpp
         

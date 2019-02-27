@@ -113,7 +113,7 @@ Color3f EnvironmentLight::Eval(const EmitterQueryRecord & Record) const
 std::string EnvironmentLight::ToString() const
 {
 	return tfm::format(
-		"EnvironmentLight["
+		"EnvironmentLight[\n"
 		"  filename = %s,\n"
 		"  scale = %f,\n"
 		"  toWorld = %s\n"

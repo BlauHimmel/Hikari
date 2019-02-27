@@ -56,7 +56,13 @@ float ConductorBSDF::Pdf(const BSDFQueryRecord & Record) const
 
 std::string ConductorBSDF::ToString() const
 {
-	return tfm::format("Conductor[intIOR = %f, extIOR = %f, k = %f, ks = %s]", m_IntIOR, m_ExtIOR, m_K, m_Ks.ToString());
+	return tfm::format(
+		"Conductor[intIOR = %f, extIOR = %f, k = %f, ks = %s]", 
+		m_IntIOR,
+		m_ExtIOR,
+		m_K,
+		m_Ks.ToString()
+	);
 }
 
 NAMESPACE_END

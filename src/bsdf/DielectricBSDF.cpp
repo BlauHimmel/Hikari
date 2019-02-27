@@ -63,7 +63,13 @@ float DielectricBSDF::Pdf(const BSDFQueryRecord & Record) const
 
 std::string DielectricBSDF::ToString() const
 {
-	return tfm::format("Dielectric[intIOR = %f, extIOR = %f]", m_IntIOR, m_ExtIOR);
+	return tfm::format(
+		"Dielectric[intIOR = %f, extIOR = %f, ksReflect = %s, ksRefract = %s]", 
+		m_IntIOR, 
+		m_ExtIOR,
+		m_KsReflect.ToString(),
+		m_KsRefract.ToString()
+	);
 }
 
 NAMESPACE_END

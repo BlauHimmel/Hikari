@@ -281,6 +281,49 @@ Color3f FresnelConductor(float CosThetaI, const Color3f & Eta, const Color3f & E
 	return 0.5f * (Rp + Rs);
 }
 
+float ApproxFresnelDiffuseReflectance(float Eta)
+{
+	/** 
+	* The following code approximates the
+	* diffuse Frensel reflectance for the Eta < 1.0 and
+	* Eta > 1.0 cases. An evalution of the accuracy led
+	* to the following scheme, which cherry-picks
+	* fits from two papers where they are best.
+	*/
+	if (Eta < 1.0f)
+	{
+		/* Fit by Egan and Hilgeman (1973). Works
+		reasonably well for "normal" IOR values (<2).
+		Max rel. error in 1.0 - 1.5 : 0.1%
+		Max rel. error in 1.5 - 2   : 0.6%
+		Max rel. error in 2.0 - 5   : 9.5%
+		*/
+		return -1.4399f * (Eta * Eta) + 0.7099f * Eta + 0.6681f + 0.0636f / Eta;
+	}
+	else
+	{
+		/* Fit by d'Eon and Irving (2011)
+		*
+		* Maintains a good accuracy even for
+		* unrealistic IOR values.
+		*
+		* Max rel. error in 1.0 - 2.0   : 0.1%
+		* Max rel. error in 2.0 - 10.0  : 0.2%
+		*/
+		float InvEta = 1.0f / Eta,
+			InvEta2 = InvEta * InvEta,
+			InvEta3 = InvEta2 * InvEta,
+			InvEta4 = InvEta3 * InvEta,
+			InvEta5 = InvEta4 * InvEta;
+
+		return 0.919317f - 3.4793f * InvEta
+			+ 6.75335f * InvEta2
+			- 7.80989f * InvEta3
+			+ 4.98554f * InvEta4
+			- 1.36881f * InvEta5;
+	}
+}
+
 void CoordinateSystem(const Vector3f & Va, Vector3f & Vb, Vector3f & Vc)
 {
 	if (std::abs(Va.x()) > std::abs(Va.y()))

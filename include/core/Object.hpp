@@ -118,7 +118,7 @@ public:
 	static Object * CreateInstance(const std::string & Name, const PropertyList & PropList);
 
 private:
-	static std::map<std::string, Constructor> * m_pConstructors;
+	static std::unique_ptr<std::map<std::string, Constructor>> m_pConstructors;
 };
 
 /// Macro for registering an object constructor with the \ref ObjectFactory

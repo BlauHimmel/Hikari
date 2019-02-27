@@ -129,14 +129,12 @@ std::string MicrofacetBSDF::ToString() const
 		"  alpha = %f,\n"
 		"  intIOR = %f,\n"
 		"  extIOR = %f,\n"
-		"  kd = %s,\n"
-		"  ks = %f\n"
+		"  kd = %s\n"
 		"]",
 		m_Alpha,
 		m_IntIOR,
 		m_ExtIOR,
-		m_Kd.ToString(),
-		m_Ks
+		m_Kd.ToString()
 	);
 }
 
