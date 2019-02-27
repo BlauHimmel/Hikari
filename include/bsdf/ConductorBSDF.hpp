@@ -22,6 +22,8 @@ public:
 protected:
 	float m_IntIOR, m_ExtIOR;
 	Color3f m_K, m_Ks;
+
+	Color3f m_Eta, m_EtaK;
 };
 
 NAMESPACE_END

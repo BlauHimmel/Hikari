@@ -18,6 +18,9 @@ DielectricBSDF::DielectricBSDF(const PropertyList & PropList)
 
 	/* Specular transmittance */
 	m_KsRefract = PropList.GetColor(XML_BSDF_DIELECTRIC_KS_REFRACT, DEFAULT_BSDF_DIELECTRIC_KS_REFRACT);
+
+	m_Eta = m_IntIOR / m_ExtIOR;
+	m_InvEta = 1.0f / m_Eta;
 }
 
 Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
@@ -25,23 +28,13 @@ Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample)
 	Record.Measure = EMeasure::EDiscrete;
 
 	float CosThetaI = Frame::CosTheta(Record.Wi);
-	float FresnelTerm = FresnelDielectric(CosThetaI, m_ExtIOR, m_IntIOR);
-
-	float ExtIOR = m_ExtIOR;
-	float IntIOR = m_IntIOR;
-	Normal3f N(0.0f, 0.0f, 1.0f);
-
-	if (CosThetaI < 0.0f)
-	{
-		std::swap(ExtIOR, IntIOR);
-		N *= -1.0f;
-		CosThetaI = -CosThetaI;
-	}
+	float CosThetaT;
+	float FresnelTerm = FresnelDielectric(CosThetaI, m_Eta, m_InvEta, CosThetaT);
 
 	// Reflection
 	if (Sample.x() < FresnelTerm)
 	{
-		Record.Wo = Vector3f(-Record.Wi.x(), -Record.Wi.y(), Record.Wi.z());
+		Record.Wo = Reflect(Record.Wi);
 		Record.Eta = 1.0f;
 
 		return m_KsReflect;
@@ -49,12 +42,9 @@ Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample)
 	// Refraction
 	else
 	{
-		float Eta = ExtIOR / IntIOR;
-		float SinThetaT2 = Eta * Eta * (1.0f - CosThetaI * CosThetaI);
-		Record.Wo = Eta * -1.0f * Record.Wi + N * (Eta * CosThetaI - std::sqrt(1.0f - SinThetaT2));
-		Record.Eta = 1.0f / Eta;
-
-		float Factor = Eta * Eta;
+		Record.Wo = Refract(Record.Wi, CosThetaT, m_Eta, m_InvEta);
+		Record.Eta = CosThetaT < 0.0f ? m_Eta : m_InvEta;
+		float Factor = CosThetaT < 0.0f ? m_InvEta : m_Eta;
 		return m_KsRefract * Factor;
 	}
 }

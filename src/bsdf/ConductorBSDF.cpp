@@ -18,6 +18,9 @@ ConductorBSDF::ConductorBSDF(const PropertyList & PropList)
 
 	/* Speculer reflectance  */
 	m_Ks = PropList.GetColor(XML_BSDF_CONDUCTOR_KS, DEFAULT_BSDF_CONDUCTOR_KS);
+
+	m_Eta = Color3f(m_IntIOR / m_ExtIOR);
+	m_EtaK = m_K / m_ExtIOR;
 }
 
 Color3f ConductorBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
@@ -31,9 +34,9 @@ Color3f ConductorBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) 
 		return Color3f(0.0f);
 	}
 
-	Color3f FresnelTerm = FresnelConductor(CosThetaI, m_ExtIOR, m_IntIOR, m_K);
+	Color3f FresnelTerm = FresnelConductor(CosThetaI, m_Eta, m_EtaK);
 
-	Record.Wo = Vector3f(-Record.Wi.x(), -Record.Wi.y(), Record.Wi.z());
+	Record.Wo = Reflect(Record.Wi);
 	Record.Eta = 1.0f;
 
 	return m_Ks * Color3f(FresnelTerm);

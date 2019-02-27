@@ -492,25 +492,20 @@ Vector3f SphericalDirection(float Theta, float Phi);
 /// Compute a direction for the given coordinates in spherical coordinates
 Point2f SphericalCoordinates(const Vector3f & Dir);
 
-/**
-* \brief Calculates the unpolarized fresnel reflection coefficient for a
-* dielectric material. Handles incidence from either side (i.e.
-* \code CosThetaI < 0 is allowed).
-*
-* \param CosThetaI
-*      Cosine of the angle between the normal and the incident ray
-* \param ExtIOR
-*      Refractive index of the side that contains the surface normal
-* \param IntIOR
-*      Refractive index of the interior
-*/
-float FresnelDielectric(float CosThetaI, float ExtIOR, float IntIOR);
+/// Fresnel coefficient for dielectric material. Eta = IntIOR / ExtIOR
+float FresnelDielectric(float CosThetaI, float Eta, float InvEta, float & CosThetaT);
 
-/// Fresnel coefficient for conductor material. \Ref FresnelDielectric()
-Color3f FresnelConductor(float CosThetaI, float ExtIOR, float IntIOR, const Color3f & K);
+/// Fresnel coefficient for conductor material. Eta = IntIOR / ExtIOR, EtaK = K / ExtIOR
+Color3f FresnelConductor(float CosThetaI, const Color3f & Eta, const Color3f & EtaK);
 
 /// Complete the set {a} to an orthonormal base
 void CoordinateSystem(const Vector3f & Va, Vector3f & Vb, Vector3f & Vc);
+
+/// Reflection in local coordinates
+Vector3f Reflect(const Vector3f & Wi);
+
+/// Refraction in local coordinates
+Vector3f Refract(const Vector3f & Wi, float CosThetaT, float Eta, float InvEta);
 
 /**
 * \brief Return the global file resolver instance

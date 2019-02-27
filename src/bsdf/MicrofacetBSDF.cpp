@@ -31,6 +31,9 @@ MicrofacetBSDF::MicrofacetBSDF(const PropertyList & PropList)
 	TODO : Use a more realistic model in the future
 	*/
 	m_Ks = 1.0F - m_Kd.maxCoeff();
+
+	m_Eta = m_IntIOR / m_ExtIOR;
+	m_InvEta = 1.0f / m_Eta;
 }
 
 Color3f MicrofacetBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
@@ -78,8 +81,10 @@ Color3f MicrofacetBSDF::Eval(const BSDFQueryRecord & Record) const
 
 	Vector3f Wh = (Record.Wi + Record.Wo).normalized();
 
+	float CosThetaT;
+
 	float D = BeckmannD(Wh);
-	float F = FresnelDielectric(Wh.dot(Record.Wi), m_ExtIOR, m_IntIOR);
+	float F = FresnelDielectric(Wh.dot(Record.Wi), m_Eta, m_InvEta, CosThetaT);
 	float G = SmithBeckmannG1(Record.Wi, Wh) * SmithBeckmannG1(Record.Wo, Wh);
 
 	Color3f SpecularTerm = m_Ks * F * D * G / (4.0f * Frame::CosTheta(Record.Wi) * Frame::CosTheta(Record.Wo));

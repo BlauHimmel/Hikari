@@ -225,53 +225,43 @@ Point2f SphericalCoordinates(const Vector3f & Dir)
 	return Result;
 }
 
-float FresnelDielectric(float CosThetaI, float ExtIOR, float IntIOR)
+float FresnelDielectric(float CosThetaI, float Eta, float InvEta, float & CosThetaT)
 {
-	float EtaI = ExtIOR, EtaT = IntIOR;
-
-	if (ExtIOR == IntIOR)
+	if (Eta == 1.0f)
 	{
+		CosThetaT = -CosThetaI;
 		return 0.0f;
-	}
-
-	CosThetaI = (CosThetaI < -1.0f ? -1.0f : (CosThetaI > 1.0f ? 1.0f : CosThetaI));
-
-	/* Swap the indices of refraction if the interaction starts
-	at the inside of the object */
-	if (CosThetaI < 0.0f)
-	{
-		std::swap(EtaI, EtaT);
-		CosThetaI = std::abs(CosThetaI);
 	}
 
 	/* Using Snell's law, calculate the squared sine of the
 	angle between the normal and the transmitted ray */
-	float Eta = EtaI / EtaT;
-	float SinThetaTSqr = Eta * Eta * std::max(0.0f, 1.0f - CosThetaI * CosThetaI);
+	float Scale = (CosThetaI > 0.0f) ? InvEta : Eta;
+	float CosThetaTSqr = 1.0f - (1.0f - CosThetaI * CosThetaI) * (Scale * Scale);
 
-	if (SinThetaTSqr > 1.0f)
+	/* Check for total internal reflection */
+	if (CosThetaTSqr <= 0.0f)
 	{
-		return 1.0f;  /* Total internal reflection! */
+		CosThetaT = 0.0f;
+		return 1.0f;
 	}
 
-	float CosThetaT = std::sqrt(std::max(0.0f, 1.0f - SinThetaTSqr));
+	/* Find the absolute cosines of the incident/transmitted rays */
+	float CosThetaII = std::abs(CosThetaI);
+	float CosThetaTT = std::sqrt(CosThetaTSqr);
 
-	float Rs = (EtaI * CosThetaI - EtaT * CosThetaT)
-		/ (EtaI * CosThetaI + EtaT * CosThetaT);
-	float Rp = (EtaT * CosThetaI - EtaI * CosThetaT)
-		/ (EtaT * CosThetaI + EtaI * CosThetaT);
+	float Rs = (CosThetaII - Eta * CosThetaTT)
+		/ (CosThetaII + Eta * CosThetaTT);
+	float Rp = (Eta * CosThetaII - CosThetaTT)
+		/ (Eta * CosThetaII + CosThetaTT);
 
-	return (Rs * Rs + Rp * Rp) * 0.5f;
+	CosThetaT = (CosThetaI > 0.0f) ? -CosThetaTT : CosThetaTT;
+
+	/* No polarization -- return the unpolarized reflectance */
+	return 0.5f * (Rs * Rs + Rp * Rp);
 }
 
-Color3f FresnelConductor(float CosThetaI, float ExtIOR, float IntIOR, const Color3f & K)
+Color3f FresnelConductor(float CosThetaI, const Color3f & Eta, const Color3f & EtaK)
 {
-	CosThetaI = (CosThetaI < -1.0f ? -1.0f : (CosThetaI > 1.0f ? 1.0f : CosThetaI));
-
-	Color3f EtaI = ExtIOR, EtaT = IntIOR;
-	Color3f Eta = EtaT.cwiseQuotient(EtaI);
-	Color3f EtaK = K.cwiseQuotient(EtaI);
-
 	float CosThetaI2 = CosThetaI * CosThetaI;
 	float SinThetaI2 = 1.0f - CosThetaI2;
 	Color3f Eta2 = Eta * Eta;
@@ -304,6 +294,17 @@ void CoordinateSystem(const Vector3f & Va, Vector3f & Vb, Vector3f & Vc)
 		Vc = Vector3f(0.0f, Va.z() * InvLen, -Va.y() * InvLen);
 	}
 	Vb = Vc.cross(Va);
+}
+
+Vector3f Reflect(const Vector3f & Wi)
+{
+	return Vector3f(-Wi.x(), -Wi.y(), Wi.z());
+}
+
+Vector3f Refract(const Vector3f & Wi, float CosThetaT, float Eta, float InvEta)
+{
+	float Scale = -(CosThetaT < 0 ? InvEta : Eta);
+	return Vector3f(Scale * Wi.x(), Scale * Wi.y(), CosThetaT);
 }
 
 filesystem::resolver * GetFileResolver()

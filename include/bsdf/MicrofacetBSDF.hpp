@@ -29,8 +29,10 @@ protected:
 	float m_Alpha;
 	float m_IntIOR;
 	float m_ExtIOR;
-	float m_Ks;
 	Color3f m_Kd;
+
+	float m_Ks;
+	float m_Eta, m_InvEta;
 };
 
 NAMESPACE_END
