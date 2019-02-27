@@ -12,7 +12,7 @@ An ray tracer based on nori.
 ![](https://github.com/BlauHimmel/Hikari/blob/master/screenshot/Ajax-dielectric.png)
 
 ## Ajax-Smooth Plastic
-![](https://github.com/BlauHimmel/Hikari/blob/master/screenshot/Ajax-plactic.png)
+![](https://github.com/BlauHimmel/Hikari/blob/master/screenshot/Ajax-plastic.png)
 
 ## Table-Dielectric & Diffuse
 ![](https://github.com/BlauHimmel/Hikari/blob/master/screenshot/Table.png)
