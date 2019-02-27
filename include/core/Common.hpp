@@ -497,6 +497,42 @@ inline int Mod(int A, int B)
 	return (R < 0) ? R + B : R;
 }
 
+/// Arcsine variant that gracefully handles arguments > 1 that are due to roundoff errors
+inline float SafeAsin(float Value)
+{
+	return std::asin(std::min(1.0f, std::max(-1.0f, Value)));
+}
+
+/// Arcsine variant that gracefully handles arguments > 1 that are due to roundoff errors
+inline double SafeAsin(double Value)
+{
+	return std::asin(std::min(1.0, std::max(-1.0, Value)));
+}
+
+/// Arccosine variant that gracefully handles arguments > 1 that are due to roundoff errors
+inline float SafeAcos(float Value)
+{
+	return std::acos(std::min(1.0f, std::max(-1.0f, Value)));
+}
+
+/// Arccosine variant that gracefully handles arguments > 1 that are due to roundoff errors
+inline double SafeAcos(double Value)
+{
+	return std::acos(std::min(1.0, std::max(-1.0, Value)));
+}
+
+/// Square root variant that gracefully handles arguments < 0 that are due to roundoff errors
+inline float SafeSqrt(float Value)
+{
+	return std::sqrt(std::max(0.0f, Value));
+}
+
+/// Square root variant that gracefully handles arguments < 0 that are due to roundoff errors
+inline double SafeSqrt(double Value)
+{
+	return std::sqrt(std::max(0.0, Value));
+}
+
 /// Compute a direction for the given coordinates in spherical coordinates
 Vector3f SphericalDirection(float Theta, float Phi);
 
