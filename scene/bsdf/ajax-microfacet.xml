@@ -1,0 +1,64 @@
+<scene>
+	<!-- Independent sample generator, 64 samples per pixel -->
+	<sampler type="independent">
+		<integer name="sampleCount" value="512"/>
+	</sampler>
+
+	<acceleration type="hlbvh">
+		<integer name="leafSize" value="10"/>
+	</acceleration>
+
+	<!-- Use the simple point light integrator -->
+    <integrator type="pathMIS">
+		<integer name="depth" value="32"/>
+	</integrator>
+
+	<emitter type="env"> 
+		<string name="filename" value="uffizi-large.exr" />
+		<transform name="toWorld">
+		 	<matrix value="1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1"/>
+		</transform>
+	</emitter>
+
+	<!-- Load the Ajax bust (a freely available scan from the Jotero forum) -->
+	<mesh type="obj">
+		<string name="filename" value="ajax.obj"/>
+
+		<bsdf type="microfacet">
+            <float name="intIOR" value="1.7"/>
+            <color name="kd" value="0.2 0.2 0.4"/>
+            <float name="alpha" value="0.28"/>
+		</bsdf>
+	</mesh>
+
+    <!-- Area light source -->
+	<mesh type="obj">
+		<string name="filename" value="ajax-light.obj"/>
+
+		<emitter type="area">
+            <color name="radiance" value="20 20 20"/>
+		</emitter>
+	</mesh>
+
+	<!-- Render the scene viewed by a perspective camera -->
+	<camera type="perspective">
+        <!-- 3D origin, target point, and 'up' vector -->
+		<transform name="toWorld">
+				<lookat target="-64.8161, 47.2211, 23.8576"
+                    origin="-65.6055, 47.5762, 24.3583"
+                    up="0.299858, 0.934836, -0.190177"/>
+		</transform>
+
+		<!-- Field of view: 30 degrees -->
+		<float name="fov" value="30"/>
+
+		<!-- 768 x 768 pixels -->
+		<integer name="width" value="800"/>
+		<integer name="height" value="800"/>
+
+		<rfilter type="gaussian">
+			<float name="radius" value="2.0"/>
+			<float name="stddev" value="0.6"/>
+		</rfilter>
+	</camera>
+</scene>
