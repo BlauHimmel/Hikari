@@ -1,0 +1,95 @@
+<scene>
+	<!-- Independent sample generator, 1024 samples per pixel -->
+	<sampler type="independent">
+		<integer name="sampleCount" value="2048"/>
+	</sampler>
+
+	<acceleration type="hlbvh">
+		<integer name="leafSize" value="10"/>
+	</acceleration>
+
+	<!-- Use the simple point light integrator -->
+    <integrator type="pathMIS">
+		<integer name="depth" value="64"/>
+	</integrator>
+
+	<emitter type="env"> 
+		<string name="filename" value="uffizi-large.exr" />
+		<float name="scale" value="1.35" />
+	</emitter>
+
+	<camera type="perspective">
+		<float name="fov" value="35"/>
+		<float name="nearClip" value="0.10000000149011612"/>
+		<float name="farClip" value="100.0"/>
+		<integer name="width" value="800"/>
+		<integer name="height" value="800"/>
+		<transform name="toWorld" >
+			<matrix value="-0.721367 -0.373123 -0.583445 3.04068 -8.26273e-008 0.842456 -0.538765 3.17153 0.692553 -0.388647 -0.60772 3.20454 0 0 0 1"/>
+		</transform>
+		<rfilter type="gaussian">
+			<float name="radius" value="2.0"/>
+			<float name="stddev" value="0.6"/>
+		</rfilter>
+	</camera>
+
+	<mesh type="obj" >
+		<string name="filename" value="matball/Plane.obj" />
+		<transform name="toWorld" >
+			<matrix value="-1.88298 1.9602 2.50299e-007 -0.708772 
+			-2.37623e-007 1.18811e-007 -2.71809 0 -1.9602 
+			-1.88298 8.90586e-008 -0.732108 
+			0 0 0 1"/>
+		</transform>
+		<emitter type="area">
+            <color name="radiance" value="22 20 20"/>
+		</emitter>
+	</mesh>
+
+	<mesh type="obj" >
+		<string name="filename" value="matball/Mesh001.obj" />
+		<transform name="toWorld" >
+			<matrix value="0.482906 0 0 0.0571719 0 0.482906 0 0.213656 0 0 0.482906 0.0682078 0 0 0 1"/>
+		</transform>
+		<bsdf type="conductor">
+			<float name="intIOR" value="1.5"/>
+			<float name="extIOR" value="1.0"/>
+			<color name="k" value="2.9278 2.9278 2.9278"/>
+			<color name="ks" value="1.0, 1.0, 1.0"/>
+		</bsdf>
+	</mesh>
+
+	<mesh type="obj" >
+		<string name="filename" value="matball/Mesh002.obj" />
+		<transform name="toWorld" >
+			<matrix value="0.482906 0 0 0.156382 0 0.482906 0 0.777229 0 0 0.482906 0.161698 0 0 0 1"/>
+		</transform>
+		<bsdf type="dielectric">
+			<float name="intIOR" value="1.5"/>
+			<float name="extIOR" value="1.0"/>
+		</bsdf>
+	</mesh>
+
+	<mesh type="obj" >
+		<string name="filename" value="matball/Mesh000.obj" />
+		<transform name="toWorld" >
+			<matrix value="0.482906 0 0 0.110507 0 0.482906 0 0.494301 0 0 0.482906 0.126194 0 0 0 1"/>
+		</transform>
+		<bsdf type="plastic">
+			<float name="intIOR" value="1.5"/>
+			<float name="extIOR" value="1.0"/>
+			<color name="kd" value="0.27 0.39 0.47"/>
+			<boolean name="nonlinear" value="true"/>
+		</bsdf>
+	</mesh>
+
+	<mesh type="obj" >
+		<string name="filename" value="matball/Plane.obj" />
+		<transform name="toWorld" >
+			<matrix value="-1.88298 1.9602 2.50299e-007 -0.708772 -2.37623e-007 1.18811e-007 -2.71809 0 -1.9602 -1.88298 8.90586e-008 -0.732108 0 0 0 1"/>
+		</transform>
+		<bsdf type="diffuse">
+            <color name="albedo" value="0.22 0.2 0.2"/>
+		</bsdf>
+	</mesh>
+</scene>

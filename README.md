@@ -25,3 +25,6 @@ An ray tracer based on nori.
 
 ## Unreal-Smooth Plastic
 ![](https://github.com/BlauHimmel/Hikari/blob/master/screenshot/Unreal-plastic.png)
+
+## Unreal with multiple material
+![](https://github.com/BlauHimmel/Hikari/blob/master/screenshot/Matball.png)
