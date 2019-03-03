@@ -350,6 +350,11 @@ Vector3f Refract(const Vector3f & Wi, float CosThetaT, float Eta, float InvEta)
 	return Vector3f(Scale * Wi.x(), Scale * Wi.y(), CosThetaT);
 }
 
+Vector3f Reflect(const Vector3f & Wi, const Vector3f & M)
+{
+	return 2.0f * Wi.dot(M) * M - Wi;
+}
+
 filesystem::resolver * GetFileResolver()
 {
 	static std::unique_ptr<filesystem::resolver> pResolver(new filesystem::resolver());

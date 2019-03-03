@@ -40,13 +40,13 @@ std::string Object::ClassTypeName(EClassType Type)
 	}
 }
 
-std::unique_ptr<std::map<std::string, ObjectFactory::Constructor>> ObjectFactory::m_pConstructors = nullptr;
+std::map<std::string, ObjectFactory::Constructor> * ObjectFactory::m_pConstructors = nullptr;
 
 void ObjectFactory::RegisterClz(const std::string & Name, const Constructor & Construct)
 {
 	if (m_pConstructors == nullptr)
 	{
-		m_pConstructors.reset(new std::map<std::string, Constructor>());
+		m_pConstructors = new std::map<std::string, Constructor>();
 	}
 
 	if (m_pConstructors->find(Name) != m_pConstructors->end())

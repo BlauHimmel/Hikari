@@ -103,14 +103,28 @@ void Triangle::PostIntersect(Intersection & Isect)
 	/* Compute the geometry frame */
 	Isect.GeometricFrame = Frame((P1 - P0).cross(P2 - P0).normalized());
 
-	if (N.size() > 0)
+	if (N.size() > 0 && UV.size() > 0)
 	{
-		/* Compute the shading frame. Note that for simplicity,
-		the current implementation doesn't attempt to provide
-		tangents that are continuous across the surface. That
-		means that this code will need to be modified to be able
-		use anisotropic BRDFs, which need tangent continuity */
-
+		Point2f UV0 = UV.col(Idx0), UV1 = UV.col(Idx1), UV2 = UV.col(Idx2);
+		float Factor = 1.0f / ((UV0.x() - UV2.x()) * (UV1.y() - UV2.y()) - (UV0.y() - UV2.y()) * (UV1.x() - UV2.x()));
+		
+		if (std::isnan(Factor) || std::isinf(Factor))
+		{
+			Isect.ShadingFrame = Frame(
+				(Barycentric.x() * N.col(Idx0) + Barycentric.y() * N.col(Idx1) + Barycentric.z() * N.col(Idx2)).normalized()
+			);
+		}
+		else
+		{
+			Vector3f Dpdu = (UV1.y() - UV2.y()) * Factor * (P0 - P2) + (UV2.y() - UV0.y()) * Factor * (P1 - P2);
+			Isect.ShadingFrame = Frame(
+				(Barycentric.x() * N.col(Idx0) + Barycentric.y() * N.col(Idx1) + Barycentric.z() * N.col(Idx2)).normalized(),
+				Dpdu
+			);
+		}
+	}
+	else if (N.size() > 0)
+	{
 		Isect.ShadingFrame = Frame(
 			(Barycentric.x() * N.col(Idx0) + Barycentric.y() * N.col(Idx1) + Barycentric.z() * N.col(Idx2)).normalized()
 		);

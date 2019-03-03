@@ -149,6 +149,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/MicrofacetBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/MirrorBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/PlasticBSDF.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/RoughConductorBSDF.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/camera/PerspectiveCamera.cpp
         
@@ -168,6 +169,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Intersection.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/MemoryArena.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Mesh.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/MicrofacetDistribution.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Object.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Parser.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Primitive.cpp
@@ -218,6 +220,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/MicrofacetBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/MirrorBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/PlasticBSDF.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/RoughConductorBSDF.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/camera/PerspectiveCamera.hpp
         
@@ -237,6 +240,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Intersection.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/MemoryArena.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Mesh.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/MicrofacetDistribution.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Object.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Parser.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Primitive.hpp

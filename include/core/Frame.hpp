@@ -21,6 +21,8 @@ struct Frame
 	/// Default constructor -- performs no initialization!
 	Frame();
 
+	Frame(const Normal3f & N, const Vector3f & Dpdu);
+
 	/// Given a normal and tangent vectors, construct a new coordinate frame
 	Frame(const Vector3f & S, const Vector3f & T, const Normal3f & N);
 

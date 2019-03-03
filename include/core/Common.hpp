@@ -136,6 +136,16 @@
 #define XML_BSDF_PLASTIC_KS                      "ks"
 #define XML_BSDF_PLASTIC_KD                      "kd"
 #define XML_BSDF_PLASTIC_NONLINEAR               "nonlinear"
+#define XML_BSDF_ROUGH_CONDUCTOR                 "roughConductor"
+#define XML_BSDF_ROUGH_CONDUCTOR_INT_IOR         "intIOR"
+#define XML_BSDF_ROUGH_CONDUCTOR_EXT_IOR         "extIOR"
+#define XML_BSDF_ROUGH_CONDUCTOR_K               "k"
+#define XML_BSDF_ROUGH_CONDUCTOR_KS              "ks"
+#define XML_BSDF_ROUGH_CONDUCTOR_ALPHA           "alpha"
+#define XML_BSDF_ROUGH_CONDUCTOR_ALPHA_U         "alphaU"
+#define XML_BSDF_ROUGH_CONDUCTOR_ALPHA_V         "alphaV"
+#define XML_BSDF_ROUGH_CONDUCTOR_TYPE            "type"
+#define XML_BSDF_ROUGH_CONDUCTOR_AS              "as"
 
 #define XML_MEDIUM                               "medium"
 
@@ -217,6 +227,15 @@
 #define DEFAULT_BSDF_PLASTIC_KS                   Color3f(1.0f)
 #define DEFAULT_BSDF_PLASTIC_KD                   Color3f(0.5f)
 #define DEFAULT_BSDF_PLASTIC_NONLINEAR            false
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_INT_IOR      1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_EXT_IOR      1.000277f /* Air */
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_K            Color3f(1.0f)
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_KS           Color3f(1.0f)
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA        0.1f
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_U      0.1f
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_V      0.1f
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_TYPE         "beckmann"
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_AS           false
 
 #define DEFAULT_FILTER_GAUSSIAN_RADIUS            2.0f
 #define DEFAULT_FILTER_GAUSSIAN_STDDEV            0.5f
@@ -289,6 +308,7 @@ class Sampling;
 class Scene;
 class Timer;
 class Shape;
+class MicrofacetDistribution;
 
 /* Basic data structures (vectors, points, rays, bounding boxes,
 kd-trees) are oblivious to the underlying data type and dimension.
@@ -533,6 +553,55 @@ inline double SafeSqrt(double Value)
 	return std::sqrt(std::max(0.0, Value));
 }
 
+inline float Hypot2(float A, float B)
+{
+	float Result;
+	if (std::abs(A) > std::abs(B))
+	{
+		Result = B / A;
+		Result = std::abs(A) * std::sqrt(1.0f + Result * Result);
+	}
+	else if (B != 0.0f)
+	{
+		Result = A / B;
+		Result = std::abs(B) * std::sqrt(1.0f + Result * Result);
+	}
+	else
+	{
+		Result = 0.0f;
+	}
+	return Result;
+}
+
+inline double Hypot2(double A, double B)
+{
+	double Result;
+	if (std::abs(A) > std::abs(B))
+	{
+		Result = B / A;
+		Result = std::abs(A) * std::sqrt(1.0 + Result * Result);
+	}
+	else if (B != 0.0)
+	{
+		Result = A / B;
+		Result = std::abs(B) * std::sqrt(1.0 + Result * Result);
+	}
+	else
+	{
+		Result = 0.0;
+	}
+	return Result;
+}
+
+/// Simple signum function -- note that it returns the FP sign of the input (and never zero)
+inline float Signum(float Value) {
+#if defined(__PLATFORM_WINDOWS__)
+	return float(_copysign(1.0f, Value));
+#elif
+	return float(copysign(1.0f, Value));
+#endif
+}
+
 /// Compute a direction for the given coordinates in spherical coordinates
 Vector3f SphericalDirection(float Theta, float Phi);
 
@@ -555,6 +624,9 @@ Vector3f Reflect(const Vector3f & Wi);
 
 /// Refraction in local coordinates
 Vector3f Refract(const Vector3f & Wi, float CosThetaT, float Eta, float InvEta);
+
+/// Reflection in global coordinates
+Vector3f Reflect(const Vector3f & Wi, const Vector3f & M);
 
 /**
 * \brief Return the global file resolver instance

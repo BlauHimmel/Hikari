@@ -4,6 +4,13 @@ NAMESPACE_BEGIN
 
 Frame::Frame() { }
 
+Frame::Frame(const Normal3f & N, const Vector3f & Dpdu)
+{
+	this->N = N;
+	this->S = (Dpdu - this->N * this->N.dot(Dpdu)).normalized();
+	this->T = this->N.cross(this->S);
+}
+
 Frame::Frame(const Vector3f & S, const Vector3f & T, const Normal3f & N) : S(S), T(T), N(N) { }
 
 Frame::Frame(const Vector3f & X, const Vector3f & Y, const Vector3f & Z) : S(X), T(Y), N(Z) { }
