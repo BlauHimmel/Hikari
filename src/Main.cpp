@@ -1,7 +1,11 @@
 #include <core\Screen.hpp>
 #include <thread>
+#include <mutex>
+#include <algorithm>
 
 NAMESPACE_BEGIN
+
+static std::mutex Lock;
 
 static void RenderBlock(const Scene * pScene, Sampler * pSampler, ImageBlock & Block)
 {
@@ -53,6 +57,7 @@ static void Render(Scene * pScene, const std::string & Filename)
 
 	/* Create a window that visualizes the partially rendered result */
 	std::unique_ptr<Screen> pScreen(new Screen(Result));
+	std::vector<const ImageBlock *> & RenderingBlocks = pScreen->GetRenderingBlocks();
 
 	/* Do the following in parallel and asynchronously */
 	std::thread RenderThread([&]
@@ -79,8 +84,16 @@ static void Render(Scene * pScene, const std::string & Filename)
 				/* Inform the sampler about the block to be rendered */
 				pSampler->Prepare(Block);
 
+				Lock.lock();
+				RenderingBlocks.push_back(&Block);
+				Lock.unlock();
+
 				/* Render all contained pixels */
 				RenderBlock(pScene, pSampler.get(), Block);
+
+				Lock.lock();
+				RenderingBlocks.erase(std::remove(RenderingBlocks.begin(), RenderingBlocks.end(), &Block), RenderingBlocks.end());
+				Lock.unlock();
 
 				/* The image block has been processed. Now add it to
 				the "big" block that represents the entire image */

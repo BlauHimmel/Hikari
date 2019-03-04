@@ -44,7 +44,13 @@ class Screen
 {
 public:
 	Screen(const ImageBlock & Block);
+	std::vector<const ImageBlock *> & GetRenderingBlocks();
 	void Draw();
+	void DrawUI();
+
+private:
+	void BindScreenVertexBuffer();
+	void BindBlockVertexBuffer();
 
 private:
 	const ImageBlock & m_Block;
@@ -53,11 +59,13 @@ private:
 	GLuint m_VBO = GLuint(-1);
 	GLuint m_VAO = GLuint(-1);
 	GLuint m_EBO = GLuint(-1);
-	std::unique_ptr<Shader> m_Shader = nullptr;
+	std::unique_ptr<Shader> m_ScreenShader = nullptr;
+	std::unique_ptr<Shader> m_BlockShader = nullptr;
 	int m_Width;
 	int m_Height;
 	int m_BorderSize;
 	float m_Scale;
+	std::vector<const ImageBlock *> m_RenderingBlocks;
 };
 
 NAMESPACE_END
