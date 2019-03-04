@@ -103,24 +103,38 @@ void Triangle::PostIntersect(Intersection & Isect)
 	/* Compute the geometry frame */
 	Isect.GeometricFrame = Frame((P1 - P0).cross(P2 - P0).normalized());
 
-	if (N.size() > 0 && UV.size() > 0)
+	const BSDF * pBSDF = GetBSDF();
+
+	if (pBSDF != nullptr && pBSDF->IsAnisotropic() && N.size() > 0 && UV.size() > 0)
 	{
 		Point2f UV0 = UV.col(Idx0), UV1 = UV.col(Idx1), UV2 = UV.col(Idx2);
-		float Factor = 1.0f / ((UV0.x() - UV2.x()) * (UV1.y() - UV2.y()) - (UV0.y() - UV2.y()) * (UV1.x() - UV2.x()));
-		
-		if (std::isnan(Factor) || std::isinf(Factor))
+		Vector3f dP1 = P1 - P0, dP2 = P2 - P0;
+		Vector2f dUV1 = UV1 - UV0, dUV2 = UV2 - UV0;
+		float Length = dP1.cross(dP2).norm();
+
+		if (Length == 0)
 		{
-			Isect.ShadingFrame = Frame(
-				(Barycentric.x() * N.col(Idx0) + Barycentric.y() * N.col(Idx1) + Barycentric.z() * N.col(Idx2)).normalized()
-			);
+			Isect.ShadingFrame = Isect.GeometricFrame;
 		}
 		else
 		{
-			Vector3f Dpdu = (UV1.y() - UV2.y()) * Factor * (P0 - P2) + (UV2.y() - UV0.y()) * Factor * (P1 - P2);
-			Isect.ShadingFrame = Frame(
-				(Barycentric.x() * N.col(Idx0) + Barycentric.y() * N.col(Idx1) + Barycentric.z() * N.col(Idx2)).normalized(),
-				Dpdu
-			);
+			float Det = dUV1.x() * dUV2.y() - dUV1.y() * dUV2.x();
+
+			if (Det == 0.0f)
+			{
+				Isect.ShadingFrame = Frame(
+					(Barycentric.x() * N.col(Idx0) + Barycentric.y() * N.col(Idx1) + Barycentric.z() * N.col(Idx2)).normalized()
+				);
+			}
+			else
+			{
+				float InvDet = 1.0f / Det;
+				Vector3f Dpdu = (dUV2.y() * dP1 - dUV1.y() * dP2) * InvDet;
+				Isect.ShadingFrame = Frame(
+					(Barycentric.x() * N.col(Idx0) + Barycentric.y() * N.col(Idx1) + Barycentric.z() * N.col(Idx2)).normalized(),
+					Dpdu
+				);
+			}
 		}
 	}
 	else if (N.size() > 0)

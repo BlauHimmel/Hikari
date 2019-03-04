@@ -28,7 +28,7 @@ public:
 	void ScaleAlpha(float Scale);
 	float Eval(const Vector3f & M) const;
 	Vector3f Sample(const Vector3f & Wi, const Point2f & Sample, float & Pdf) const;
-	float Pdf(const Vector3f & Wi, const Vector3f & M) const;
+	float Pdf(const Vector3f & M) const;
 	float SmithG1(const Vector3f & V, const Vector3f & M) const;
 	float G(const Vector3f & Wi, const Vector3f & Wo, const Vector3f & M) const;
 	static std::string TypeName(EType Type);

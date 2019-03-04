@@ -18,6 +18,8 @@ public:
 
 	virtual float Pdf(const BSDFQueryRecord & Record) const override;
 
+	virtual bool IsAnisotropic() const override;
+
 	virtual std::string ToString() const override;
 
 protected:

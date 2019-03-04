@@ -48,4 +48,9 @@ bool BSDF::IsDiffuse() const
 	return false;
 }
 
+bool BSDF::IsAnisotropic() const
+{
+	return false;
+}
+
 NAMESPACE_END

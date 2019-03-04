@@ -86,7 +86,7 @@ float MicrofacetDistribution::Eval(const Vector3f & M) const
 	{
 		/* Isotropic case: Phong distribution. Anisotropic case: Ashikhmin-Shirley distribution */
 		float Exponent = InterpolatePhongExponent(M);
-		Result = std::sqrt((m_ExponentU + 2) * (m_ExponentV + 2)) * float(INV_TWOPI) * std::pow(Frame::CosTheta(M), Exponent);
+		Result = std::sqrt((m_ExponentU + 2.0f) * (m_ExponentV + 2.0f)) * float(INV_TWOPI) * std::pow(Frame::CosTheta(M), Exponent);
 	}
 	else
 	{
@@ -97,7 +97,7 @@ float MicrofacetDistribution::Eval(const Vector3f & M) const
 	/* Prevent potential numerical issues in other stages of the model */
 	if (Result * Frame::CosTheta(M) < 1e-20f)
 	{
-		Result = 0.0;
+		Result = 0.0f;
 	}
 
 	return Result;
@@ -108,7 +108,7 @@ Vector3f MicrofacetDistribution::Sample(const Vector3f & Wi, const Point2f & Sam
 	return SampleAll(Sample, Pdf);
 }
 
-float MicrofacetDistribution::Pdf(const Vector3f & Wi, const Vector3f & M) const
+float MicrofacetDistribution::Pdf(const Vector3f & M) const
 {
 	return PdfAll(M);
 }
@@ -243,10 +243,38 @@ Vector3f MicrofacetDistribution::SampleAll(const Point2f & Sample, float & Pdf) 
 	}
 	else if (m_Type == EPhong)
 	{
-		/* Phong dose not support anisotropic */
-		float PhiM = (2.0f * float(M_PI)) * Sample.y();
-		float Exponent = m_ExponentU;
-		assert(IsIsotropic());
+		float PhiM;
+		float Exponent;
+
+		if (IsIsotropic())
+		{
+			PhiM = (2.0f * float(M_PI)) * Sample.y();
+			Exponent = m_ExponentU;
+		}
+		else
+		{
+			/* Sampling method based on code from PBRT */
+			if (Sample.y() < 0.25f)
+			{
+				SampleFirstQuadrant(4.0f * Sample.y(), PhiM, Exponent);
+			}
+			else if (Sample.y() < 0.5f)
+			{
+				SampleFirstQuadrant(4.0f * (0.5f - Sample.y()), PhiM, Exponent);
+				PhiM = float(M_PI) - PhiM;
+			}
+			else if (Sample.y() < 0.75f)
+			{
+				SampleFirstQuadrant(4.0f * (Sample.y() - 0.5f), PhiM, Exponent);
+				PhiM += float(M_PI);
+			}
+			else
+			{
+				SampleFirstQuadrant(4.0f * (1.0f - Sample.y()), PhiM, Exponent);
+				PhiM = 2.0f * float(M_PI) - PhiM;
+			}
+		}
+
 		SinCos(PhiM, &SinPhiM, &CosPhiM);
 		CosThetaM = std::pow(Sample.x(), 1.0f / (Exponent + 2.0f));
 		Pdf = std::sqrt((m_ExponentU + 2.0f) * (m_ExponentV + 2.0f)) * float(INV_TWOPI) * std::pow(CosThetaM, Exponent + 1.0f);

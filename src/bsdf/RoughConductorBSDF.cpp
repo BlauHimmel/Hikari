@@ -31,7 +31,7 @@ RoughConductorBSDF::RoughConductorBSDF(const PropertyList & PropList)
 
 	if (m_Type == MicrofacetDistribution::EPhong && bAs)
 	{
-		throw HikariException("Phong does not support anisotropic alpha.");
+		LOG(ERROR) << "Anisotropic phong does not work correctly in some cases. Bugs need to be fixed.";
 	}
 
 	if (bAs)
@@ -139,7 +139,12 @@ float RoughConductorBSDF::Pdf(const BSDFQueryRecord & Record) const
 	  (texture will be implemented later) */
 	MicrofacetDistribution Distribution(m_Type, m_AlphaU, m_AlphaV);
 
-	return Distribution.Pdf(Record.Wi, H) / (4.0f * std::abs(H.dot(Record.Wo)));
+	return Distribution.Pdf(H) / (4.0f * std::abs(H.dot(Record.Wo)));
+}
+
+bool RoughConductorBSDF::IsAnisotropic() const
+{
+	return m_AlphaV != m_AlphaU;
 }
 
 std::string RoughConductorBSDF::ToString() const
