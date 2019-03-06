@@ -2,6 +2,7 @@
 #include <thread>
 #include <mutex>
 #include <algorithm>
+#include <atomic>
 
 NAMESPACE_BEGIN
 
@@ -51,6 +52,9 @@ static void Render(Scene * pScene, const std::string & Filename)
 	/* Create a block generator (i.e. a work scheduler) */
 	BlockGenerator BlockGenerator(OutputSize, HIKARI_BLOCK_SIZE);
 
+	int TotalBlock = BlockGenerator.GetBlockCount();
+	std::atomic<int> RenderedBlock = 0;
+
 	/* Allocate memory for the entire output image and clear it */
 	ImageBlock Result(OutputSize, pCamera->GetReconstructionFilter());
 	Result.Clear();
@@ -58,6 +62,8 @@ static void Render(Scene * pScene, const std::string & Filename)
 	/* Create a window that visualizes the partially rendered result */
 	std::unique_ptr<Screen> pScreen(new Screen(Result));
 	std::vector<const ImageBlock *> & RenderingBlocks = pScreen->GetRenderingBlocks();
+	float & Progress = pScreen->GetProgress();
+	std::string & RenderTimeString = pScreen->GetRenderTimeString();;
 
 	/* Do the following in parallel and asynchronously */
 	std::thread RenderThread([&]
@@ -84,6 +90,7 @@ static void Render(Scene * pScene, const std::string & Filename)
 				/* Inform the sampler about the block to be rendered */
 				pSampler->Prepare(Block);
 
+				/* Add this block to the rendering blocks vector in the Screen class to display it. */
 				Lock.lock();
 				RenderingBlocks.push_back(&Block);
 				Lock.unlock();
@@ -91,8 +98,14 @@ static void Render(Scene * pScene, const std::string & Filename)
 				/* Render all contained pixels */
 				RenderBlock(pScene, pSampler.get(), Block);
 
+				/* Update progress */
+				RenderedBlock++;
+
+				/* Render task is done, remove it. */
 				Lock.lock();
 				RenderingBlocks.erase(std::remove(RenderingBlocks.begin(), RenderingBlocks.end(), &Block), RenderingBlocks.end());
+				Progress = float(RenderedBlock) / float(TotalBlock);
+				RenderTimeString = RenderTimer.ElapsedString();
 				Lock.unlock();
 
 				/* The image block has been processed. Now add it to

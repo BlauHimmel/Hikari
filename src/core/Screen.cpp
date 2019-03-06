@@ -175,7 +175,14 @@ Screen::Screen(const ImageBlock & Block) : m_Block(Block), m_Scale(0.5f)
 
 	m_BlockShader.reset(new Shader(BlockVertexShaderSource, BlockFragmentShaderSource));
 
-	
+	glGenVertexArrays(1, &m_VAO);
+	glGenBuffers(1, &m_VBO);
+	glGenBuffers(1, &m_EBO);
+
+	glGenTextures(1, &m_Texture);
+	glBindTexture(GL_TEXTURE_2D, m_Texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	LOG(INFO) << "OpenGL initialized!Version: " << glGetString(GL_VERSION);
 }
@@ -183,6 +190,16 @@ Screen::Screen(const ImageBlock & Block) : m_Block(Block), m_Scale(0.5f)
 std::vector<const ImageBlock*>& Screen::GetRenderingBlocks()
 {
 	return m_RenderingBlocks;
+}
+
+float & Screen::GetProgress()
+{
+	return m_Progress;
+}
+
+std::string & Screen::GetRenderTimeString()
+{
+	return m_RenderTimeString;
 }
 
 void Screen::Draw()
@@ -233,6 +250,7 @@ void Screen::Draw()
 		BindBlockVertexBuffer();
 
 		m_BlockShader->Use();
+
 		glBindVertexArray(m_VAO);
 		glDrawElements(GL_LINES, GLsizei(m_RenderingBlocks.size() * 8), GL_UNSIGNED_INT, (void*)(0));
 		glBindVertexArray(0);
@@ -259,6 +277,18 @@ void Screen::DrawUI()
 	if (ImGui::Begin("Option", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		ImGui::SliderFloat("Explosure Value", &m_Scale, 0.0f, 1.0f);
+
+		static char Buffer[64];
+		if (1.0f - m_Progress > 1e-4f)
+		{
+			sprintf(Buffer, "%.0f%%(%s)", m_Progress * 100 + 0.01f, m_RenderTimeString.c_str());
+		}
+		else
+		{
+			sprintf(Buffer, "Finished(%s)", m_RenderTimeString.c_str());
+		}
+		ImGui::ProgressBar(m_Progress, ImVec2(-1, 0), Buffer);
+
 		ImGui::End();
 	}
 }
@@ -279,10 +309,6 @@ void Screen::BindScreenVertexBuffer()
 		-1.0f,  1.0f, 0.0f,  0.0f, 0.0f
 	};
 
-	glGenVertexArrays(1, &m_VAO);
-	glGenBuffers(1, &m_VBO);
-	glGenBuffers(1, &m_EBO);
-
 	glBindVertexArray(m_VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
@@ -299,11 +325,6 @@ void Screen::BindScreenVertexBuffer()
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
-	glGenTextures(1, &m_Texture);
-	glBindTexture(GL_TEXTURE_2D, m_Texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
 void Screen::BindBlockVertexBuffer()
@@ -318,7 +339,7 @@ void Screen::BindBlockVertexBuffer()
 	{
 		Indices.push_back(unsigned int(i));
 	}
-	
+
 	float InvWidth = 1.0f / m_Width;
 	float InvHeight = 1.0f / m_Height;
 
@@ -366,10 +387,6 @@ void Screen::BindBlockVertexBuffer()
 			Vertices.push_back(0.0f); Vertices.push_back(1.0f); Vertices.push_back(0.0f);
 		}
 	}
-
-	glGenVertexArrays(1, &m_VAO);
-	glGenBuffers(1, &m_VBO);
-	glGenBuffers(1, &m_EBO);
 
 	glBindVertexArray(m_VAO);
 

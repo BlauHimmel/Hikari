@@ -45,6 +45,8 @@ class Screen
 public:
 	Screen(const ImageBlock & Block);
 	std::vector<const ImageBlock *> & GetRenderingBlocks();
+	float & GetProgress();
+	std::string & GetRenderTimeString();
 	void Draw();
 	void DrawUI();
 
@@ -66,6 +68,8 @@ private:
 	int m_BorderSize;
 	float m_Scale;
 	std::vector<const ImageBlock *> m_RenderingBlocks;
+	float m_Progress = 0.0f;
+	std::string m_RenderTimeString = "";
 };
 
 NAMESPACE_END
