@@ -91,7 +91,7 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 				Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
 				if (!pScene->ShadowRayIntersect(ShadowRay))
 				{
-					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
+					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle, ETransportMode::ERadiance);
 					PdfBSDFEMS = pBSDF->Pdf(BSDFRecord);
 					if (PdfLightEMS + PdfBSDFEMS != 0.0f)
 					{
@@ -102,7 +102,7 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			}
 		}
 
-		BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction));
+		BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction), ETransportMode::ERadiance);
 		Color3f F = pBSDF->Sample(BSDFRecord, pSampler->Next2D());
 
 		TracingRay = Ray3f(Isect.P, Isect.ToWorld(BSDFRecord.Wo));

@@ -83,7 +83,7 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 					Ray3f ShadowRay = Isect.SpawnShadowRay(EmitterRecord.P);
 					if (!pScene->ShadowRayIntersect(ShadowRay))
 					{
-						BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * TracingRay.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle);
+						BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * TracingRay.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle, ETransportMode::ERadiance);
 						Li += Beta * pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Ldirect;
 					}
 				}
@@ -94,7 +94,7 @@ Color3f PathEMSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 			bLastPathSpecular = true;
 		}
 
-		BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction));
+		BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction), ETransportMode::ERadiance);
 		Beta *= pBSDF->Sample(BSDFRecord, pSampler->Next2D());
 
 		if (Beta.isZero())

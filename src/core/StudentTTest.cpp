@@ -94,7 +94,7 @@ void StudentTTest::Activate()
 				LOG(INFO) << "\nTesting (angle=" << Angle << "): " << pBSDF->ToString();
 				++Total;
 
-				BSDFQueryRecord BSDFRecord(SphericalDirection(DegToRad(Angle), 0.0f));
+				BSDFQueryRecord BSDFRecord(SphericalDirection(DegToRad(Angle), 0.0f), ETransportMode::ERadiance);
 
 				LOG(INFO) << "\nDrawing " << m_SampleCount << " samples .. ";
 

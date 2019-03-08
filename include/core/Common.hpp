@@ -146,6 +146,16 @@
 #define XML_BSDF_ROUGH_CONDUCTOR_ALPHA_V         "alphaV"
 #define XML_BSDF_ROUGH_CONDUCTOR_TYPE            "type"
 #define XML_BSDF_ROUGH_CONDUCTOR_AS              "as"
+#define XML_BSDF_ROUGH_DIELECTRIC                "roughDielectric"
+#define XML_BSDF_ROUGH_DIELECTRIC_INT_IOR        "intIOR"
+#define XML_BSDF_ROUGH_DIELECTRIC_EXT_IOR        "extIOR"
+#define XML_BSDF_ROUGH_DIELECTRIC_KS_REFLECT     "ksReflect"
+#define XML_BSDF_ROUGH_DIELECTRIC_KS_REFRACT     "ksRefract"
+#define XML_BSDF_ROUGH_DIELECTRIC_ALPHA          "alpha"
+#define XML_BSDF_ROUGH_DIELECTRIC_ALPHA_U        "alphaU"
+#define XML_BSDF_ROUGH_DIELECTRIC_ALPHA_V        "alphaV"
+#define XML_BSDF_ROUGH_DIELECTRIC_TYPE           "type"
+#define XML_BSDF_ROUGH_DIELECTRIC_AS             "as"
 
 #define XML_MEDIUM                               "medium"
 
@@ -236,6 +246,15 @@
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_V      0.1f
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_TYPE         "beckmann"
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_AS           false
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_INT_IOR     1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_EXT_IOR     1.000277f /* Air */
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_KS_REFLECT  Color3f(1.0f) 
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_KS_REFRACT  Color3f(1.0f) 
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA       0.1f
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA_U     0.1f
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA_V     0.1f
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_TYPE        "beckmann"
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_AS          false
 
 #define DEFAULT_FILTER_GAUSSIAN_RADIUS            2.0f
 #define DEFAULT_FILTER_GAUSSIAN_STDDEV            0.5f
@@ -455,6 +474,13 @@ enum class EEmitterType
 	EPoint = 1,
 	EArea = 2,
 	EEnvironment = 3
+};
+
+enum class ETransportMode
+{
+	EUnknown = 0,
+	ERadiance = 1,
+	EImportance = 2
 };
 
 /// Convert radians to degrees

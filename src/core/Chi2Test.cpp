@@ -98,7 +98,7 @@ void Chi2Test::Activate()
 			LOG(INFO) << "\nAccumulating " << m_SampleCount << " samples into a " << m_CosThetaResolution << "x" << m_PhiResolution << " contingency table .. ";
 
 			/* Generate many samples from the BSDF and create a histogram / contingency table */
-			BSDFQueryRecord BSDFRecord(Wi);
+			BSDFQueryRecord BSDFRecord(Wi, ETransportMode::ERadiance);
 			for (int i = 0; i < m_SampleCount; ++i)
 			{
 				Point2f Sample(Random.nextFloat(), Random.nextFloat());
@@ -158,7 +158,7 @@ void Chi2Test::Activate()
 							float(CosTheta)
 						);
 
-						BSDFQueryRecord BSDFRecord(Wi, Wo, EMeasure::ESolidAngle);
+						BSDFQueryRecord BSDFRecord(Wi, Wo, EMeasure::ESolidAngle, ETransportMode::ERadiance);
 						return pBSDF->Pdf(BSDFRecord);
 					};
 
