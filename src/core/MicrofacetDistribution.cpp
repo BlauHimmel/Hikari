@@ -6,57 +6,25 @@ NAMESPACE_BEGIN
 MicrofacetDistribution::MicrofacetDistribution(EType Type, float Alpha) :
 	m_Type(Type),
 	m_AlphaU(Alpha),
-	m_AlphaV(Alpha),
-	m_ExponentU(0.0f),
-	m_ExponentV(0.0f)
+	m_AlphaV(Alpha)
 {
 	m_AlphaU = std::max(m_AlphaU, 1e-4f);
 	m_AlphaV = std::max(m_AlphaV, 1e-4f);
-
-	if (m_Type == EPhong)
-	{
-		// Ref: Microfacet Models for Refraction through Rough Surfaces 
-		// Sec 5.2 Phong Distribution
-		// Walter et al.
-		m_ExponentU = std::max(2.0f / (m_AlphaU * m_AlphaU) - 2.0f, 0.0f);
-		m_ExponentV = std::max(2.0f / (m_AlphaV * m_AlphaV) - 2.0f, 0.0f);
-	}
 }
 
 MicrofacetDistribution::MicrofacetDistribution(EType Type, float AlphaU, float AlphaV) :
 	m_Type(Type),
 	m_AlphaU(AlphaU),
-	m_AlphaV(AlphaV),
-	m_ExponentU(0.0f),
-	m_ExponentV(0.0f)
+	m_AlphaV(AlphaV)
 {
 	m_AlphaU = std::max(m_AlphaU, 1e-4f);
 	m_AlphaV = std::max(m_AlphaV, 1e-4f);
-
-	if (m_Type == EPhong)
-	{
-		// Ref: Microfacet Models for Refraction through Rough Surfaces 
-		// Sec 5.2 Phong Distribution
-		// Walter et al.
-		m_ExponentU = std::max(2.0f / (m_AlphaU * m_AlphaU) - 2.0f, 0.0f);
-		m_ExponentV = std::max(2.0f / (m_AlphaV * m_AlphaV) - 2.0f, 0.0f);
-
-	}
 }
 
 void MicrofacetDistribution::ScaleAlpha(float Scale)
 {
 	m_AlphaU *= Scale;
 	m_AlphaV *= Scale;
-
-	if (m_Type == EPhong)
-	{
-		// Ref: Microfacet Models for Refraction through Rough Surfaces 
-		// Sec 5.2 Phong Distribution
-		// Walter et al.
-		m_ExponentU = std::max(2.0f / (m_AlphaU * m_AlphaU) - 2.0f, 0.0f);
-		m_ExponentV = std::max(2.0f / (m_AlphaV * m_AlphaV) - 2.0f, 0.0f);
-	}
 }
 
 float MicrofacetDistribution::Eval(const Vector3f & M) const
@@ -81,12 +49,6 @@ float MicrofacetDistribution::Eval(const Vector3f & M) const
 		/* GGX / Trowbridge-Reitz distribution function for rough surfaces */
 		float Root = (1.0f + BeckmannExponent) * CosTheta2;
 		Result = 1.0f / (float(M_PI) * m_AlphaU * m_AlphaV * Root * Root);
-	}
-	else if (m_Type == EPhong)
-	{
-		/* Isotropic case: Phong distribution. Anisotropic case: Ashikhmin-Shirley distribution */
-		float Exponent = InterpolatePhongExponent(M);
-		Result = std::sqrt((m_ExponentU + 2.0f) * (m_ExponentV + 2.0f)) * float(INV_TWOPI) * std::pow(Frame::CosTheta(M), Exponent);
 	}
 	else
 	{
@@ -131,7 +93,7 @@ float MicrofacetDistribution::SmithG1(const Vector3f & V, const Vector3f & M) co
 
 	float Alpha = ProjectRoughness(V);
 
-	if (m_Type == EPhong || m_Type == EBeckmann)
+	if (m_Type == EBeckmann)
 	{
 		float A = 1.0f / (Alpha * TanTheta);
 		if (A >= 1.6f)
@@ -165,7 +127,6 @@ std::string MicrofacetDistribution::TypeName(EType Type)
 	{
 		case EBeckmann: return "beckmann"; break;
 		case EGGX: return "ggx"; break;
-		case EPhong: return "phong"; break;
 		default: return "invalid"; break;
 	}
 }
@@ -241,44 +202,6 @@ Vector3f MicrofacetDistribution::SampleAll(const Point2f & Sample, float & Pdf) 
 		float Temp = 1.0f + TanThetaMSqr / AlphaSqr;
 		Pdf = float(INV_PI) / (m_AlphaU * m_AlphaV * CosThetaM * CosThetaM * CosThetaM * Temp * Temp);
 	}
-	else if (m_Type == EPhong)
-	{
-		float PhiM;
-		float Exponent;
-
-		if (IsIsotropic())
-		{
-			PhiM = (2.0f * float(M_PI)) * Sample.y();
-			Exponent = m_ExponentU;
-		}
-		else
-		{
-			/* Sampling method based on code from PBRT */
-			if (Sample.y() < 0.25f)
-			{
-				SampleFirstQuadrant(4.0f * Sample.y(), PhiM, Exponent);
-			}
-			else if (Sample.y() < 0.5f)
-			{
-				SampleFirstQuadrant(4.0f * (0.5f - Sample.y()), PhiM, Exponent);
-				PhiM = float(M_PI) - PhiM;
-			}
-			else if (Sample.y() < 0.75f)
-			{
-				SampleFirstQuadrant(4.0f * (Sample.y() - 0.5f), PhiM, Exponent);
-				PhiM += float(M_PI);
-			}
-			else
-			{
-				SampleFirstQuadrant(4.0f * (1.0f - Sample.y()), PhiM, Exponent);
-				PhiM = 2.0f * float(M_PI) - PhiM;
-			}
-		}
-
-		SinCos(PhiM, &SinPhiM, &CosPhiM);
-		CosThetaM = std::pow(Sample.x(), 1.0f / (Exponent + 2.0f));
-		Pdf = std::sqrt((m_ExponentU + 2.0f) * (m_ExponentV + 2.0f)) * float(INV_TWOPI) * std::pow(CosThetaM, Exponent + 1.0f);
-	}
 	else
 	{
 		LOG(ERROR) << "Invalid distribution type!";
@@ -320,34 +243,6 @@ float MicrofacetDistribution::ProjectRoughness(const Vector3f & V) const
 	float SinPhi2 = V.y() * V.y() * InvSinTheta2;
 
 	return std::sqrt(CosPhi2 * m_AlphaU * m_AlphaU + SinPhi2 * m_AlphaV * m_AlphaV);
-}
-
-float MicrofacetDistribution::InterpolatePhongExponent(const Vector3f & V) const
-{
-	float SinTheta2 = Frame::SinTheta2(V);
-
-	if (IsIsotropic() || SinTheta2 <= 1.0f / std::numeric_limits<float>::max())
-	{
-		return m_ExponentU;
-	}
-
-	float InvSinTheta2 = 1.0f / SinTheta2;
-	float CosPhi2 = V.x() * V.x() * InvSinTheta2;
-	float SinPhi2 = V.y() * V.y() * InvSinTheta2;
-
-	return m_ExponentU * CosPhi2 + m_ExponentV * SinPhi2;
-}
-
-void MicrofacetDistribution::SampleFirstQuadrant(float U1, float & Phi, float & Exponent) const
-{
-	float CosPhi, SinPhi;
-	Phi = std::tan(
-		std::sqrt((m_ExponentU + 2.0f) / (m_ExponentV + 2.0f)) * 
-		std::tan(float(M_PI) * U1 * 0.5f)
-	);
-	SinCos(Phi, &SinPhi, &CosPhi);
-
-	Exponent = m_ExponentU * CosPhi * CosPhi + m_ExponentV * SinPhi * SinPhi;
 }
 
 NAMESPACE_END

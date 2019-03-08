@@ -1,0 +1,64 @@
+<scene>
+	<sampler type="independent">
+		<integer name="sampleCount" value="256"/>
+	</sampler>
+
+	<acceleration type="hlbvh">
+		<integer name="leafSize" value="10"/>
+	</acceleration>
+
+	<!-- Use the simple point light integrator -->
+    <integrator type="pathMIS">
+		<integer name="depth" value="128"/>
+	</integrator>
+
+	<emitter type="env"> 
+		<string name="filename" value="uffizi-large.exr" />
+	</emitter>
+	
+	<camera type="perspective">
+		<float name="fov" value="49.13434207760448"/>
+		<float name="nearClip" value="0.10000000149011612"/>
+		<float name="farClip" value="100.0"/>
+		<integer name="width" value="800"/>
+		<integer name="height" value="800"/>
+		<transform name="toWorld">
+			<scale value="1.000000 1.000000 -1.000000"/>
+			<matrix value="0.6859195828437805,-0.3240130841732025,0.6515595316886902,2.7304561138153076,0.7276773452758789,0.3054189383983612,-0.6141701340675354,-2.6036219596862793,5.387954615798662e-07,0.8953964710235596,0.4452698230743408,1.8621299266815186,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<rfilter type="gaussian">
+			<float name="radius" value="2.0"/>
+			<float name="stddev" value="0.6"/>
+		</rfilter>
+	</camera>
+
+	<mesh type="obj">
+		<string name="filename" value="sphere-light.obj"/>
+		<transform name="toWorld">
+			<matrix value="0.8490152955055237,-0.5095598101615906,0.13972072303295135,3.744663715362549,-0.03923485800623894,-0.3245088458061218,-0.9450685977935791,3.156461000442505,0.526909589767456,0.7968957424163818,-0.29550546407699585,3.088547945022583,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<emitter type="area">
+            <color name="radiance" value="20 20 20"/>
+		</emitter>
+		<bsdf type="diffuse">
+			<color name="albedo" value="0,0,0"/>
+		</bsdf>
+	</mesh>
+
+	<mesh type="obj">
+		<string name="filename" value="sphere.obj"/>
+		<transform name="toWorld">
+			<matrix value="1.0,0.0,0.0,0.0,0.0,-1.6292068494294654e-07,-1.0,0.0,0.0,1.0,-1.6292068494294654e-07,0.0,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<bsdf type="roughConductor">
+			<string name="type" value="ggx"/>
+			<float name="intIOR" value="1.5"/>
+			<float name="extIOR" value="1.0"/>
+			<float name="alphaU" value="0.025"/>
+			<float name="alphaV" value="0.025"/>
+			<boolean name="as" value="true"/>
+			<color name="k" value="2.9278 2.9278 2.9278"/>
+			<color name="ks" value="1.0, 1.0, 1.0"/>
+		</bsdf>
+	</mesh>
+</scene>

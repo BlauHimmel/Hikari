@@ -9,7 +9,7 @@ class MicrofacetDistribution
 public:
 	enum EType
 	{
-		EBeckmann, EGGX, EPhong
+		EBeckmann, EGGX
 	};
 
 	MicrofacetDistribution(EType Type, float Alpha);
@@ -19,9 +19,6 @@ public:
 	float GetAlpha() const { return m_AlphaU; }
 	float GetAlphaU() const { return m_AlphaU; }
 	float GetAlphaV() const { return m_AlphaV; }
-	float GetExponent() const { return m_ExponentU; }
-	float GetExponentU() const { return m_ExponentU; }
-	float GetExponentV() const { return m_ExponentV; }
 	bool IsAnisotropic() const { return m_AlphaU != m_AlphaV; }
 	bool IsIsotropic() const { return m_AlphaU == m_AlphaV; }
 
@@ -40,15 +37,10 @@ protected:
 	float PdfAll(const Vector3f & M) const;
 	// Compute the effective roughness projected on direction V
 	float ProjectRoughness(const Vector3f & V) const;
-	// Compute the interpolated roughness for the Phong model
-	float InterpolatePhongExponent(const Vector3f & V) const;
-	// Sample the azimuthal part of the first quadrant of the A&S distribution
-	void SampleFirstQuadrant(float U1, float & Phi, float & Exponent) const;
 
 protected:
 	EType m_Type;
 	float m_AlphaU, m_AlphaV;
-	float m_ExponentU, m_ExponentV;
 };
 
 NAMESPACE_END

@@ -23,16 +23,9 @@ RoughConductorBSDF::RoughConductorBSDF(const PropertyList & PropList)
 	std::string TypeStr = PropList.GetString(XML_BSDF_ROUGH_CONDUCTOR_TYPE, DEFAULT_BSDF_ROUGH_CONDUCTOR_TYPE);
 	if (TypeStr == "beckmann") { m_Type = MicrofacetDistribution::EBeckmann; }
 	else if (TypeStr == "ggx") { m_Type = MicrofacetDistribution::EGGX; }
-	else if (TypeStr == "phong") { m_Type = MicrofacetDistribution::EPhong; }
 	else { throw HikariException("Unexpected distribution type : %s", TypeStr); }
 
-
 	bool bAs = PropList.GetBoolean(XML_BSDF_ROUGH_CONDUCTOR_AS, DEFAULT_BSDF_ROUGH_CONDUCTOR_AS);
-
-	if (m_Type == MicrofacetDistribution::EPhong && bAs)
-	{
-		LOG(ERROR) << "Anisotropic phong does not work correctly in some cases. Bugs need to be fixed.";
-	}
 
 	if (bAs)
 	{
