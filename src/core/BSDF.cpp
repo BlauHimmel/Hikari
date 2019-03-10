@@ -2,9 +2,20 @@
 
 NAMESPACE_BEGIN
 
-BSDFQueryRecord::BSDFQueryRecord(const Vector3f & Wi, ETransportMode Mode) : Wi(Wi), Measure(EMeasure::EUnknownMeasure), Mode(Mode) { }
+BSDFQueryRecord::BSDFQueryRecord(const Vector3f & Wi, ETransportMode Mode, Sampler * pSampler) : 
+	Wi(Wi),
+	Measure(EMeasure::EUnknownMeasure),
+	Mode(Mode),
+	pSampler(pSampler) 
+{ }
 
-BSDFQueryRecord::BSDFQueryRecord(const Vector3f & Wi, const Vector3f & Wo, EMeasure Measure, ETransportMode Mode) : Wi(Wi), Wo(Wo), Measure(Measure), Mode(Mode) { }
+BSDFQueryRecord::BSDFQueryRecord(const Vector3f & Wi, const Vector3f & Wo, EMeasure Measure, ETransportMode Mode, Sampler * pSampler) : 
+	Wi(Wi),
+	Wo(Wo),
+	Measure(Measure),
+	Mode(Mode),
+	pSampler(pSampler)
+{ }
 
 std::string BSDFQueryRecord::ToString() const
 {

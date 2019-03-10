@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<scene>
+	<sampler type="independent">
+		<integer name="sampleCount" value="2560"/>
+	</sampler>
+
+	<acceleration type="hlbvh">
+		<integer name="leafSize" value="10"/>
+	</acceleration>
+
+	<!-- Use the simple point light integrator -->
+    <integrator type="pathMIS">
+		<integer name="depth" value="128"/>
+	</integrator>
+
+	<emitter type="env"> 
+		<string name="filename" value="uffizi-large.exr" />
+	</emitter>
+
+	<camera type="perspective">
+		<float name="fov" value="49.13434207760448"/>
+		<float name="nearClip" value="0.10000000149011612"/>
+		<float name="farClip" value="100.0"/>
+		<integer name="width" value="800"/>
+		<integer name="height" value="800"/>
+		<transform name="toWorld">
+			<scale value="1.000000 1.000000 -1.000000"/>
+			<matrix value="-0.028131036087870598,-0.048434678465127945,0.9984301328659058,6.67431640625,0.9996042251586914,-0.0013632290065288544,0.028097985312342644,0.14475978910923004,1.720771365398832e-07,0.9988254308700562,0.04845385625958443,0.4294753670692444,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<rfilter type="gaussian">
+			<float name="radius" value="2.0"/>
+			<float name="stddev" value="0.6"/>
+		</rfilter>
+	</camera>
+
+	<mesh type="obj">
+		<string name="filename" value="glass.obj"/>
+		<transform name="toWorld">
+			<matrix value="0.009999999776482582,0.0,0.0,0.0,0.0,1.5,0.0,0.0,0.0,0.0,1.5,0.0,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<bsdf type="roughDielectric">
+			<string name="type" value="ggx"/>
+			<float name="intIOR" value="1.5"/>
+			<float name="extIOR" value="1.0"/>
+			<float name="alphaU" value="0.005"/>
+			<float name="alphaV" value="0.005"/>
+			<boolean name="as" value="true"/>
+			<color name="ksRefract" value="1.0, 1.0, 1.0"/>
+			<color name="ksReflect" value="1.0, 1.0, 1.0"/>
+		</bsdf>
+	</mesh>
+</scene>

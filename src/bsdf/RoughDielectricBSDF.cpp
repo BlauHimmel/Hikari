@@ -1,5 +1,7 @@
 #include <bsdf\RoughDielectricBSDF.hpp>
 #include <core\Frame.hpp>
+#include <core\Sampler.hpp>
+#include <pcg32.h>
 
 NAMESPACE_BEGIN
 
@@ -44,7 +46,90 @@ RoughDielectricBSDF::RoughDielectricBSDF(const PropertyList & PropList)
 
 Color3f RoughDielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
 {
-	return Color3f();
+	Record.Measure = EMeasure::ESolidAngle;
+	float CosThetaI = Frame::CosTheta(Record.Wi);
+
+	/* Construct the microfacet distribution matching the
+	roughness values at the current surface position.
+	(texture will be implemented later) */
+	MicrofacetDistribution Distribution(m_Type, m_AlphaU, m_AlphaV);
+
+	/* Trick by Walter et al.: slightly scale the roughness values to
+	   reduce importance sampling weights. */
+	MicrofacetDistribution SampleDistribution(Distribution);
+	SampleDistribution.ScaleAlpha(1.2f - 0.2f * std::sqrt(std::abs(CosThetaI)));
+
+	float Pdf;
+	Vector3f M = SampleDistribution.Sample(Signum(CosThetaI) * Record.Wi, Sample, Pdf);
+
+	if (Pdf == 0.0f)
+	{
+		return Color3f(0.0f);
+	}
+
+	float CosThetaT;
+	float F = FresnelDielectric(Record.Wi.dot(M), m_Eta, m_InvEta, CosThetaT);
+
+	float Sample1D;
+	if (Record.pSampler != nullptr)
+	{
+		Sample1D = Record.pSampler->Next1D();
+	}
+	else
+	{
+		pcg32 Random;
+		Sample1D = Random.nextFloat();
+		LOG(WARNING) << "Sampler not specified in the BSDFQueryRecord, use pcg32 instead!.";
+	}
+
+	bool bSampleReflection;
+	if (Sample1D > F)
+	{
+		bSampleReflection = false;
+	}
+	else
+	{
+		bSampleReflection = true;
+	}
+
+	Color3f W(1.0f);
+
+	if (bSampleReflection)
+	{
+		Record.Wo = Reflect(Record.Wi, M);
+		Record.Eta = 1.0f;
+
+		float CosThetaO = Frame::CosTheta(Record.Wo);
+		if (CosThetaO * CosThetaI <= 0.0f)
+		{
+			return Color3f(0.0f);
+		}
+
+		W *= m_KsReflect;
+	}
+	else
+	{
+		if (CosThetaT == 0.0f)
+		{
+			return Color3f(0.0f);
+		}
+
+		/* Perfect specular transmission based on the microfacet normal */
+		Record.Wo = Refract(Record.Wi, M, CosThetaT, m_Eta, m_InvEta);
+		Record.Eta = (CosThetaT < 0.0f ? m_Eta : m_InvEta);
+
+		float CosThetaO = Frame::CosTheta(Record.Wo);
+		if (CosThetaO * CosThetaI >= 0.0f)
+		{
+			return Color3f(0.0f);
+		}
+
+		float Factor = (Record.Mode == ETransportMode::ERadiance) ? (CosThetaT < 0.0f ? m_InvEta : m_Eta) : 1.0f;
+		W *= m_KsRefract * (Factor * Factor);
+	}
+
+	W *= std::abs(Distribution.Eval(M) * Distribution.G(Record.Wi, Record.Wo, M) * Record.Wi.dot(M) / (Pdf * CosThetaI));
+	return W;
 }
 
 Color3f RoughDielectricBSDF::Eval(const BSDFQueryRecord & Record) const
@@ -109,12 +194,60 @@ Color3f RoughDielectricBSDF::Eval(const BSDFQueryRecord & Record) const
 
 		return std::abs(Value * Factor * Factor) * m_KsRefract;
 	}
-	return Color3f();
 }
 
 float RoughDielectricBSDF::Pdf(const BSDFQueryRecord & Record) const
 {
-	return 0.0f;
+	if (Record.Measure != EMeasure::ESolidAngle)
+	{
+		return 0.0f;
+	}
+	float CosThetaI = Frame::CosTheta(Record.Wi);
+	float CosThetaO = Frame::CosTheta(Record.Wo);
+
+	bool bReflect = (CosThetaI * CosThetaO > 0.0f);
+
+	Vector3f H;
+	float J;
+
+	if (bReflect)
+	{
+		/* Calculate the reflection half-vector */
+		H = (Record.Wi + Record.Wo).normalized();
+
+		/* Jacobian of the half-direction mapping */
+		J = 1.0f / (4.0f * Record.Wo.dot(H));
+	}
+	else
+	{
+		/* Calculate the transmission half-vector */
+		float Eta = CosThetaI > 0.0f ? m_Eta : m_InvEta;
+		H = (Record.Wi + Record.Wo * Eta).normalized();
+
+		/* Jacobian of the half-direction mapping */
+		float SqrtDenom = Record.Wi.dot(H) + Eta * Record.Wo.dot(H);
+		J = (Eta * Eta * Record.Wo.dot(H)) / (SqrtDenom * SqrtDenom);
+	}
+
+	/* Ensure that the half-vector points into the
+	   same hemisphere as the macrosurface normal */
+	H *= Signum(Frame::CosTheta(H));
+
+	/* Construct the microfacet distribution matching the
+	  roughness values at the current surface position.
+	  (texture will be implemented later) */
+	MicrofacetDistribution Distribution(m_Type, m_AlphaU, m_AlphaV);
+
+	/* Trick by Walter et al.: slightly scale the roughness values to
+	   reduce importance sampling weights.*/
+	Distribution.ScaleAlpha(1.2f - 0.2f * std::sqrt(std::abs(CosThetaI)));
+
+	float CosThetaT;
+	float F = FresnelDielectric(Record.Wi.dot(H), m_Eta, m_InvEta, CosThetaT);
+
+	float Pdf = Distribution.Pdf(H) * (bReflect ? F : (1.0f - F));
+
+	return std::abs(Pdf * J);
 }
 
 bool RoughDielectricBSDF::IsAnisotropic() const

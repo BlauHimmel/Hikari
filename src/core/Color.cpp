@@ -46,7 +46,7 @@ bool Color3f::IsValid() const
 	for (int i = 0; i < 3; ++i)
 	{
 		float Value = coeff(i);
-		if (Value < 0 || !std::isfinite(Value))
+		if (Value < 0.0f || !std::isfinite(Value))
 		{
 			return false;
 		}

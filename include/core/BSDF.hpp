@@ -23,14 +23,17 @@ struct BSDFQueryRecord
 	/// Measure associated with the sample
 	EMeasure Measure;
 
-	/// the transport mode when sampling or evaluating a scattering function
+	/// The transport mode when sampling or evaluating a scattering function
 	ETransportMode Mode;
 
+	/// The sampler currently used
+	Sampler * pSampler;
+
 	/// Create a new record for sampling the BSDF
-	BSDFQueryRecord(const Vector3f & Wi, ETransportMode Mode);
+	BSDFQueryRecord(const Vector3f & Wi, ETransportMode Mode, Sampler * pSampler);
 
 	/// Create a new record for querying the BSDF
-	BSDFQueryRecord(const Vector3f & Wi, const Vector3f & Wo, EMeasure Measure, ETransportMode Mode);
+	BSDFQueryRecord(const Vector3f & Wi, const Vector3f & Wo, EMeasure Measure, ETransportMode Mode, Sampler * pSampler);
 
 	/// Return a human-readable string summary
 	std::string ToString() const;

@@ -47,7 +47,7 @@ Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample)
 		/* Radiance must be scaled to account for the solid angle compression
 		that occurs when crossing the interface. */
 		float Factor = (Record.Mode == ETransportMode::ERadiance) ? (CosThetaT < 0.0f ? m_InvEta : m_Eta) : 1.0f;
-		return m_KsRefract * Factor * Factor;
+		return m_KsRefract * (Factor * Factor);
 	}
 }
 

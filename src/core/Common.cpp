@@ -346,13 +346,19 @@ Vector3f Reflect(const Vector3f & Wi)
 
 Vector3f Refract(const Vector3f & Wi, float CosThetaT, float Eta, float InvEta)
 {
-	float Scale = -(CosThetaT < 0 ? InvEta : Eta);
+	float Scale = -(CosThetaT < 0.0f ? InvEta : Eta);
 	return Vector3f(Scale * Wi.x(), Scale * Wi.y(), CosThetaT);
 }
 
 Vector3f Reflect(const Vector3f & Wi, const Vector3f & M)
 {
 	return 2.0f * Wi.dot(M) * M - Wi;
+}
+
+Vector3f Refract(const Vector3f & Wi, const Vector3f & M, float CosThetaT, float Eta, float InvEta)
+{
+	Eta = (CosThetaT < 0.0f ? InvEta : Eta);
+	return M * (Wi.dot(M) * Eta + CosThetaT) - Wi * Eta;
 }
 
 filesystem::resolver * GetFileResolver()

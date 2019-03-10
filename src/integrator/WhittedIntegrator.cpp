@@ -54,11 +54,11 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		{
 			if (pEmitter == Isect.pEmitter)
 			{
-				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), Isect.ToLocal(Isect.ShadingFrame.N), EMeasure::ESolidAngle, ETransportMode::ERadiance);
+				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), Isect.ToLocal(Isect.ShadingFrame.N), EMeasure::ESolidAngle, ETransportMode::ERadiance, nullptr);
 				float Pdf = pBSDF->Pdf(BSDFRecord);
 				if (Pdf != 0.0f)
 				{
-					Lr += pBSDF->Eval(BSDFRecord) / Pdf * Frame::CosTheta(BSDFRecord.Wo) * Le;
+					Lr += pBSDF->Eval(BSDFRecord) / Pdf * std::abs(Frame::CosTheta(BSDFRecord.Wo)) * Le;
 				}
 				continue;
 			}
@@ -77,8 +77,8 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 
 				if (!pScene->ShadowRayIntersect(ShadowRay))
 				{
-					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle, ETransportMode::ERadiance);
-					Lr += pBSDF->Eval(BSDFRecord) * Frame::CosTheta(BSDFRecord.Wo) * Li;
+					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle, ETransportMode::ERadiance, nullptr);
+					Lr += pBSDF->Eval(BSDFRecord) * std::abs(Frame::CosTheta(BSDFRecord.Wo)) * Li;
 				}
 			}
 		}
@@ -88,7 +88,7 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		if (pSampler->Next1D() < 0.95f)
 		{
 			constexpr float Inv = 1.0f / 0.95f;
-			BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), ETransportMode::ERadiance);
+			BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), ETransportMode::ERadiance, nullptr);
 			Color3f C = pBSDF->Sample(BSDFRecord, pSampler->Next2D());
 			Lr += C * Li(pScene, pSampler, Ray3f(Isect.P, Isect.ToWorld(BSDFRecord.Wo))) * Inv;
 		}
