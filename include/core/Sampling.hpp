@@ -45,9 +45,11 @@ public:
 	static float SquareToCosineHemispherePdf(const Vector3f & V);
 
 	/// Warp a uniformly distributed square sample to a Beckmann distribution * cosine for the given 'alpha' parameter
+	/// (Deprecated : Sampling methods relevant to microfacet are wrapped in MicrofacetDistribution class now.)
 	static Vector3f SquareToBeckmann(const Point2f & Sample, float Alpha);
 
 	/// Probability density of \ref SquareToBeckmann()
+	/// (Deprecated : Sampling methods relevant to microfacet are wrapped in MicrofacetDistribution class now.)
 	static float SquareToBeckmannPdf(const Vector3f & M, float Alpha);
 };
 

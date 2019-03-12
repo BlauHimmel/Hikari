@@ -3,6 +3,10 @@
 
 NAMESPACE_BEGIN
 
+// Reference:
+//     Notes on the Ward BRDF 
+//     Microfacet Models for Refraction through Rough Surfaces
+
 MicrofacetDistribution::MicrofacetDistribution(EType Type, float Alpha) :
 	m_Type(Type),
 	m_AlphaU(Alpha),

@@ -1,7 +1,7 @@
 <scene>
 	<!-- Independent sample generator, 1024 samples per pixel -->
 	<sampler type="independent">
-		<integer name="sampleCount" value="2048"/>
+		<integer name="sampleCount" value="5120"/>
 	</sampler>
 
 	<acceleration type="hlbvh">
@@ -64,9 +64,15 @@
 		<transform name="toWorld" >
 			<matrix value="0.482906 0 0 0.156382 0 0.482906 0 0.777229 0 0 0.482906 0.161698 0 0 0 1"/>
 		</transform>
-		<bsdf type="dielectric">
+		<bsdf type="roughDielectric">
+			<string name="type" value="beckmann"/>
 			<float name="intIOR" value="1.5"/>
 			<float name="extIOR" value="1.0"/>
+			<float name="alphaU" value="0.01"/>
+			<float name="alphaV" value="0.01"/>
+			<boolean name="as" value="true"/>
+			<color name="ksRefract" value="1.0, 1.0, 1.0"/>
+			<color name="ksReflect" value="1.0, 1.0, 1.0"/>
 		</bsdf>
 	</mesh>
 

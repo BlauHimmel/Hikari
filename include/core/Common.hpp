@@ -156,6 +156,10 @@
 #define XML_BSDF_ROUGH_DIELECTRIC_ALPHA_V        "alphaV"
 #define XML_BSDF_ROUGH_DIELECTRIC_TYPE           "type"
 #define XML_BSDF_ROUGH_DIELECTRIC_AS             "as"
+#define XML_BSDF_ROUGH_DIFFUSE                   "roughDiffuse"
+#define XML_BSDF_ROUGH_DIFFUSE_ALBEDO            "albedo"
+#define XML_BSDF_ROUGH_DIFFUSE_ALPHA             "alpha"
+#define XML_BSDF_ROUGH_DIFFUSE_FAST_APPROX       "fastApprox"
 
 #define XML_MEDIUM                               "medium"
 
@@ -255,6 +259,9 @@
 #define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA_V     0.1f
 #define DEFAULT_BSDF_ROUGH_DIELECTRIC_TYPE        "beckmann"
 #define DEFAULT_BSDF_ROUGH_DIELECTRIC_AS          false
+#define DEFAULT_BSDF_ROUGH_DIFFUSE_ALBEDO         Color3f(0.5f)
+#define DEFAULT_BSDF_ROUGH_DIFFUSE_ALPHA          0.2f
+#define DEFAULT_BSDF_ROUGH_DIFFUSE_FAST_APPROX    false
 
 #define DEFAULT_FILTER_GAUSSIAN_RADIUS            2.0f
 #define DEFAULT_FILTER_GAUSSIAN_STDDEV            0.5f
