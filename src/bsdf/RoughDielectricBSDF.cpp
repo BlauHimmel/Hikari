@@ -49,6 +49,11 @@ Color3f RoughDielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sa
 	Record.Measure = EMeasure::ESolidAngle;
 	float CosThetaI = Frame::CosTheta(Record.Wi);
 
+	if (CosThetaI == 0.0f)
+	{
+		return Color3f(0.0f);
+	}
+
 	/* Construct the microfacet distribution matching the
 	roughness values at the current surface position.
 	(texture will be implemented later) */
@@ -129,6 +134,7 @@ Color3f RoughDielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sa
 	}
 
 	W *= std::abs(Distribution.Eval(M) * Distribution.G(Record.Wi, Record.Wo, M) * Record.Wi.dot(M) / (Pdf * CosThetaI));
+
 	return W;
 }
 
@@ -204,6 +210,11 @@ float RoughDielectricBSDF::Pdf(const BSDFQueryRecord & Record) const
 	}
 	float CosThetaI = Frame::CosTheta(Record.Wi);
 	float CosThetaO = Frame::CosTheta(Record.Wo);
+
+	if (CosThetaI == 0.0f || CosThetaO == 0.0f)
+	{
+		return 0.0f;
+	}
 
 	bool bReflect = (CosThetaI * CosThetaO > 0.0f);
 
