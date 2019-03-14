@@ -1,7 +1,7 @@
 <scene>
 	<!-- Independent sample generator, 64 samples per pixel -->
 	<sampler type="independent">
-		<integer name="sampleCount" value="512"/>
+		<integer name="sampleCount" value="256"/>
 	</sampler>
 
 	<acceleration type="hlbvh">
@@ -52,7 +52,7 @@
 			<matrix value="1.0,0.0,0.0,0.0,0.0,-1.6292068494294654e-07,-1.0,0.0,0.0,1.0,-1.6292068494294654e-07,0.0,0.0,0.0,0.0,1.0"/>
 		</transform>
 		<bsdf type="roughDiffuse">
-			<float name="alpha" value="0.4"/>
+			<float name="alpha" value="0.7"/>
 			<color name="albedo" value="0.27 0.39 0.47"/>
 			<boolean name="fastApprox" value="false"/>
 		</bsdf>

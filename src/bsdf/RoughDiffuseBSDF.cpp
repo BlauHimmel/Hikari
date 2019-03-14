@@ -16,6 +16,8 @@ RoughDiffuseBSDF::RoughDiffuseBSDF(const PropertyList & PropList)
 
 	/* Whether to use full version of the model or a fast approximation */
 	m_bFastApprox = PropList.GetBoolean(XML_BSDF_ROUGH_DIFFUSE_FAST_APPROX, DEFAULT_BSDF_ROUGH_DIFFUSE_FAST_APPROX);
+
+	m_Alpha = std::max(m_Alpha, 1e-4f);
 }
 
 Color3f RoughDiffuseBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
