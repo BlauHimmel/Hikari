@@ -153,7 +153,13 @@ bool PlasticBSDF::IsDiffuse() const
 std::string PlasticBSDF::ToString() const
 {
 	return tfm::format(
-		"Plastic[intIOR = %f, extIOR = %f, ks = %f, kd = %s, nonlinear = %s]",
+		"Plastic[\n"
+		"intIOR = %f,\n"
+		"extIOR = %f,\n"
+		"ks = %f,\n"
+		"kd = %s,\n"
+		"nonlinear = %s\n"
+		"]",
 		m_IntIOR,
 		m_ExtIOR,
 		m_Ks.ToString(),
