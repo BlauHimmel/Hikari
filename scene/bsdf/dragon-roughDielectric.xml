@@ -1,12 +1,12 @@
 <scene>
 	<sampler type="independent">
-		<integer name="sampleCount" value="5000"/>
+		<integer name="sampleCount" value="2048"/>
 	</sampler>
 	<acceleration type="hlbvh">
 		<integer name="leafSize" value="10"/>
 	</acceleration>
     <integrator type="pathMIS">
-		<integer name="depth" value="64"/>
+		<integer name="depth" value="16"/>
 	</integrator>
 	<emitter type="env"> 
 		<string name="filename" value="uffizi-large.exr" />
