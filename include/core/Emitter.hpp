@@ -29,7 +29,10 @@ struct EmitterQueryRecord
 	/// Direction vector from 'Ref' to 'P'
 	Vector3f Wi;
 
-	/// Distance between 'Ref' and 'P'
+	/// Distance between 'Ref' and 'P'. 
+	/// When the type of emitter is either Env or Directional, this 
+	/// value should be set as the radius of the bounding sphere of 
+	/// the whole scene before CALLING Sample().
 	float Distance;
 
 	/// Create an unitialized query record

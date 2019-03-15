@@ -78,7 +78,7 @@ Color3f PathMISIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		{
 			EmitterQueryRecord EmitterRecord(Isect.P);
 
-			if (pEmitter->GetEmitterType() == EEmitterType::EEnvironment)
+			if (pEmitter->GetEmitterType() == EEmitterType::EEnvironment || pEmitter->GetEmitterType() == EEmitterType::EDirectional)
 			{
 				EmitterRecord.Distance = pScene->GetBoundingBox().GetRadius();
 			}

@@ -93,6 +93,9 @@
 #define XML_EMITTER_ENVIRONMENT_LIGHT_FILENAME   "filename"
 #define XML_EMITTER_ENVIRONMENT_LIGHT_SCALE      "scale"
 #define XML_EMITTER_ENVIRONMENT_LIGHT_TO_WORLD   "toWorld"
+#define XML_EMITTER_DIRECTIONAL_LIGHT            "directional"
+#define XML_EMITTER_DIRECTIONAL_LIGHT_IRRADIANCE "irradiance"
+#define XML_EMITTER_DIRECTIONAL_LIGHT_DIRECTION  "direction"
 
 #define XML_ACCELERATION                         "acceleration"
 #define XML_ACCELERATION_BRUTO_LOOP              "bruto"
@@ -480,9 +483,11 @@ enum class EEmitterType
 	EUnknown = 0,
 	EPoint = 1,
 	EArea = 2,
-	EEnvironment = 3
+	EEnvironment = 3,
+	EDirectional = 4
 };
 
+/// Type of the light transport. Currently not used, so set it to ERadiance now. 
 enum class ETransportMode
 {
 	EUnknown = 0,

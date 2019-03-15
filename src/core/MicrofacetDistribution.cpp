@@ -12,8 +12,8 @@ MicrofacetDistribution::MicrofacetDistribution(EType Type, float Alpha) :
 	m_AlphaU(Alpha),
 	m_AlphaV(Alpha)
 {
-	m_AlphaU = std::max(m_AlphaU, 1e-4f);
-	m_AlphaV = std::max(m_AlphaV, 1e-4f);
+	m_AlphaU = std::max(m_AlphaU, 5e-4f);
+	m_AlphaV = std::max(m_AlphaV, 5e-4f);
 }
 
 MicrofacetDistribution::MicrofacetDistribution(EType Type, float AlphaU, float AlphaV) :
@@ -21,8 +21,8 @@ MicrofacetDistribution::MicrofacetDistribution(EType Type, float AlphaU, float A
 	m_AlphaU(AlphaU),
 	m_AlphaV(AlphaV)
 {
-	m_AlphaU = std::max(m_AlphaU, 1e-4f);
-	m_AlphaV = std::max(m_AlphaV, 1e-4f);
+	m_AlphaU = std::max(m_AlphaU, 5e-4f);
+	m_AlphaV = std::max(m_AlphaV, 5e-4f);
 }
 
 void MicrofacetDistribution::ScaleAlpha(float Scale)

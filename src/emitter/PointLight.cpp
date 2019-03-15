@@ -2,7 +2,7 @@
 
 NAMESPACE_BEGIN
 
-REGISTER_CLASS(PointLight, XML_EMITTER_POINT_LIGHT)
+REGISTER_CLASS(PointLight, XML_EMITTER_POINT_LIGHT);
 
 PointLight::PointLight(const PropertyList & PropList)
 {
@@ -44,7 +44,7 @@ Color3f PointLight::Eval(const EmitterQueryRecord & Record) const
 std::string PointLight::ToString() const
 {
 	return tfm::format(
-		"PointLight=[power = %s, position = %s]",
+		"PointLight[power = %s, position = %s]",
 		m_Power.ToString(),
 		m_Position.ToString()
 	);

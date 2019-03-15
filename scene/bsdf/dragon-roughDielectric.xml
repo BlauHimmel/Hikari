@@ -55,7 +55,7 @@
 			<string name="type" value="beckmann"/>
 			<float name="intIOR" value="1.5"/>
 			<float name="extIOR" value="1.0"/>
-			<float name="alpha" value="0.1"/>
+			<float name="alpha" value="0.3"/>
 			<boolean name="as" value="false"/>
 			<color name="ksRefract" value="1.0, 1.0, 1.0"/>
 			<color name="ksReflect" value="1.0, 1.0, 1.0"/>

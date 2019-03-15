@@ -54,7 +54,7 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		{
 			if (pEmitter == Isect.pEmitter)
 			{
-				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), Isect.ToLocal(Isect.ShadingFrame.N), EMeasure::ESolidAngle, ETransportMode::ERadiance, nullptr);
+				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), Isect.ToLocal(Isect.ShadingFrame.N), EMeasure::ESolidAngle, ETransportMode::ERadiance, pSampler);
 				float Pdf = pBSDF->Pdf(BSDFRecord);
 				if (Pdf != 0.0f)
 				{
@@ -67,7 +67,7 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 				EmitterQueryRecord EmitterRecord;
 				EmitterRecord.Ref = Isect.P;
 
-				if (pEmitter->GetEmitterType() == EEmitterType::EEnvironment)
+				if (pEmitter->GetEmitterType() == EEmitterType::EEnvironment || pEmitter->GetEmitterType() == EEmitterType::EDirectional)
 				{
 					EmitterRecord.Distance = pScene->GetBoundingBox().GetRadius();
 				}
@@ -77,7 +77,7 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 
 				if (!pScene->ShadowRayIntersect(ShadowRay))
 				{
-					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle, ETransportMode::ERadiance, nullptr);
+					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle, ETransportMode::ERadiance, pSampler);
 					Lr += pBSDF->Eval(BSDFRecord) * std::abs(Frame::CosTheta(BSDFRecord.Wo)) * Li;
 				}
 			}
@@ -88,7 +88,7 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		if (pSampler->Next1D() < 0.95f)
 		{
 			constexpr float Inv = 1.0f / 0.95f;
-			BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), ETransportMode::ERadiance, nullptr);
+			BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), ETransportMode::ERadiance, pSampler);
 			Color3f C = pBSDF->Sample(BSDFRecord, pSampler->Next2D());
 			Lr += C * Li(pScene, pSampler, Ray3f(Isect.P, Isect.ToWorld(BSDFRecord.Wo))) * Inv;
 		}

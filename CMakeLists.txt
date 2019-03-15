@@ -189,6 +189,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Vector.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/emitter/AreaLight.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/emitter/DirectionalLight.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/emitter/EnvironmentLight.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/emitter/PointLight.cpp
 
@@ -262,6 +263,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Vector.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/emitter/AreaLight.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/emitter/DirectionalLight.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/emitter/EnvironmentLight.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/emitter/PointLight.hpp
 
