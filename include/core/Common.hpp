@@ -42,6 +42,9 @@
 /* "Ray epsilon": relative error threshold for ray intersection computations */
 #define Epsilon 1e-4
 
+/* Used for BSDF::Eval() or BSDF::PDF() for the delta distribution. */
+#define DeltaEpsilon 1e-3
+
 /* A few useful constants */
 #undef M_PI
 
@@ -76,6 +79,7 @@
 #define XML_INTEGRATOR_AO_ALPHA                  "alpha"
 #define XML_INTEGRATOR_AO_SAMPLE_COUNT           "sampleCount"
 #define XML_INTEGRATOR_WHITTED                   "whitted"
+#define XML_INTEGRATOR_WHITTED_DEPTH             "depth"
 #define XML_INTEGRATOR_PATH_EMS                  "pathEMS"
 #define XML_INTEGRATOR_PATH_EMS_DEPTH            "depth"
 #define XML_INTEGRATOR_PATH_MATS                 "pathMATS"
@@ -94,7 +98,7 @@
 #define XML_EMITTER_ENVIRONMENT_LIGHT_SCALE      "scale"
 #define XML_EMITTER_ENVIRONMENT_LIGHT_TO_WORLD   "toWorld"
 #define XML_EMITTER_DIRECTIONAL_LIGHT            "directional"
-#define XML_EMITTER_DIRECTIONAL_LIGHT_IRRADIANCE "irradiance"
+#define XML_EMITTER_DIRECTIONAL_LIGHT_POWER      "power"
 #define XML_EMITTER_DIRECTIONAL_LIGHT_DIRECTION  "direction"
 
 #define XML_ACCELERATION                         "acceleration"
@@ -108,6 +112,8 @@
 #define XML_ACCELERATION_HLBVH_LEAF_SIZE         "leafSize"
 
 #define XML_SCENE                                "scene"
+#define XML_SCENE_BACKGROUND                     "background"
+#define XML_SCENE_FORCE_BACKGROUND               "forceBackground"
 
 #define XML_MESH                                 "mesh"
 #define XML_MESH_WAVEFRONG_OBJ                   "obj"
@@ -276,6 +282,7 @@
 
 #define DEFAULT_INTEGRATOR_AO_ALPHA               1e6f
 #define DEFAULT_INTEGRATOR_AO_SAMPLE_COUNT        16
+#define DEFAULT_INTEGRATOR_WHITTED_DEPTH          -1
 
 #define DEFAULT_SAMPLER_INDEPENDENT_SAMPLE_COUNT  1
 
@@ -294,6 +301,9 @@
 #define DEFAULT_TEST_CHI2_MIN_EXP_FREQUENCY       5
 #define DEFAULT_TEST_CHI2_SAMPLE_COUNT            -1
 #define DEFAULT_TEST_CHI2_TEST_COUNT              5
+
+#define DEFAULT_SCENE_BACKGROUND              Color3f(0.0f)
+#define DEFAULT_SCENE_FORCE_BACKGROUND        false
 
 NAMESPACE_BEGIN
 

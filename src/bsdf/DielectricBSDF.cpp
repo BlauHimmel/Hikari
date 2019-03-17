@@ -53,13 +53,54 @@ Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample)
 
 Color3f DielectricBSDF::Eval(const BSDFQueryRecord & Record) const
 {
-	/* Discrete BRDFs always evaluate to zero */
+	float CosThetaI = Frame::CosTheta(Record.Wi);
+	float CosThetaO = Frame::CosTheta(Record.Wo);
+	float CosThetaT;
+
+	float FresnelTerm = FresnelDielectric(CosThetaI, m_Eta, m_InvEta, CosThetaT);
+
+	if (CosThetaI * CosThetaO >= 0.0f)
+	{
+		if (std::abs(Reflect(Record.Wi).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
+		{
+			return m_KsReflect * FresnelTerm;
+		}
+	}
+	else
+	{
+		if (std::abs(Refract(Record.Wi, CosThetaT, m_Eta, m_InvEta).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
+		{
+			float Factor = (Record.Mode == ETransportMode::ERadiance) ? (CosThetaT < 0.0f ? m_InvEta : m_Eta) : 1.0f;
+			return m_KsRefract * (Factor * Factor) * (1.0f - FresnelTerm);
+		}
+	}
+
 	return Color3f(0.0f);
 }
 
 float DielectricBSDF::Pdf(const BSDFQueryRecord & Record) const
 {
-	/* Discrete BRDFs always evaluate to zero */
+	float CosThetaI = Frame::CosTheta(Record.Wi);
+	float CosThetaO = Frame::CosTheta(Record.Wo);
+	float CosThetaT;
+
+	float FresnelTerm = FresnelDielectric(CosThetaI, m_Eta, m_InvEta, CosThetaT);
+
+	if (CosThetaI * CosThetaO >= 0.0f)
+	{
+		if (std::abs(Reflect(Record.Wi).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
+		{
+			return FresnelTerm;
+		}
+	}
+	else
+	{
+		if (std::abs(Refract(Record.Wi, CosThetaT, m_Eta, m_InvEta).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
+		{
+			return 1.0f - FresnelTerm;
+		}
+	}
+
 	return 0.0f;
 }
 

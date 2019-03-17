@@ -66,7 +66,7 @@ Color3f EnvironmentLight::Sample(EmitterQueryRecord & Record, const Point2f & Sa
 	Record.Wi = m_ToWorld * SphericalDirection(Theta, Phi);
 	Record.N = -Record.Wi;
 	Record.pEmitter = this;
-	Record.P = Record.Ref + Record.Wi * Record.Distance;
+	Record.P = Record.Ref + Record.Wi * Record.Distance * 2.0f;
 	Color3f Radiance = m_pEnvironmentMap->coeff(Idx.y(), Idx.x());
 	if (!Radiance.IsValid())
 	{

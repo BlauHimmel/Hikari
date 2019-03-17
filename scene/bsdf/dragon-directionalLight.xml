@@ -1,0 +1,63 @@
+<scene>
+  <color name="background" value="1 1 1"/>
+	<boolean name="forceBackground" value="true"/>
+	<sampler type="independent">
+		<integer name="sampleCount" value="64"/>
+	</sampler>
+	<acceleration type="hlbvh">
+		<integer name="leafSize" value="10"/>
+	</acceleration>
+    <integrator type="pathMIS">
+		<integer name="depth" value="16"/>
+	</integrator>
+	<camera type="perspective">
+		<float name="fov" value="49.13434207760448"/>
+		<float name="nearClip" value="0.10000000149011612"/>
+		<float name="farClip" value="100.0"/>
+		<integer name="width" value="800"/>
+		<integer name="height" value="800"/>
+		<transform name="toWorld">
+			<scale value="1.000000 1.000000 -1.000000"/>
+			<matrix value="0.8381392359733582,-0.40597838163375854,0.3642858862876892,0.18933695554733276,0.5454563498497009,0.6238195896148682,-0.5597557425498962,-0.20809967815876007,4.839010259161114e-08,0.6678552627563477,0.7442911863327026,0.36485588550567627,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<rfilter type="gaussian">
+			<float name="radius" value="2.0"/>
+			<float name="stddev" value="0.6"/>
+		</rfilter>
+	</camera>
+	<emitter type="env"> 
+		<string name="filename" value="uffizi-large.exr" />
+		<float name="scale" value="0.2" />
+	</emitter>
+	<emitter type="directional">
+    <color name="power" value="1.5 1.5 1.5"/>
+		<vector name="direction" value="1 -1 -1"/>
+	</emitter>
+	<emitter type="directional">
+    <color name="power" value="1.5 1.5 1.5"/>
+		<vector name="direction" value="-1 -1 -1"/>
+	</emitter>
+	<emitter type="directional">
+    <color name="power" value="1.5 1.5 1.5"/>
+		<vector name="direction" value="1 1 -1"/>
+	</emitter>
+	<emitter type="directional">
+    <color name="power" value="1.5 1.5 1.5"/>
+		<vector name="direction" value="1 -1 1"/>
+	</emitter>
+	<mesh type="obj">
+		<string name="filename" value="dragon/dragon_remeshed.obj"/>
+		<transform name="toWorld">
+			<matrix value="0.0006386842578649521,-4.5970648443471873e-07,-0.0007694688392803073,0.0,3.79323901142925e-05,0.000998802832327783,3.088840458076447e-05,0.0,0.0007685334421694279,-4.891573189524934e-05,0.0006379371043294668,0.04235324263572693,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<bsdf type="roughConductor">
+			<string name="type" value="ggx"/>
+			<float name="intIOR" value="1.5"/>
+			<float name="extIOR" value="1.0"/>
+			<float name="alpha" value="0.2"/>
+			<boolean name="as" value="false"/>
+			<color name="k" value="2.9278 2.9278 2.9278"/>
+			<color name="ks" value="1.0, 1.0, 1.0"/>
+		</bsdf>
+	</mesh>
+</scene>

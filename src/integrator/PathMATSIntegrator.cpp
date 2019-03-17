@@ -11,6 +11,8 @@ REGISTER_CLASS(PathMATSIntegrator, XML_INTEGRATOR_PATH_MATS);
 PathMATSIntegrator::PathMATSIntegrator(const PropertyList & PropList)
 {
 	m_Depth = uint32_t(PropList.GetInteger(XML_INTEGRATOR_PATH_MATS_DEPTH));
+
+	LOG(WARNING) << "PathMATSIntegrator will emit PointLight and DirectionalLight due to the limitations of the sampling strategy.";
 }
 
 Color3f PathMATSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ray3f & Ray) const
@@ -21,17 +23,23 @@ Color3f PathMATSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const R
 	Color3f Beta(1.0f);
 	uint32_t Depth = 0;
 	const Emitter * pEnvironmentEmitter = pScene->GetEnvironmentEmitter();
+	Color3f Background = pScene->GetBackground();
+	bool bForceBackground = pScene->GetForceBackground();
 
 	while (Depth < m_Depth)
 	{
 		if (!pScene->RayIntersect(TracingRay, Isect))
 		{
-			if (pEnvironmentEmitter != nullptr)
+			if (pEnvironmentEmitter != nullptr && !bForceBackground)
 			{
 				EmitterQueryRecord EmitterRecord;
 				EmitterRecord.Ref = TracingRay.Origin;
 				EmitterRecord.Wi = TracingRay.Direction;
 				Li += Beta * pEnvironmentEmitter->Eval(EmitterRecord) / 1.0f;
+			}
+			else if (Depth == 0)
+			{
+				return Background;
 			}
 			break;
 		}

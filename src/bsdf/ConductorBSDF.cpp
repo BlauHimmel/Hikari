@@ -44,13 +44,31 @@ Color3f ConductorBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) 
 
 Color3f ConductorBSDF::Eval(const BSDFQueryRecord & Record) const
 {
-	/* Discrete BRDFs always evaluate to zero */
+	float CosThetaI = Frame::CosTheta(Record.Wi);
+	float CosThetaO = Frame::CosTheta(Record.Wo);
+
+	if (CosThetaI > 0.0f && CosThetaO > 0.0f && Record.Measure == EMeasure::EDiscrete &&
+		std::abs(Reflect(Record.Wi).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
+	{
+		LOG(INFO) << "1111";
+		return m_Ks * FresnelConductor(CosThetaI, m_Eta, m_EtaK);
+	}
+
 	return Color3f(0.0f);
 }
 
 float ConductorBSDF::Pdf(const BSDFQueryRecord & Record) const
 {
-	/* Discrete BRDFs always evaluate to zero */
+	float CosThetaI = Frame::CosTheta(Record.Wi);
+	float CosThetaO = Frame::CosTheta(Record.Wo);
+
+	if (CosThetaI > 0.0f && CosThetaO > 0.0f && Record.Measure == EMeasure::EDiscrete &&
+		std::abs(Reflect(Record.Wi).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
+	{
+		LOG(INFO) << "2222";
+		return 1.0f;
+	}
+
 	return 0.0f;
 }
 

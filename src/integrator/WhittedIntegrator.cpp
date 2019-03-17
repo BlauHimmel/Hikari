@@ -10,18 +10,30 @@ REGISTER_CLASS(WhittedIntegrator, XML_INTEGRATOR_WHITTED);
 
 WhittedIntegrator::WhittedIntegrator(const PropertyList & PropList)
 {
-
+	m_Depth = uint32_t(PropList.GetInteger(XML_INTEGRATOR_WHITTED_DEPTH, DEFAULT_INTEGRATOR_WHITTED_DEPTH));
 }
 
 Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ray3f & Ray) const
 {
+	return LiRecursive(pScene, pSampler, Ray, 0);
+}
+
+std::string WhittedIntegrator::ToString() const
+{
+	return tfm::format("WhittedIntegrator[depth = %d]", m_Depth);
+}
+
+Color3f WhittedIntegrator::LiRecursive(const Scene * pScene, Sampler * pSampler, const Ray3f & Ray, uint32_t Depth) const
+{
 	const Emitter * pEnvironmentEmitter = pScene->GetEnvironmentEmitter();
+	Color3f Background = pScene->GetBackground();
+	bool bForceBackground = pScene->GetForceBackground();
 
 	/* Find the surface that is visible in the requested direction */
 	Intersection Isect;
 	if (!pScene->RayIntersect(Ray, Isect))
 	{
-		if (pEnvironmentEmitter != nullptr)
+		if (pEnvironmentEmitter != nullptr && !bForceBackground)
 		{
 			EmitterQueryRecord EmitterRecord;
 			EmitterRecord.Ref = Ray.Origin;
@@ -30,7 +42,14 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 		}
 		else
 		{
-			return Color3f(0.0f);
+			if (Depth == 0)
+			{
+				return Background;
+			}
+			else
+			{
+				return Color3f(0.0f);
+			}
 		}
 	}
 
@@ -85,21 +104,16 @@ Color3f WhittedIntegrator::Li(const Scene * pScene, Sampler * pSampler, const Ra
 	}
 	else
 	{
-		if (pSampler->Next1D() < 0.95f)
+		if (pSampler->Next1D() < 0.95f && Depth < m_Depth)
 		{
 			constexpr float Inv = 1.0f / 0.95f;
 			BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), ETransportMode::ERadiance, pSampler);
 			Color3f C = pBSDF->Sample(BSDFRecord, pSampler->Next2D());
-			Lr += C * Li(pScene, pSampler, Ray3f(Isect.P, Isect.ToWorld(BSDFRecord.Wo))) * Inv;
+			Lr += C * LiRecursive(pScene, pSampler, Ray3f(Isect.P, Isect.ToWorld(BSDFRecord.Wo)), Depth + 1) * Inv;
 		}
 	}
 
 	return Lr + Le;
-}
-
-std::string WhittedIntegrator::ToString() const
-{
-	return "WhittedIntegrator[]";
 }
 
 NAMESPACE_END

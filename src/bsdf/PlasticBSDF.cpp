@@ -98,6 +98,11 @@ Color3f PlasticBSDF::Eval(const BSDFQueryRecord & Record) const
 
 	if (bSpecular)
 	{
+		if (std::abs(Reflect(Record.Wi).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
+		{
+			return m_Ks * FresnelTermI;
+		}
+
 		return Color3f(0.0f);
 	}
 	else
@@ -133,6 +138,14 @@ float PlasticBSDF::Pdf(const BSDFQueryRecord & Record) const
 
 	if (bSpecular)
 	{
+		if (std::abs(Reflect(Record.Wi).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
+		{
+			float CosThetaT;
+			float FresnelTermI = FresnelDielectric(CosThetaI, m_Eta, m_InvEta, CosThetaT);
+			float SpecularPDF = (FresnelTermI * m_SpecularSamplingWeight) /
+				(FresnelTermI * m_SpecularSamplingWeight + (1.0f - FresnelTermI) * (1.0f - m_SpecularSamplingWeight));
+			return  1.0f - SpecularPDF;
+		}
 		return 0.0f;
 	}
 	else

@@ -10,7 +10,11 @@ REGISTER_CLASS(Scene, XML_SCENE);
 
 Scene::Scene(const PropertyList & PropList)
 {
+	/* Background of the image, i.e. the return value when the ray does not hit any object */
+	m_Background = PropList.GetColor(XML_SCENE_BACKGROUND, DEFAULT_SCENE_BACKGROUND);
 
+	/* Forcely use the background color when the environment emitter is specified */
+	m_bForceBackground = PropList.GetBoolean(XML_SCENE_FORCE_BACKGROUND, DEFAULT_SCENE_FORCE_BACKGROUND);
 }
 
 Scene::~Scene()
@@ -33,6 +37,16 @@ Scene::~Scene()
 	delete m_pSampler;
 	delete m_pCamera;
 	delete m_pIntegrator;
+}
+
+Color3f Scene::GetBackground() const
+{
+	return m_Background;
+}
+
+bool Scene::GetForceBackground() const
+{
+	return m_bForceBackground;
 }
 
 const Acceleration * Scene::GetAccel() const
@@ -167,7 +181,8 @@ void Scene::AddChild(Object * pChildObj)
 		}
 		break;
 	case EClassType::EEmitter:
-		if (((Emitter*)(pChildObj))->GetEmitterType() == EEmitterType::EPoint)
+		if (((Emitter*)(pChildObj))->GetEmitterType() == EEmitterType::EPoint || 
+			((Emitter*)(pChildObj))->GetEmitterType() == EEmitterType::EDirectional)
 		{
 			m_pEmitters.push_back((Emitter*)(pChildObj));
 		}
@@ -240,6 +255,8 @@ std::string Scene::ToString() const
 
 	return tfm::format(
 		"Scene[\n"
+		"  background = %s,\n"
+		"  forceBackground = %s,\n"
 		"  acceleration = %s,\n"
 		"  integrator = %s,\n"
 		"  sampler = %s\n"
@@ -249,6 +266,8 @@ std::string Scene::ToString() const
 		"  meshes = {\n"
 		"  %s  }\n"
 		"]",
+		m_Background.ToString(),
+		m_bForceBackground ? "true" : "false",
 		Indent(m_pAcceleration->ToString()),
 		Indent(m_pIntegrator->ToString()),
 		Indent(m_pSampler->ToString()),

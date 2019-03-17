@@ -15,6 +15,11 @@ public:
 
 	/// Return a human-readable description for debugging purposes
 	virtual std::string ToString() const override;
+
+protected:
+	Color3f LiRecursive(const Scene * pScene, Sampler * pSampler, const Ray3f & Ray, uint32_t Depth) const;
+
+	uint32_t m_Depth;
 };
 
 NAMESPACE_END

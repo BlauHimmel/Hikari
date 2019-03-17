@@ -23,11 +23,6 @@ Color3f PointLight::Sample(EmitterQueryRecord & Record, const Point2f & Sample2D
 	Record.pEmitter = this;
 	Record.Pdf = 1.0f;
 
-	if (Record.Pdf == 0.0f || std::isinf(Record.Pdf))
-	{
-		return Color3f(0.0f);
-	}
-
 	return m_Power * (1.0f / ((4.0f * float(M_PI)) * (Record.Distance * Record.Distance)));
 }
 

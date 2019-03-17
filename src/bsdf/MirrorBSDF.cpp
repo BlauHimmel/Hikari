@@ -28,13 +28,29 @@ Color3f MirrorBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) con
 
 Color3f MirrorBSDF::Eval(const BSDFQueryRecord & Record) const
 {
-	/* Discrete BRDFs always evaluate to zero */
+	float CosThetaI = Frame::CosTheta(Record.Wi);
+	float CosThetaO = Frame::CosTheta(Record.Wo);
+
+	if (CosThetaI > 0.0f && CosThetaO > 0.0f && Record.Measure == EMeasure::EDiscrete &&
+		std::abs(Reflect(Record.Wi).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
+	{
+		return Color3f(1.0f);
+	}
+
 	return Color3f(0.0f);
 }
 
 float MirrorBSDF::Pdf(const BSDFQueryRecord & Record) const
 {
-	/* Discrete BRDFs always evaluate to zero */
+	float CosThetaI = Frame::CosTheta(Record.Wi);
+	float CosThetaO = Frame::CosTheta(Record.Wo);
+
+	if (CosThetaI > 0.0f && CosThetaO > 0.0f && Record.Measure == EMeasure::EDiscrete &&
+		std::abs(Reflect(Record.Wi).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
+	{
+		return 1.0f;
+	}
+
 	return 0.0f;
 }
 

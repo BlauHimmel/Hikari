@@ -15,6 +15,11 @@ public:
 	/// Release all memory
 	virtual ~Scene();
 
+	/// Return the color of the background;
+	Color3f GetBackground() const;
+
+	bool GetForceBackground() const;
+
 	/// Return a pointer to the scene's acceleration structure
 	const Acceleration * GetAccel() const;
 
@@ -98,6 +103,9 @@ public:
 	virtual EClassType GetClassType() const override;
 
 protected:
+	Color3f m_Background;
+	bool m_bForceBackground;
+
 	std::vector<Mesh*> m_pMeshes;
 	Integrator * m_pIntegrator = nullptr;
 	Sampler * m_pSampler = nullptr;
