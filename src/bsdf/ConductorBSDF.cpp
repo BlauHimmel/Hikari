@@ -50,7 +50,6 @@ Color3f ConductorBSDF::Eval(const BSDFQueryRecord & Record) const
 	if (CosThetaI > 0.0f && CosThetaO > 0.0f && Record.Measure == EMeasure::EDiscrete &&
 		std::abs(Reflect(Record.Wi).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
 	{
-		LOG(INFO) << "1111";
 		return m_Ks * FresnelConductor(CosThetaI, m_Eta, m_EtaK);
 	}
 
@@ -65,7 +64,6 @@ float ConductorBSDF::Pdf(const BSDFQueryRecord & Record) const
 	if (CosThetaI > 0.0f && CosThetaO > 0.0f && Record.Measure == EMeasure::EDiscrete &&
 		std::abs(Reflect(Record.Wi).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
 	{
-		LOG(INFO) << "2222";
 		return 1.0f;
 	}
 

@@ -415,6 +415,10 @@ void Mesh::AddChild(Object * pChildObj)
 			throw HikariException("Mesh: tried to register multiple Emitter instances!");
 		}
 		m_pEmitter = (Emitter*)(pChildObj);
+		if (m_pEmitter->GetEmitterType() != EEmitterType::EArea)
+		{
+			throw HikariException("Mesh: only area light can be attached!");
+		}
 		break;
 	default:
 		throw HikariException("Mesh::AddChild(<%s>) is not supported!", ClassTypeName(pChildObj->GetClassType()));

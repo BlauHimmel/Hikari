@@ -100,6 +100,8 @@
 #define XML_EMITTER_DIRECTIONAL_LIGHT            "directional"
 #define XML_EMITTER_DIRECTIONAL_LIGHT_POWER      "power"
 #define XML_EMITTER_DIRECTIONAL_LIGHT_DIRECTION  "direction"
+#define XML_EMITTER_CONSTANT_LIGHT               "constant"
+#define XML_EMITTER_CONSTANT_LIGHT_RADIANCE      "radiance"
 
 #define XML_ACCELERATION                         "acceleration"
 #define XML_ACCELERATION_BRUTO_LOOP              "bruto"
