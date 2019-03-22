@@ -30,6 +30,11 @@ struct TRay
 	Scalar MinT;                    ///< Minimum position on the ray segment
 	Scalar MaxT;                    ///< Maximum position on the ray segment
 
+	/* Differential info of the ray */
+	PointType RxOrigin, RyOrigin;
+	VectorType RxDirection, RyDirection;
+	bool bHasDifferentials = false;
+
 	/// Construct a new ray
 	TRay() : MinT(float(Epsilon)), MaxT(std::numeric_limits<Scalar>::infinity()) { }
 	
@@ -52,13 +57,19 @@ struct TRay
 	TRay(const TRay & Ray) :
 		Origin(Ray.Origin), Direction(Ray.Direction), 
 		DirectionReciprocal(Ray.DirectionReciprocal), 
-		MinT(Ray.MinT), MaxT(Ray.MaxT) { }
+		MinT(Ray.MinT), MaxT(Ray.MaxT),
+		RxOrigin(Ray.RxOrigin), RyOrigin(Ray.RyOrigin),
+		RxDirection(Ray.RxDirection), RyDirection(Ray.RyDirection),
+		bHasDifferentials(Ray.bHasDifferentials) { }
 
 	/// Copy a ray, but change the covered segment of the copy
 	TRay(const TRay & Ray, Scalar MinT, Scalar MaxT) :
 		Origin(ray.Origin), Direction(ray.Direction),
 		DirectionReciprocal(ray.DirectionReciprocal),
-		MinT(Ray.MinT), MaxT(Ray.MaxT) { }
+		MinT(Ray.MinT), MaxT(Ray.MaxT),
+		RxOrigin(Ray.RxOrigin), RyOrigin(Ray.RyOrigin),
+		RxDirection(Ray.RxDirection), RyDirection(Ray.RyDirection),
+		bHasDifferentials(Ray.bHasDifferentials) { }
 
 	/// Update the reciprocal ray directions after changing 'Direction'
 	void Update()
@@ -78,6 +89,10 @@ struct TRay
 		Result.DirectionReciprocal = -DirectionReciprocal;
 		Result.MinT = MinT;
 		Result.MaxT = MaxT;
+		Result.RxOrigin = RxOrigin;
+		Result.RyOrigin = RyOrigin;
+		Result.RxDirection = -RxDirection;
+		Result.RyDirection = -RyDirection;
 		return Result;
 	}
 
@@ -89,9 +104,20 @@ struct TRay
 			"  Origin = %s,\n"
 			"  Direction = %s,\n"
 			"  MinT = %f,\n"
-			"  MaxT = %f\n"
+			"  MaxT = %f,\n"
+			"  RxOrigin = %s,\n"
+			"  RyOrigin = %s,\n"
+			"  RxDirection = %s,\n"
+			"  RyDirection = %s\n"
 			"]", 
-			Origin.ToString(), Direction.ToString(), MinT, MaxT
+			Origin.ToString(),
+			Direction.ToString(),
+			MinT,
+			MaxT,
+			RxOrigin.ToString(),
+			RyOrigin.ToString(),
+			RxDirection.ToString(),
+			RyDirection.ToString()
 		);
 	}
 };

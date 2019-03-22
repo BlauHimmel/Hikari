@@ -16,7 +16,7 @@ Triangle::Triangle(Mesh * pMesh, uint32_t * pFacet, uint32_t iFacet) :
 
 void Triangle::SamplePosition(const Point2f & Sample, Point3f & P, Normal3f & N) const
 {
-	/** This method is correct theoretically, but won't pass test */
+	/** This method is correct theoretically, but won't pass the test */
 	//// Ref : https://blog.csdn.net/noahzuo/article/details/52886447 or <<Graphics Gems>>
 	//float SqrY = Sample.y();
 	//float Alpha = 1.0f - SqrY;
@@ -130,6 +130,7 @@ void Triangle::PostIntersect(Intersection & Isect)
 				Isect.dPdV = Isect.ShadingFrame.T;
 				Isect.dNdU = Vector3f(0.0f);
 				Isect.dNdV = Vector3f(0.0f);
+				Isect.bHasUVPartial = true;
 			}
 			else
 			{
@@ -151,6 +152,7 @@ void Triangle::PostIntersect(Intersection & Isect)
 				Isect.dNdV = (-dUV2.x() * dNdU + dUV1.x() * dNdV) * InvDet;
 				Isect.dPdU = dPdU;
 				Isect.dPdV = dPdV;
+				Isect.bHasUVPartial = true;
 
 				Isect.ShadingFrame = Frame(NShade, dPdU);
 			}

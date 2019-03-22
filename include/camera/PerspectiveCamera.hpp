@@ -33,6 +33,8 @@ protected:
 	float m_Fov;
 	float m_NearClip;
 	float m_FarClip;
+	Vector3f m_dX;
+	Vector3f m_dY;
 };
 
 NAMESPACE_END

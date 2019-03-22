@@ -348,6 +348,7 @@ bool BVHAcceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool
 	if (bFoundIntersection)
 	{
 		pFoundShape->PostIntersect(Isect);
+		Isect.ComputeScreenSpacePartial(Ray);
 	}
 
 	return bFoundIntersection;

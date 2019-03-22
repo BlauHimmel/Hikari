@@ -29,6 +29,8 @@ struct Intersection
 	*/
 	Point2f UV;
 
+	bool bHasUVPartial = false;
+
 	Vector3f dPdU;
 
 	Vector3f dPdV;
@@ -37,8 +39,13 @@ struct Intersection
 
 	Vector3f dNdV;
 
-	float dUdX = 0.0f, dUdY = 0.0f;
-	float dVdX = 0.0f, dVdY = 0.0f;
+	float dUdX = 0.0f;
+
+	float dUdY = 0.0f;
+
+	float dVdX = 0.0f;
+
+	float dVdY = 0.0f;
 
 	/// Shading frame (based on the shading normal)
 	Frame ShadingFrame;
@@ -68,6 +75,9 @@ struct Intersection
 	* Note : MinT = 0.0 Max : 1.0 and Dir = Pt - Isect.P in the returned ray
 	*/
 	Ray3f SpawnShadowRay(const Point3f & Pt) const;
+
+	/// Computes texture coordinate partials
+	void ComputeScreenSpacePartial(const Ray3f & Ray);
 
 	/// Return a human-readable summary of the intersection record
 	std::string ToString() const;

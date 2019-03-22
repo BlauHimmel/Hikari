@@ -647,6 +647,25 @@ inline double Hypot2(double A, double B)
 	return Result;
 }
 
+inline bool SolveLinearSystem2x2(const float A[2][2], const float B[2], float X[2])
+{
+	float Det = A[0][0] * A[1][1] - A[0][1] * A[1][0];
+
+	constexpr float InvOverflow = 1.0f / std::numeric_limits<float>::max();
+
+	if (std::abs(Det) <= InvOverflow)
+	{
+		return false;
+	}
+
+	float InvDet = 1.0f / Det;
+
+	X[0] = (A[1][1] * B[0] - A[0][1] * B[1]) * InvDet;
+	X[1] = (A[0][0] * B[1] - A[1][0] * B[0]) * InvDet;
+
+	return true;
+}
+
 /// Simple signum function -- note that it returns the FP sign of the input (and never zero)
 inline float Signum(float Value)
 {

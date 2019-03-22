@@ -61,6 +61,11 @@ void PerspectiveCamera::Activate()
 		Perspective
 	).Inverse();
 
+	m_dX = m_SampleToCamera * Point3f(m_InvOutputSize.x(), 0.0f, 0.0f) -
+		m_SampleToCamera * Point3f(0.0f);
+	m_dY = m_SampleToCamera * Point3f(0.0f, m_InvOutputSize.y(), 0.0f) -
+		m_SampleToCamera * Point3f(0.0f);
+
 	/* If no reconstruction filter was assigned, instantiate a default filter */
 	if (m_pFilter == nullptr)
 	{
@@ -86,6 +91,11 @@ Color3f PerspectiveCamera::SampleRay(Ray3f & Ray, const Point2f & SamplePosition
 	Ray.Direction = m_CameraToWorld * Dir;
 	Ray.MinT = m_NearClip * InvZ;
 	Ray.MaxT = m_FarClip * InvZ;
+	Ray.RxOrigin = Ray.Origin;
+	Ray.RyOrigin = Ray.Origin;
+	Ray.RxDirection = m_CameraToWorld * Vector3f((Vector3f(NearP) + m_dX).normalized());
+	Ray.RyDirection = m_CameraToWorld * Vector3f((Vector3f(NearP) + m_dY).normalized());
+	Ray.bHasDifferentials = true;
 	Ray.Update();
 
 	return Color3f(1.0f);

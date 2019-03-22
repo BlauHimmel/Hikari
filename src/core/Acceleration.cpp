@@ -68,6 +68,7 @@ bool Acceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool bS
 	if (bFoundIntersection)
 	{
 		pFoundShape->PostIntersect(Isect);
+		Isect.ComputeScreenSpacePartial(Ray);
 	}
 
 	return bFoundIntersection;

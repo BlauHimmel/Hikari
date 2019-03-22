@@ -280,6 +280,7 @@ bool HLBVHAcceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bo
 	if (bFoundIntersection)
 	{
 		pFoundShape->PostIntersect(Isect);
+		Isect.ComputeScreenSpacePartial(Ray);
 	}
 
 	return bFoundIntersection;
