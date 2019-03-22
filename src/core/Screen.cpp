@@ -187,7 +187,7 @@ Screen::Screen(const ImageBlock & Block) : m_Block(Block), m_Scale(0.5f)
 	LOG(INFO) << "OpenGL initialized!Version: " << glGetString(GL_VERSION);
 }
 
-std::vector<const ImageBlock*>& Screen::GetRenderingBlocks()
+std::vector<const ImageBlock *> & Screen::GetRenderingBlocks()
 {
 	return m_RenderingBlocks;
 }

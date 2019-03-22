@@ -21,6 +21,7 @@ public:
 		EBSDF                 = 2,
 		EPhaseFunction        = 3,
 		EEmitter              = 4,
+		ETexture              = 5,
 		EMedium               = 6,
 		ECamera               = 7,
 		EIntegrator           = 8,

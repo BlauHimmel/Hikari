@@ -113,6 +113,7 @@ set(
         ${GLOG_INCLUDE_DIR}
         ${FILESYSTEM_INCLUDE_DIR}
         ${HYPOTHESIS_INCLUDE_DIR}
+        ${STB_LIB_INCLUDE_DIR}
 )
 
 set(
@@ -184,6 +185,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Screen.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Shape.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/StudentTTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Texture.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Timer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Transform.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Vector.cpp
@@ -259,6 +261,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Screen.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Shape.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/StudentTTest.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Texture.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Timer.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Transform.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Vector.hpp

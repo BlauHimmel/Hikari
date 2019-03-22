@@ -29,6 +29,17 @@ struct Intersection
 	*/
 	Point2f UV;
 
+	Vector3f dPdU;
+
+	Vector3f dPdV;
+
+	Vector3f dNdU;
+
+	Vector3f dNdV;
+
+	float dUdX = 0.0f, dUdY = 0.0f;
+	float dVdX = 0.0f, dVdY = 0.0f;
+
 	/// Shading frame (based on the shading normal)
 	Frame ShadingFrame;
 

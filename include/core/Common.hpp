@@ -103,6 +103,8 @@
 #define XML_EMITTER_CONSTANT_LIGHT               "constant"
 #define XML_EMITTER_CONSTANT_LIGHT_RADIANCE      "radiance"
 
+#define XML_TEXTURE                              "texture"
+
 #define XML_ACCELERATION                         "acceleration"
 #define XML_ACCELERATION_BRUTO_LOOP              "bruto"
 #define XML_ACCELERATION_BVH                     "bvh"
@@ -304,8 +306,8 @@
 #define DEFAULT_TEST_CHI2_SAMPLE_COUNT            -1
 #define DEFAULT_TEST_CHI2_TEST_COUNT              5
 
-#define DEFAULT_SCENE_BACKGROUND              Color3f(0.0f)
-#define DEFAULT_SCENE_FORCE_BACKGROUND        false
+#define DEFAULT_SCENE_BACKGROUND                  Color3f(0.0f)
+#define DEFAULT_SCENE_FORCE_BACKGROUND            false
 
 NAMESPACE_BEGIN
 
@@ -350,6 +352,8 @@ class Scene;
 class Timer;
 class Shape;
 class MicrofacetDistribution;
+class Texture;
+class Texture2D;
 
 /* Basic data structures (vectors, points, rays, bounding boxes,
 kd-trees) are oblivious to the underlying data type and dimension.
@@ -644,7 +648,8 @@ inline double Hypot2(double A, double B)
 }
 
 /// Simple signum function -- note that it returns the FP sign of the input (and never zero)
-inline float Signum(float Value) {
+inline float Signum(float Value)
+{
 #if defined(__PLATFORM_WINDOWS__)
 	return float(_copysign(1.0f, Value));
 #elif

@@ -28,6 +28,7 @@ std::string Object::ClassTypeName(EClassType Type)
 		case EClassType::EBSDF:                 return "BSDF";
 		case EClassType::EPhaseFunction:        return "PhaseFunction";
 		case EClassType::EEmitter:              return "Emitter";
+		case EClassType::ETexture:              return "Texture";
 		case EClassType::EMedium:               return "Medium";
 		case EClassType::ECamera:               return "Camera";
 		case EClassType::EIntegrator:           return "Integrator";

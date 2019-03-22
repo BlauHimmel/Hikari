@@ -52,6 +52,7 @@ Object * LoadFromXML(const std::string & Filename)
 		EBSDF                 = Object::EClassType::EBSDF,
 		EPhaseFunction        = Object::EClassType::EPhaseFunction,
 		EEmitter              = Object::EClassType::EEmitter,
+		ETexture              = Object::EClassType::ETexture,
 		EMedium               = Object::EClassType::EMedium,
 		ECamera               = Object::EClassType::ECamera,
 		EIntegrator           = Object::EClassType::EIntegrator,
@@ -86,6 +87,7 @@ Object * LoadFromXML(const std::string & Filename)
 	Tags[XML_BSDF]                 = EBSDF;
 	Tags[XML_PHASE]                = EPhaseFunction;
 	Tags[XML_EMITTER]              = EEmitter;
+	Tags[XML_TEXTURE]              = ETexture;
 	Tags[XML_MEDIUM]               = EMedium;
 	Tags[XML_CAMERA]               = ECamera;
 	Tags[XML_INTEGRATOR]           = EIntegrator;
