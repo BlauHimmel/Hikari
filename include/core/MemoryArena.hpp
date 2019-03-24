@@ -102,24 +102,24 @@ public:
 
 	constexpr int BlockSize() const { return 1 << LogBlockSize; }
 
-	int RoundUp(int x) const
+	int RoundUp(int X) const
 	{
-		return (x + BlockSize() - 1) & ~(BlockSize() - 1);
+		return (X + BlockSize() - 1) & ~(BlockSize() - 1);
 	}
 
-	int uSize() const
+	int USize() const
 	{
 		return m_URes;
 	}
 
-	int vSize() const
+	int VSize() const
 	{
 		return m_VRes;
 	}
 
 	int Block(int A) const
 	{
-		return A >> logBlockSize;
+		return A >> LogBlockSize;
 	}
 
 	int Offset(int A) const

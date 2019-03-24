@@ -1,4 +1,4 @@
-#include <core\Common.hpp>
+#include <core\MipMap.hpp>
 
 NAMESPACE_BEGIN
 

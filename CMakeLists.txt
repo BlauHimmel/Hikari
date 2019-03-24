@@ -173,9 +173,9 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/MemoryArena.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Mesh.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/MicrofacetDistribution.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/MipMap.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Object.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Parser.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Primitive.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/PropertyList.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Ray.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/ReconstructionFilter.cpp
@@ -249,9 +249,9 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/MemoryArena.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Mesh.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/MicrofacetDistribution.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/MipMap.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Object.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Parser.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Primitive.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/PropertyList.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Ray.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/ReconstructionFilter.hpp

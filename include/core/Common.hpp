@@ -558,11 +558,18 @@ inline int Clamp(int Value, int Min, int Max)
 	}
 }
 
+Color3f Clamp(Color3f Value, Color3f Min, Color3f Max);
+Color4f Clamp(Color4f Value, Color4f Min, Color4f Max);
+
 /// Linearly interpolate between two values
 inline float Lerp(float T, float V1, float V2)
 {
 	return (1.0f - T) * V1 + T * V2;
 }
+
+/// Linearly interpolate between two Color
+Color3f Lerp(float T, const Color3f & V1, const Color3f & V2);
+Color4f Lerp(float T, const Color4f & V1, const Color4f & V2);
 
 /// Always-positive modulo operation
 inline int Mod(int A, int B)
@@ -674,6 +681,78 @@ inline float Signum(float Value)
 #elif
 	return float(copysign(1.0f, Value));
 #endif
+}
+
+template <typename T>
+inline constexpr bool IsPowerOf2(T Value)
+{
+	return Value && !(Value & (Value - 1));
+}
+
+inline int32_t RoundUpPow2(int32_t Value)
+{
+	Value--;
+	Value |= Value >> 1;
+	Value |= Value >> 2;
+	Value |= Value >> 4;
+	Value |= Value >> 8;
+	Value |= Value >> 16;
+	return Value + 1;
+}
+
+inline int64_t RoundUpPow2(int64_t Value)
+{
+	Value--;
+	Value |= Value >> 1;
+	Value |= Value >> 2;
+	Value |= Value >> 4;
+	Value |= Value >> 8;
+	Value |= Value >> 16;
+	Value |= Value >> 32;
+	return Value + 1;
+}
+
+inline int Log2Int(uint32_t V)
+{
+#if defined(__PLATFORM_WINDOWS__)
+	unsigned long LZ = 0;
+	if (_BitScanReverse(&LZ, V)) { return LZ; }
+	return 0;
+#else
+	return 31 - __builtin_clz(V);
+#endif
+}
+
+inline int Log2Int(int32_t V)
+{
+	return Log2Int(uint32_t(V));
+}
+
+inline int Log2Int(uint64_t V)
+{
+#if defined(__PLATFORM_WINDOWS__)
+	unsigned long LZ = 0;
+#if defined(_WIN64)
+	_BitScanReverse64(&LZ, V);
+#else
+	if (_BitScanReverse(&LZ, V >> 32))
+	{
+		LZ += 32;
+	}
+	else
+	{
+		_BitScanReverse(&LZ, V & 0xffffffff);
+	}
+#endif
+	return LZ;
+#else 
+	return 63 - __builtin_clzll(V);
+#endif
+}
+
+inline int Log2Int(int64_t V)
+{
+	return Log2Int(uint64_t(V));
 }
 
 /// Compute a direction for the given coordinates in spherical coordinates

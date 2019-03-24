@@ -243,7 +243,7 @@ std::string Scene::ToString() const
 	}
 
 	std::string EmitterString;
-	for (size_t i = 0; i<m_pEmitters.size(); ++i)
+	for (size_t i = 0; i < m_pEmitters.size(); ++i)
 	{
 		EmitterString += std::string("  ") + Indent(m_pEmitters[i]->ToString(), 2);
 		if (i + 1 < m_pEmitters.size())

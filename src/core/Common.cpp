@@ -198,6 +198,35 @@ std::string MemString(size_t Size, bool bPrecise)
 	return OS.str();
 }
 
+Color3f Clamp(Color3f Value, Color3f Min, Color3f Max)
+{
+	return Color3f(
+		Clamp(Value[0], Min[0], Max[0]),
+		Clamp(Value[1], Min[1], Max[1]),
+		Clamp(Value[2], Min[2], Max[2])
+	);
+}
+
+Color4f Clamp(Color4f Value, Color4f Min, Color4f Max)
+{
+	return Color4f(
+		Clamp(Value[0], Min[0], Max[0]),
+		Clamp(Value[1], Min[1], Max[1]),
+		Clamp(Value[2], Min[2], Max[2]),
+		Clamp(Value[3], Min[3], Max[3])
+	);
+}
+
+Color3f Lerp(float T, const Color3f & V1, const Color3f & V2)
+{
+	return (1.0f - T) * V1 + T * V2;
+}
+
+Color4f Lerp(float T, const Color4f & V1, const Color4f & V2)
+{
+	return (1.0f - T) * V1 + T * V2;
+}
+
 Vector3f SphericalDirection(float Theta, float Phi)
 {
 	float SinTheta, CosTheta, SinPhi, CosPhi;
