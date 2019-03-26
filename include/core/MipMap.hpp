@@ -19,6 +19,8 @@ struct ResampleWeight
 	float Weight[4];
 };
 
+float Lanczos(float X, float Tau);
+
 template <typename T>
 class MipMap
 {
@@ -35,16 +37,15 @@ public:
 	int GetHeight() const { return m_Resolution[1]; }
 	int GetLevels() const { return m_Pyramid.size(); }
 	const T & Texel(int Level, int U, int V) const;
-	T Lookup(const Point2i & UV, float Width = 0.0f) const;
+	T Lookup(const Point2f & UV, float Width = 0.0f) const;
 	T Lookup(const Point2f & UV, Vector2f D0, Vector2f D1);
 
 private:
 
 	std::unique_ptr<ResampleWeight[]> GetResampleWeights(int Old, int New);
 
-	T Triangle(int Level, const Point2i & UV) const;
+	T Triangle(int Level, const Point2f & UV) const;
 	T EWA(int Level, Point2f UV, Vector2f D0, Vector2f D1) const;
-	float Lanczos(float X, float Tau);
 
 	bool m_bTrilinear;
 	float m_MaxAnisotropic;
@@ -251,7 +252,7 @@ inline const T & MipMap<T>::Texel(int Level, int U, int V) const
 }
 
 template<typename T>
-inline T MipMap<T>::Lookup(const Point2i & UV, float Width) const
+inline T MipMap<T>::Lookup(const Point2f & UV, float Width) const
 {
 	// Compute MipMap level for trilinear filtering
 	float Level = GetLevels() - 1.0f + std::log2(std::max(Width, 1e-8f));
@@ -348,7 +349,7 @@ inline std::unique_ptr<ResampleWeight[]> MipMap<T>::GetResampleWeights(int Old, 
 }
 
 template<typename T>
-inline T MipMap<T>::Triangle(int Level, const Point2i & UV) const
+inline T MipMap<T>::Triangle(int Level, const Point2f & UV) const
 {
 	Level = Clamp(Level, 0, GetLevels() - 1);
 	float U = UV[0] * m_Pyramid[Level]->USize() - 0.5f;
@@ -400,7 +401,7 @@ inline T MipMap<T>::EWA(int Level, Point2f UV, Vector2f D0, Vector2f D1) const
 
 	// Scan over ellipse bound and compute quadratic equation
 	T Sum(0.0f);
-	float SumWeight = 0;
+	float SumWeight = 0.0f;
 	for (int iV = V0; iV <= V1; ++iV)
 	{
 		float dV = iV - UV[1];
@@ -423,16 +424,7 @@ inline T MipMap<T>::EWA(int Level, Point2f UV, Vector2f D0, Vector2f D1) const
 }
 
 template<typename T>
-inline float MipMap<T>::Lanczos(float X, float Tau)
-{
-	X = std::abs(X);
-	float S = std::sin(X * Tau) / (X * Tau);
-	float Lanczos = std::sin(X) / X;
-	return S * Lanczos;
-}
-
-template<typename T>
-float MipMap<T>::s_WeightLut[s_WeightLUTSize];
+float MipMap<T>::s_WeightLut[s_WeightLUTSize] = { 0.0f };
 
 NAMESPACE_END
 
