@@ -8,25 +8,86 @@
 
 NAMESPACE_BEGIN
 
-TextureData3f::TextureData3f(const Vector2i & Size)
+std::unique_ptr<float[]> LoadImageFromFileR(
+	const std::string & Filename,
+	float Gamma,
+	int & Width,
+	int & Height,
+	float * pAverage,
+	float * pMaximum,
+	float * pMinimum
+)
 {
-	m_Data.reset(new BlockedArray<Color3f, 2>(Size.x(), Size.y()));
-}
-
-TextureData3f::TextureData3f(const std::string & Filename)
-{
-	int Width = -1, Height = -1, ChannelsInFile = -1, RequestChannels = 3;
+	int ChannelsInFile = -1, RequestChannels = 1;
 	unsigned char * pData = stbi_load(Filename.c_str(), &Width, &Height, &ChannelsInFile, RequestChannels);
-	
+
 	if (pData == nullptr)
 	{
 		const char * pFailReason = stbi_failure_reason();
 		throw HikariException("Load texture \"%s\" failed. Reason : [%s]", Filename.c_str(), pFailReason);
 	}
 
-	m_Data.reset(new BlockedArray<Color3f, 2>(Width, Height));
-	
+	std::unique_ptr<float[]> Pixels(new float[Width * Height]);
+
 	constexpr float Inv255 = 1.0f / 255.0f;
+	const float InvGamma = 1.0f / Gamma;
+
+	float Maximum = std::numeric_limits<float>::min();
+	float Minimum = std::numeric_limits<float>::max();
+	float Average = 0.0f;
+
+	for (int x = 0; x < Width; x++)
+	{
+		for (int y = 0; y < Height; y++)
+		{
+			int PixelIdx = y * Height + x;
+			
+			Pixels[PixelIdx] = GammaCorrect(float(pData[PixelIdx * RequestChannels + 0]) * Inv255, InvGamma);
+
+			if (Pixels[PixelIdx] > Maximum) { Maximum = Pixels[PixelIdx]; }
+			if (Pixels[PixelIdx] < Minimum) { Minimum = Pixels[PixelIdx]; }
+			Average += Pixels[PixelIdx];
+		}
+	}
+
+	Average /= (Width * Height);
+
+	if (pMaximum != nullptr) { *pMaximum = Maximum; }
+	if (pMinimum != nullptr) { *pMinimum = Minimum; }
+	if (pAverage != nullptr) { *pAverage = Average; }
+
+	stbi_image_free(pData);
+
+	return Pixels;
+}
+
+std::unique_ptr<Color3f[]> LoadImageFromFileRGB(
+	const std::string & Filename,
+	float Gamma,
+	int & Width,
+	int & Height,
+	Color3f * pAverage,
+	Color3f * pMaximum,
+	Color3f * pMinimum
+)
+{
+	int ChannelsInFile = -1, RequestChannels = 3;
+	unsigned char * pData = stbi_load(Filename.c_str(), &Width, &Height, &ChannelsInFile, RequestChannels);
+
+	if (pData == nullptr)
+	{
+		const char * pFailReason = stbi_failure_reason();
+		throw HikariException("Load texture \"%s\" failed. Reason : [%s]", Filename.c_str(), pFailReason);
+	}
+
+	std::unique_ptr<Color3f[]> Pixels(new Color3f[Width * Height]);
+
+	constexpr float Inv255 = 1.0f / 255.0f;
+	const float InvGamma = 1.0f / Gamma;
+
+	Color3f Maximum = Color3f(std::numeric_limits<float>::min());
+	Color3f Minimum = Color3f(std::numeric_limits<float>::max());
+	Color3f Average = Color3f(0.0f);
 
 	for (int x = 0; x < Width; x++)
 	{
@@ -34,69 +95,38 @@ TextureData3f::TextureData3f(const std::string & Filename)
 		{
 			int PixelIdx = y * Height + x;
 
-			(*m_Data)(x, y) = Color3f(
-				pData[PixelIdx * RequestChannels + 0] * Inv255,
-				pData[PixelIdx * RequestChannels + 1] * Inv255,
-				pData[PixelIdx * RequestChannels + 2] * Inv255
+			Pixels[PixelIdx] = Color3f(
+				GammaCorrect(float(pData[PixelIdx * RequestChannels + 0]) * Inv255, InvGamma),
+				GammaCorrect(float(pData[PixelIdx * RequestChannels + 1]) * Inv255, InvGamma),
+				GammaCorrect(float(pData[PixelIdx * RequestChannels + 2]) * Inv255, InvGamma)
 			);
+
+			if (Pixels[PixelIdx][0] > Maximum[0]) { Maximum[0] = Pixels[PixelIdx][0]; }
+			if (Pixels[PixelIdx][1] > Maximum[1]) { Maximum[1] = Pixels[PixelIdx][1]; }
+			if (Pixels[PixelIdx][2] > Maximum[2]) { Maximum[2] = Pixels[PixelIdx][2]; }
+			if (Pixels[PixelIdx][0] < Minimum[0]) { Minimum[0] = Pixels[PixelIdx][0]; }
+			if (Pixels[PixelIdx][1] < Minimum[1]) { Minimum[1] = Pixels[PixelIdx][1]; }
+			if (Pixels[PixelIdx][2] < Minimum[2]) { Minimum[2] = Pixels[PixelIdx][2]; }
+			Average[0] += Pixels[PixelIdx][0];
+			Average[1] += Pixels[PixelIdx][1];
+			Average[2] += Pixels[PixelIdx][2];
 		}
 	}
+
+	Average /= float(Width * Height);
+
+	if (pMaximum != nullptr) { *pMaximum = Maximum; }
+	if (pMinimum != nullptr) { *pMinimum = Minimum; }
+	if (pAverage != nullptr) { *pAverage = Average; }
+
+	stbi_image_free(pData);
+
+	return Pixels;
 }
 
-Color3f & TextureData3f::operator()(int U, int V)
+Color3f Texture::Eval(const Intersection & Isect) const
 {
-	return (*m_Data)(U, V);
-}
-
-const Color3f & TextureData3f::operator()(int U, int V) const
-{
-	return (*m_Data)(U, V);
-}
-
-TextureData1f::TextureData1f(const Vector2i & Size)
-{
-	m_Data.reset(new BlockedArray<float, 2>(Size.x(), Size.y()));
-}
-
-TextureData1f::TextureData1f(const std::string & Filename)
-{
-	int Width = -1, Height = -1, ChannelsInFile = -1, RequestChannels = 1;
-	unsigned char * pData = stbi_load(Filename.c_str(), &Width, &Height, &ChannelsInFile, RequestChannels);
-
-	if (pData == nullptr)
-	{
-		const char * pFailReason = stbi_failure_reason();
-		throw HikariException("Load texture \"%s\" failed. Reason : [%s]", Filename.c_str(), pFailReason);
-	}
-
-	m_Data.reset(new BlockedArray<float, 2>(Width, Height));
-
-	constexpr float Inv255 = 1.0f / 255.0f;
-
-	for (int x = 0; x < Width; x++)
-	{
-		for (int y = 0; y < Height; y++)
-		{
-			int PixelIdx = y * Height + x;
-
-			(*m_Data)(x, y) = pData[PixelIdx * RequestChannels + 0] * Inv255;
-		}
-	}
-}
-
-float & TextureData1f::operator()(int U, int V)
-{
-	return (*m_Data)(U, V);
-}
-
-const float & TextureData1f::operator()(int U, int V) const
-{
-	return (*m_Data)(U, V);
-}
-
-Color3f Texture::Eval(const Intersection & Isect, bool bFilter) const
-{
-	throw HikariException("Texture::Eval(const Intersection & Isect, bool bFilter) is not implemented!");
+	throw HikariException("Texture::Eval(const Intersection & Isect) is not implemented!");
 }
 
 Color3f Texture::GetAverage() const
@@ -139,25 +169,18 @@ Object::EClassType Texture::GetClassType() const
 	return EClassType::ETexture;
 }
 
-Color3f Texture2D::Eval(const Intersection & Isect, bool bFilter) const
+Color3f Texture2D::Eval(const Intersection & Isect) const
 {
 	Point2f UV = Point2f(Isect.UV.x() * m_UVScale.x(), Isect.UV.y() * m_UVScale.y()) + m_UVOffset;
 
-	if (bFilter)
-	{
-		return Eval(UV,
-			Vector2f(Isect.dUdX * m_UVScale.x(), Isect.dVdX * m_UVScale.y()),
-			Vector2f(Isect.dUdY * m_UVScale.x(), Isect.dVdY * m_UVScale.y()));
-	}
-	else
-	{
-		return Eval(UV);
-	}
+	return Eval(UV,
+		Vector2f(Isect.dUdX * m_UVScale.x(), Isect.dVdX * m_UVScale.y()),
+		Vector2f(Isect.dUdY * m_UVScale.x(), Isect.dVdY * m_UVScale.y()));
 }
 
 ConstantColor3fTexture::ConstantColor3fTexture(const Color3f & Value) : m_Value(Value) { }
 
-Color3f ConstantColor3fTexture::Eval(const Intersection & Isect, bool bFilter) const
+Color3f ConstantColor3fTexture::Eval(const Intersection & Isect) const
 {
 	return m_Value;
 }
@@ -201,7 +224,7 @@ std::string ConstantColor3fTexture::ToString() const
 
 ConstantFloatTexture::ConstantFloatTexture(float Value) : m_Value(Value) { }
 
-Color3f ConstantFloatTexture::Eval(const Intersection & Isect, bool bFilter) const
+Color3f ConstantFloatTexture::Eval(const Intersection & Isect) const
 {
 	return Color3f(m_Value);
 }
@@ -250,7 +273,7 @@ Color3fAdditionTexture::Color3fAdditionTexture(const Texture * pTextureA, const 
 	CHECK_NOTNULL(m_pTextureB);
 }
 
-Color3f Color3fAdditionTexture::Eval(const Intersection & Isect, bool bFilter) const
+Color3f Color3fAdditionTexture::Eval(const Intersection & Isect) const
 {
 	return m_pTextureA->Eval(Isect) + m_pTextureB->Eval(Isect);
 }
@@ -307,7 +330,7 @@ Color3fSubtractionTexture::Color3fSubtractionTexture(const Texture * pTextureA, 
 	CHECK_NOTNULL(m_pTextureB);
 }
 
-Color3f Color3fSubtractionTexture::Eval(const Intersection & Isect, bool bFilter) const
+Color3f Color3fSubtractionTexture::Eval(const Intersection & Isect) const
 {
 	return m_pTextureA->Eval(Isect) - m_pTextureB->Eval(Isect);
 }
@@ -364,7 +387,7 @@ Color3fProductTexture::Color3fProductTexture(const Texture * pTextureA, const Te
 	CHECK_NOTNULL(m_pTextureB);
 }
 
-Color3f Color3fProductTexture::Eval(const Intersection & Isect, bool bFilter) const
+Color3f Color3fProductTexture::Eval(const Intersection & Isect) const
 {
 	return m_pTextureA->Eval(Isect) * m_pTextureB->Eval(Isect);
 }
@@ -416,3 +439,4 @@ std::string Color3fProductTexture::ToString() const
 }
 
 NAMESPACE_END
+

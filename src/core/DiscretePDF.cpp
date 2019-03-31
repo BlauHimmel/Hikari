@@ -52,7 +52,7 @@ float DiscretePDF1D::SampleContinuous(float Sample, float * pPdf, int * pIdx) co
 	{
 		Du /= (m_Cdf[Idx + 1] - m_Cdf[Idx]);
 	}
-	assert(!std::isnan(Du));
+	CHECK(!std::isnan(Du));
 
 	if (pPdf != nullptr)
 	{
@@ -78,7 +78,7 @@ int DiscretePDF1D::SampleDiscrete(float Sample, float * pPdf, float * pSampleRem
 	if (pSampleRemapped != nullptr)
 	{
 		*pSampleRemapped = (Sample - m_Cdf[Idx]) / (m_Cdf[Idx + 1] - m_Cdf[Idx]);
-		assert(*pSampleRemapped <= 1.0f && *pSampleRemapped >= 0.0f);
+		CHECK(*pSampleRemapped <= 1.0f && *pSampleRemapped >= 0.0f);
 	}
 
 	return Idx;
@@ -86,7 +86,7 @@ int DiscretePDF1D::SampleDiscrete(float Sample, float * pPdf, float * pSampleRem
 
 float DiscretePDF1D::Pdf(int Index) const
 {
-	assert(Index >= 0 && Index < Count());
+	CHECK(Index >= 0 && Index < Count());
 	return m_Func[Index] / (m_FuncIntegral * float(Count()));
 }
 

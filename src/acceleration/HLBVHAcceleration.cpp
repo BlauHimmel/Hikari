@@ -195,7 +195,7 @@ void HLBVHAcceleration::Build()
 	uint32_t nOffset = 0;
 	m_pNodes = new LinearBVHNode[m_nNodes];
 	FlattenBVHTree(pRoot, &nOffset);
-	assert(m_nNodes == nOffset);
+	CHECK(m_nNodes == nOffset);
 
 	LOG(INFO) << "Build HLBVH (" << m_nNodes << " nodes, with " << m_nLeafs << " leafs) in " << HLBVHBuildTimer.ElapsedString();
 }
@@ -300,7 +300,7 @@ std::string HLBVHAcceleration::ToString() const
 
 uint32_t HLBVHAcceleration::LeftShift3(uint32_t X) const
 {
-	assert(X <= (1 << 10));
+	CHECK(X <= (1 << 10));
 	if (X == (1 << 10))
 	{
 		X--;
@@ -320,7 +320,7 @@ uint32_t HLBVHAcceleration::LeftShift3(uint32_t X) const
 
 uint32_t HLBVHAcceleration::EncodeMorton3(const Vector3f & Vec) const
 {
-	assert(Vec.x() >= 0.0f && Vec.y() >= 0.0f && Vec.z() >= 0.0f);
+	CHECK(Vec.x() >= 0.0f && Vec.y() >= 0.0f && Vec.z() >= 0.0f);
 	return (
 		(LeftShift3(uint32_t(Vec.z())) << 2) |
 		(LeftShift3(uint32_t(Vec.y())) << 1) |
@@ -356,7 +356,7 @@ void HLBVHAcceleration::RadixSort(std::vector<MortonShape> & MortonShapes) const
 		for (const MortonShape & MortonShape : In)
 		{
 			int BucketIdx = (MortonShape.MortonCode >> LowBit) & BIT_MASK;
-			assert(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
+			CHECK(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
 			++BucketCount[BucketIdx];
 		}
 
@@ -394,7 +394,7 @@ BVHBuildNode * HLBVHAcceleration::EmitHLBVH(
 	int iFirstBitIdx
 )
 {
-	assert(nShape > 0);
+	CHECK(nShape > 0);
 
 	// Create and return leaf node of HLBVH treelet
 	if (iFirstBitIdx == -1 || nShape <= m_LeafSize)
@@ -445,7 +445,7 @@ BVHBuildNode * HLBVHAcceleration::EmitHLBVH(
 		uint32_t iSearchStart = 0, iSearchEnd = nShape - 1;
 		while (iSearchStart + 1 != iSearchEnd)
 		{
-			assert(iSearchStart != iSearchEnd);
+			CHECK(iSearchStart != iSearchEnd);
 			uint32_t iMid = (iSearchStart + iSearchEnd) / 2;
 
 			if ((pMortonShapes[iSearchStart].MortonCode & Mask) == (pMortonShapes[iMid].MortonCode & Mask))
@@ -454,14 +454,14 @@ BVHBuildNode * HLBVHAcceleration::EmitHLBVH(
 			}
 			else
 			{
-				assert((pMortonShapes[iMid].MortonCode & Mask) == (pMortonShapes[iSearchEnd].MortonCode & Mask));
+				CHECK((pMortonShapes[iMid].MortonCode & Mask) == (pMortonShapes[iSearchEnd].MortonCode & Mask));
 				iSearchEnd = iMid;
 			}
 		}
 
 		uint32_t nSplitOffset = iSearchEnd;
-		assert(nSplitOffset <= nShape - 1);
-		assert((pMortonShapes[nSplitOffset - 1].MortonCode & Mask) != (pMortonShapes[nSplitOffset].MortonCode & Mask));
+		CHECK(nSplitOffset <= nShape - 1);
+		CHECK((pMortonShapes[nSplitOffset - 1].MortonCode & Mask) != (pMortonShapes[nSplitOffset].MortonCode & Mask));
 
 		// Create and return interior HLBVH node
 		(*nTotalNodes)++;
@@ -499,7 +499,7 @@ BVHBuildNode * HLBVHAcceleration::BuildUpperSAH(
 	uint32_t iEnd
 )
 {
-	assert(iStart < iEnd);
+	CHECK(iStart < iEnd);
 
 	uint32_t nNodes = iEnd - iStart;
 	if (nNodes == 1)
@@ -529,7 +529,7 @@ BVHBuildNode * HLBVHAcceleration::BuildUpperSAH(
 	if (Centroid.Max[iSplitDim] == Centroid.Min[iSplitDim])
 	{
 		uint32_t iMid = (iStart + iEnd) / 2;
-		assert(iMid > iStart && iMid < iEnd);
+		CHECK(iMid > iStart && iMid < iEnd);
 
 		pNode->InitInterior(
 			iSplitDim,
@@ -550,7 +550,7 @@ BVHBuildNode * HLBVHAcceleration::BuildUpperSAH(
 	for (uint32_t i = iStart; i < iEnd; i++)
 	{
 		uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (TreeletRoots[i]->BBox.GetCenter()[iSplitDim] - Centroid.Min[iSplitDim]) * InvNorm);
-		assert(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
+		CHECK(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
 
 		Buckets[BucketIdx].nShape++;
 		if (Buckets[BucketIdx].BBox.IsValid())
@@ -610,13 +610,13 @@ BVHBuildNode * HLBVHAcceleration::BuildUpperSAH(
 		[=](const BVHBuildNode * pNode)
 		{
 			uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (pNode->BBox.GetCenter()[iSplitDim] - Centroid.Min[iSplitDim]) * InvNorm);
-			assert(BucketIdx >= 0 && BucketIdx < uint32_t(BUCKET_NUM));
+			CHECK(BucketIdx >= 0 && BucketIdx < uint32_t(BUCKET_NUM));
 			return BucketIdx <= iMinCostSplitBucket;
 		}
 	);
 
 	uint32_t iMid = uint32_t(MidIter - &TreeletRoots[0]);
-	assert(iMid > iStart && iMid < iEnd);
+	CHECK(iMid > iStart && iMid < iEnd);
 
 	pNode->InitInterior(
 		iSplitDim,
@@ -629,7 +629,7 @@ BVHBuildNode * HLBVHAcceleration::BuildUpperSAH(
 
 uint32_t HLBVHAcceleration::FlattenBVHTree(BVHBuildNode * pNode, uint32_t * pOffset)
 {
-	assert(*pOffset < m_nNodes);
+	CHECK(*pOffset < m_nNodes);
 
 	LinearBVHNode * pLinearNode = &m_pNodes[*pOffset];
 	pLinearNode->BBox = pNode->BBox;
@@ -639,8 +639,8 @@ uint32_t HLBVHAcceleration::FlattenBVHTree(BVHBuildNode * pNode, uint32_t * pOff
 	// Leaf node
 	if (pNode->nShape > 0)
 	{
-		assert(pNode->pChildren[0] == nullptr && pNode->pChildren[1] == nullptr);
-		assert(pNode->nShape < 65536);
+		CHECK(pNode->pChildren[0] == nullptr && pNode->pChildren[1] == nullptr);
+		CHECK(pNode->nShape < 65536);
 
 		pLinearNode->nShapeOffset = pNode->nFirstShapeOffset;
 		pLinearNode->nShape = pNode->nShape;
@@ -653,8 +653,8 @@ uint32_t HLBVHAcceleration::FlattenBVHTree(BVHBuildNode * pNode, uint32_t * pOff
 		FlattenBVHTree(pNode->pChildren[0], pOffset);
 		pLinearNode->nRightChildOffset = FlattenBVHTree(pNode->pChildren[1], pOffset);
 
-		assert(pNode->BBox.IsValid() && pNode->pChildren[0]->BBox.IsValid() && pNode->pChildren[1]->BBox.IsValid());
-		assert(pNode->BBox.Contains(pNode->pChildren[0]->BBox) && pNode->BBox.Contains(pNode->pChildren[1]->BBox));
+		CHECK(pNode->BBox.IsValid() && pNode->pChildren[0]->BBox.IsValid() && pNode->pChildren[1]->BBox.IsValid());
+		CHECK(pNode->BBox.Contains(pNode->pChildren[0]->BBox) && pNode->BBox.Contains(pNode->pChildren[1]->BBox));
 	}
 
 	return Offset;

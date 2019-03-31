@@ -155,7 +155,7 @@ void BVHAcceleration::Build()
 			for (uint32_t i = iStart; i < iEnd; i++)
 			{
 				uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (m_pShapes[i]->GetCentroid()[SplitDim] - Centroid.Min[SplitDim]) * InvNorm);
-				assert(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
+				CHECK(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
 
 				Buckets[BucketIdx].nShape++;
 				if (Buckets[BucketIdx].BBox.IsValid())
@@ -216,7 +216,7 @@ void BVHAcceleration::Build()
 				[=](const Shape * pShape)
 				{
 					uint32_t BucketIdx = uint32_t((BUCKET_NUM - 1) * (pShape->GetCentroid()[SplitDim] - Centroid.Min[SplitDim]) * InvNorm);
-					assert(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
+					CHECK(BucketIdx >= 0 && BucketIdx < BUCKET_NUM);
 					return BucketIdx <= iMinCostSplitBucket;
 				}
 			);

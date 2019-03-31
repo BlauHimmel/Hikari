@@ -312,12 +312,10 @@ Color3f FresnelConductor(float CosThetaI, const Color3f & Eta, const Color3f & E
 
 float ApproxFresnelDiffuseReflectance(float Eta)
 {
-	/** 
-	* The following code approximates the
-	* diffuse Frensel reflectance for the Eta < 1.0 and
-	* Eta > 1.0 cases. An evalution of the accuracy led
+	/**
+	* An evalution of the accuracy led
 	* to the following scheme, which cherry-picks
-	* fits from two papers where they are best.
+	* fits from two papers where they are best.	
 	*/
 	if (Eta < 1.0f)
 	{

@@ -8,11 +8,6 @@
 
 NAMESPACE_BEGIN
 
-enum class EWrapMode
-{
-	ERepeat, EBlack, EClamp
-};
-
 struct ResampleWeight
 {
 	int FirstTexel;
@@ -29,19 +24,23 @@ public:
 		const Point2i & Resolution,
 		const T * pData,
 		bool bTrilinear = false,
-		float MaxAnisotropic = 8.0f,
-		EWrapMode WrapMode = EWrapMode::ERepeat
+		float MaxAnisotropic = 20.0f,
+		EWrapMode UWrapMode = EWrapMode::ERepeat,
+		EWrapMode VWrapMode = EWrapMode::ERepeat
 	);
 
 	int GetWidth() const { return m_Resolution[0]; }
 	int GetHeight() const { return m_Resolution[1]; }
-	int GetLevels() const { return m_Pyramid.size(); }
+	int GetLevels() const { return int(m_Pyramid.size()); }
 	const T & Texel(int Level, int U, int V) const;
-	T Lookup(const Point2f & UV, float Width = 0.0f) const;
+	/// Perform a Nearest sample
+	T Lookup(const Point2f & UV);
+	/// Perform a Trilinear sample when Width != 0, otherwise perform a bilinear sample
+	T Lookup(const Point2f & UV, float Width) const;
+	/// Perform a Trilinear sample or EWA sample based on the bTrilinear variable
 	T Lookup(const Point2f & UV, Vector2f D0, Vector2f D1);
 
 private:
-
 	std::unique_ptr<ResampleWeight[]> GetResampleWeights(int Old, int New);
 
 	T Triangle(int Level, const Point2f & UV) const;
@@ -49,7 +48,8 @@ private:
 
 	bool m_bTrilinear;
 	float m_MaxAnisotropic;
-	EWrapMode m_WrapMode;
+	EWrapMode m_UWrapMode;
+	EWrapMode m_VWrapMode;
 	Point2i m_Resolution;
 	std::vector<std::unique_ptr<BlockedArray<T, 2>>> m_Pyramid;
 
@@ -64,12 +64,14 @@ inline MipMap<T>::MipMap(
 	const T * pData,
 	bool bTrilinear,
 	float MaxAnisotropic,
-	EWrapMode WrapMode
-) :
+	EWrapMode UWrapMode,
+	EWrapMode VWrapMode
+) : 
+	m_Resolution(Resolution),
 	m_bTrilinear(bTrilinear),
 	m_MaxAnisotropic(MaxAnisotropic),
-	m_WrapMode(WrapMode),
-	m_Resolution(Resolution)
+	m_UWrapMode(UWrapMode),
+	m_VWrapMode(VWrapMode)
 {
 	static_assert(
 		std::is_same<T, float>::value ||
@@ -102,11 +104,11 @@ inline MipMap<T>::MipMap(
 					{
 						int OriginalU = UWeigths[u].FirstTexel + j;
 						
-						if (m_WrapMode == EWrapMode::ERepeat)
+						if (m_UWrapMode == EWrapMode::ERepeat)
 						{
 							OriginalU = Mod(OriginalU, m_Resolution[0]);
 						}
-						else if (m_WrapMode == EWrapMode::EClamp)
+						else if (m_UWrapMode == EWrapMode::EClamp)
 						{
 							OriginalU = Clamp(OriginalU, 0, m_Resolution[0] - 1);
 						}
@@ -144,11 +146,11 @@ inline MipMap<T>::MipMap(
 					for (int j = 0; j < 4; j++)
 					{
 						int Offset = VWeigths[v].FirstTexel + j;
-						if (m_WrapMode == EWrapMode::ERepeat)
+						if (m_VWrapMode == EWrapMode::ERepeat)
 						{
 							Offset = Mod(Offset, m_Resolution[1]);
 						}
-						else if (m_WrapMode == EWrapMode::EClamp)
+						else if (m_VWrapMode == EWrapMode::EClamp)
 						{
 							Offset = Clamp(Offset, 0, m_Resolution[1] - 1);
 						}
@@ -228,27 +230,40 @@ inline const T & MipMap<T>::Texel(int Level, int U, int V) const
 
 	const BlockedArray<T, 2> & Data = *m_Pyramid[Level];
 
-	switch (m_WrapMode)
+	if (m_UWrapMode == EWrapMode::EBlack || m_VWrapMode == EWrapMode::EBlack || 
+		U < 0 || U >= int(Data.USize()) || V < 0 || V >= int(Data.VSize()))
+	{
+		static const T Black(0.0f);
+		return Black;
+	}
+
+	switch (m_UWrapMode)
 	{
 	case EWrapMode::ERepeat:
 		U = Mod(U, Data.USize());
-		V = Mod(V, Data.VSize());
 		break;
 	case EWrapMode::EClamp:
 		U = Clamp(U, 0, Data.USize() - 1);
-		V = Clamp(V, 0, Data.VSize() - 1);
 		break;
-	case EWrapMode::EBlack:
-		if (U < 0 || U >= int(Data.USize()) ||
-			V < 0 || V >= int(Data.VSize()))
-		{
-			static const T Black(0.0f);
-			return Black;
-		}
+	}
+
+	switch (m_VWrapMode)
+	{
+	case EWrapMode::ERepeat:
+		V = Mod(V, Data.VSize());
+		break;
+	case EWrapMode::EClamp:
+		V = Clamp(V, 0, Data.VSize() - 1);
 		break;
 	}
 
 	return Data(U, V);
+}
+
+template<typename T>
+inline T MipMap<T>::Lookup(const Point2f & UV)
+{
+	return Texel(0, int(std::floor(UV[0] * m_Resolution[0])), int(std::floor(UV[1] * m_Resolution[1])));
 }
 
 template<typename T>
@@ -268,7 +283,7 @@ inline T MipMap<T>::Lookup(const Point2f & UV, float Width) const
 	}
 	else
 	{
-		int iLevel = std::floor(Level);
+		int iLevel = int(std::floor(Level));
 		float Delta = Level - iLevel;
 		return Lerp(Delta, Triangle(iLevel, UV), Triangle(iLevel + 1, UV));
 	}
@@ -311,10 +326,10 @@ inline T MipMap<T>::Lookup(const Point2f & UV, Vector2f D0, Vector2f D1)
 
 	// Choose level of detail for EWA lookup and perform EWA filtering
 	float LOD = std::max(0.0f, GetLevels() - 1.0f + std::log2(MinorLength));
-	int iLOD = std::floor(LOD);
+	float iLOD = std::floor(LOD);
 
-	return Lerp(LOD - iLOD, EWA(iLOD, UV, D0, D1),
-		EWA(iLOD + 1, UV, D0, D1));
+	return Lerp(LOD - iLOD, EWA(int(iLOD), UV, D0, D1),
+		EWA(int(iLOD + 1.0f), UV, D0, D1));
 }
 
 template<typename T>
@@ -354,8 +369,8 @@ inline T MipMap<T>::Triangle(int Level, const Point2f & UV) const
 	Level = Clamp(Level, 0, GetLevels() - 1);
 	float U = UV[0] * m_Pyramid[Level]->USize() - 0.5f;
 	float V = UV[1] * m_Pyramid[Level]->VSize() - 0.5f;
-	int U0 = std::floor(U);
-	int V0 = std::floor(V);
+	int U0 = int(std::floor(U));
+	int V0 = int(std::floor(V));
 	float dU = U - U0;
 	float dV = V - V0;
 	return (1.0f - dU) * (1.0f - dV) * Texel(Level, U0, V0) +
@@ -394,10 +409,10 @@ inline T MipMap<T>::EWA(int Level, Point2f UV, Vector2f D0, Vector2f D1) const
 	float InvDet = 1.0f / Det;
 	float USqrt = std::sqrt(Det * C);
 	float VSqrt = std::sqrt(A * Det);
-	int U0 = std::ceil(UV[0] - 2.0f * InvDet * USqrt);
-	int U1 = std::floor(UV[0] + 2.0f * InvDet * USqrt);
-	int V0 = std::ceil(UV[1] - 2.0f * InvDet * VSqrt);
-	int V1 = std::floor(UV[1] + 2.0f * InvDet * VSqrt);
+	int U0 = int(std::ceil(UV[0] - 2.0f * InvDet * USqrt));
+	int U1 = int(std::floor(UV[0] + 2.0f * InvDet * USqrt));
+	int V0 = int(std::ceil(UV[1] - 2.0f * InvDet * VSqrt));
+	int V1 = int(std::floor(UV[1] + 2.0f * InvDet * VSqrt));
 
 	// Scan over ellipse bound and compute quadratic equation
 	T Sum(0.0f);

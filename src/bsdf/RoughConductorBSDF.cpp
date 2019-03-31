@@ -21,8 +21,8 @@ RoughConductorBSDF::RoughConductorBSDF(const PropertyList & PropList)
 
 	/* Distribution type */
 	std::string TypeStr = PropList.GetString(XML_BSDF_ROUGH_CONDUCTOR_TYPE, DEFAULT_BSDF_ROUGH_CONDUCTOR_TYPE);
-	if (TypeStr == "beckmann") { m_Type = MicrofacetDistribution::EBeckmann; }
-	else if (TypeStr == "ggx") { m_Type = MicrofacetDistribution::EGGX; }
+	if (TypeStr == XML_BSDF_BECKMANN) { m_Type = MicrofacetDistribution::EBeckmann; }
+	else if (TypeStr == XML_BSDF_GGX) { m_Type = MicrofacetDistribution::EGGX; }
 	else { throw HikariException("Unexpected distribution type : %s", TypeStr); }
 
 	bool bAs = PropList.GetBoolean(XML_BSDF_ROUGH_CONDUCTOR_AS, DEFAULT_BSDF_ROUGH_CONDUCTOR_AS);

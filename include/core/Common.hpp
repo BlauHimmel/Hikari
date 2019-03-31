@@ -104,6 +104,28 @@
 #define XML_EMITTER_CONSTANT_LIGHT_RADIANCE      "radiance"
 
 #define XML_TEXTURE                              "texture"
+#define XML_TEXTURE_BITMAP                       "bitmap"
+#define XML_TEXTURE_BITMAP_FILENAME              "filename"
+#define XML_TEXTURE_BITMAP_GAMMA                 "gamma"
+#define XML_TEXTURE_BITMAP_WRAP_MODE             "wrapMode"
+#define XML_TEXTURE_BITMAP_WRAP_MODE_U           "uWrapMode"
+#define XML_TEXTURE_BITMAP_WRAP_MODE_V           "vWrapMode"
+#define XML_TEXTURE_BITMAP_WRAP_MODE_REPEAT      "repeat"
+#define XML_TEXTURE_BITMAP_WRAP_MODE_CLAMP       "clamp"
+#define XML_TEXTURE_BITMAP_WRAP_MODE_BLACK       "black"
+#define XML_TEXTURE_BITMAP_FILTER_TYPE           "filterType"
+#define XML_TEXTURE_BITMAP_FILTER_TYPE_NEAREST   "nearest"
+#define XML_TEXTURE_BITMAP_FILTER_TYPE_BILINEAR  "bilinear"
+#define XML_TEXTURE_BITMAP_FILTER_TYPE_TRILINEAR "trilinear"
+#define XML_TEXTURE_BITMAP_FILTER_TYPE_EWA       "ewa"
+#define XML_TEXTURE_BITMAP_MAX_ANISOTROPY        "maxAnisotropy"
+#define XML_TEXTURE_BITMAP_OFFSE_U              "uOffset"
+#define XML_TEXTURE_BITMAP_OFFSE_V              "vOffset"
+#define XML_TEXTURE_BITMAP_SCALE_U               "uScale"
+#define XML_TEXTURE_BITMAP_SCALE_V               "vScale"
+#define XML_TEXTURE_BITMAP_CHANNEL               "channel"
+#define XML_TEXTURE_BITMAP_CHANNEL_R             "r"
+#define XML_TEXTURE_BITMAP_CHANNEL_RGB           "rgb"
 
 #define XML_ACCELERATION                         "acceleration"
 #define XML_ACCELERATION_BRUTO_LOOP              "bruto"
@@ -125,6 +147,8 @@
 #define XML_MESH_WAVEFRONG_OBJ_TO_WORLD          "toWorld"
 
 #define XML_BSDF                                 "bsdf"
+#define XML_BSDF_GGX                             "ggx"
+#define XML_BSDF_BECKMANN                        "beckmann"
 #define XML_BSDF_DIELECTRIC                      "dielectric"
 #define XML_BSDF_DIELECTRIC_INT_IOR              "intIOR"
 #define XML_BSDF_DIELECTRIC_EXT_IOR              "extIOR"
@@ -261,7 +285,7 @@
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA        0.1f
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_U      0.1f
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_V      0.1f
-#define DEFAULT_BSDF_ROUGH_CONDUCTOR_TYPE         "beckmann"
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_TYPE         XML_BSDF_BECKMANN
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_AS           false
 #define DEFAULT_BSDF_ROUGH_DIELECTRIC_INT_IOR     1.5046f /* (default: BK7 borosilicate optical glass) */
 #define DEFAULT_BSDF_ROUGH_DIELECTRIC_EXT_IOR     1.000277f /* Air */
@@ -270,7 +294,7 @@
 #define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA       0.1f
 #define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA_U     0.1f
 #define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA_V     0.1f
-#define DEFAULT_BSDF_ROUGH_DIELECTRIC_TYPE        "beckmann"
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_TYPE        XML_BSDF_BECKMANN
 #define DEFAULT_BSDF_ROUGH_DIELECTRIC_AS          false
 #define DEFAULT_BSDF_ROUGH_DIFFUSE_ALBEDO         Color3f(0.5f)
 #define DEFAULT_BSDF_ROUGH_DIFFUSE_ALPHA          0.2f
@@ -309,6 +333,18 @@
 #define DEFAULT_SCENE_BACKGROUND                  Color3f(0.0f)
 #define DEFAULT_SCENE_FORCE_BACKGROUND            false
 
+#define DEFAULT_TEXTURE_BITMAP_GAMMA              1.0f
+#define DEFAULT_TEXTURE_BITMAP_WRAP_MODE          XML_TEXTURE_BITMAP_WRAP_MODE_REPEAT
+#define DEFAULT_TEXTURE_BITMAP_WRAP_MODE_U        XML_TEXTURE_BITMAP_WRAP_MODE_REPEAT
+#define DEFAULT_TEXTURE_BITMAP_WRAP_MODE_V        XML_TEXTURE_BITMAP_WRAP_MODE_REPEAT
+#define DEFAULT_TEXTURE_BITMAP_FILTER_TYPE        XML_TEXTURE_BITMAP_FILTER_TYPE_EWA
+#define DEFAULT_TEXTURE_BITMAP_MAX_ANISOTROPY     20.0f
+#define DEFAULT_TEXTURE_BITMAP_OFFSET_U           0.0f
+#define DEFAULT_TEXTURE_BITMAP_OFFSET_V           0.0f
+#define DEFAULT_TEXTURE_BITMAP_SCALE_U            1.0f
+#define DEFAULT_TEXTURE_BITMAP_SCALE_V            1.0f
+#define DEFAULT_TEXTURE_BITMAP_CHANNEL            XML_TEXTURE_BITMAP_CHANNEL_RGB
+
 NAMESPACE_BEGIN
 
 /* Counting the time between TIMER_START and TIMER_END */
@@ -325,6 +361,7 @@ template <typename TScalar, int TDimension>  struct TVector;
 template <typename TScalar, int TDimension>  struct TPoint;
 template <typename TPoint, typename TVector> struct TRay;
 template <typename TPoint>                   struct TBoundingBox;
+template <typename T>                        class MipMap;
 
 class Acceleration;
 class Bitmap;
@@ -354,6 +391,11 @@ class Shape;
 class MicrofacetDistribution;
 class Texture;
 class Texture2D;
+class ConstantColor3fTexture;
+class ConstantFloatTexture;
+class Color3fAdditionTexture;
+class Color3fSubtractionTexture;
+class Color3fProductTexture;
 
 /* Basic data structures (vectors, points, rays, bounding boxes,
 kd-trees) are oblivious to the underlying data type and dimension.
@@ -399,6 +441,8 @@ using Ray2f         = TRay<Point2f, Vector2f>;
 using Ray3f         = TRay<Point3f, Vector3f>;
 using MatrixXf      = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 using MatrixXu      = Eigen::Matrix<uint32_t, Eigen::Dynamic, Eigen::Dynamic>;
+using MipMap3f      = MipMap<Color3f>;
+using MipMap1f      = MipMap<float>;
 
 /* Simple exception class, which stores a human-readable error description */
 class HikariException : public std::runtime_error 
@@ -509,6 +553,18 @@ enum class ETransportMode
 	EUnknown = 0,
 	ERadiance = 1,
 	EImportance = 2
+};
+
+/// Wrap mode of the texture, which decides the behavior when u > 1 or v > 1.
+enum class EWrapMode
+{
+	ERepeat, EBlack, EClamp
+};
+
+/// Filter type of the sampler
+enum class EFilterType
+{
+	ENearest, EBilinear, ETrilinear, EEWA
 };
 
 /// Convert radians to degrees
@@ -755,6 +811,11 @@ inline int Log2Int(int64_t V)
 	return Log2Int(uint64_t(V));
 }
 
+inline float GammaCorrect(float Value, float InvGamma)
+{
+	return InvGamma == 1.0f ? Value : std::pow(Value, InvGamma);
+}
+
 /// Compute a direction for the given coordinates in spherical coordinates
 Vector3f SphericalDirection(float Theta, float Phi);
 
@@ -767,6 +828,10 @@ float FresnelDielectric(float CosThetaI, float Eta, float InvEta, float & CosThe
 /// Fresnel coefficient for conductor material. Eta = IntIOR / ExtIOR, EtaK = K / ExtIOR
 Color3f FresnelConductor(float CosThetaI, const Color3f & Eta, const Color3f & EtaK);
 
+/**
+* Approximating the diffuse Frensel reflectance 
+* for the Eta < 1.0 and Eta > 1.0 cases.
+*/
 float ApproxFresnelDiffuseReflectance(float Eta);
 
 /// Complete the set {a} to an orthonormal base
