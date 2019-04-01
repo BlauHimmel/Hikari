@@ -3,6 +3,7 @@
 #include <core\Common.hpp>
 #include <core\Vector.hpp>
 #include <core\MemoryArena.hpp>
+#include <core\Timer.hpp>
 #include <tbb\tbb.h>
 #include <thread>
 
@@ -21,6 +22,7 @@ class MipMap
 {
 public:
 	MipMap(
+		const std::string Filename,
 		const Point2i & Resolution,
 		const T * pData,
 		bool bTrilinear = false,
@@ -46,6 +48,7 @@ private:
 	T Triangle(int Level, const Point2f & UV) const;
 	T EWA(int Level, Point2f UV, Vector2f D0, Vector2f D1) const;
 
+	std::string m_Filename;
 	bool m_bTrilinear;
 	float m_MaxAnisotropic;
 	EWrapMode m_UWrapMode;
@@ -60,6 +63,7 @@ private:
 
 template<typename T>
 inline MipMap<T>::MipMap(
+	const std::string Filename,
 	const Point2i & Resolution,
 	const T * pData,
 	bool bTrilinear,
@@ -67,6 +71,7 @@ inline MipMap<T>::MipMap(
 	EWrapMode UWrapMode,
 	EWrapMode VWrapMode
 ) : 
+	m_Filename(Filename),
 	m_Resolution(Resolution),
 	m_bTrilinear(bTrilinear),
 	m_MaxAnisotropic(MaxAnisotropic),
@@ -79,6 +84,11 @@ inline MipMap<T>::MipMap(
 		std::is_same<T, Color4f>::value,
 		"Type T of MipMap must be float, Color3f or Color4f!"
 	);
+
+	LOG(INFO) << "Generated mipmap for the texture \"" << Filename << "\" ... ";
+	cout.flush();
+	Timer ObjTimer;
+	size_t MemoryUsed = 0; // bytes
 
 	std::unique_ptr<T[]> ResampledImage = nullptr;
 
@@ -185,12 +195,14 @@ inline MipMap<T>::MipMap(
 		m_Resolution[1],
 		ResampledImage != nullptr ? ResampledImage.get() : pData)
 	);
+	MemoryUsed += m_Resolution[0] * m_Resolution[1] * sizeof(T);
 
 	for (int i = 1; i < nLevels; ++i)
 	{
 		int URes = std::max(1, m_Pyramid[i - 1]->USize() / 2);
 		int VRes = std::max(1, m_Pyramid[i - 1]->VSize() / 2);
 		m_Pyramid[i].reset(new BlockedArray<T, 2>(URes, VRes));
+		MemoryUsed += URes * VRes * sizeof(T);
 
 		tbb::blocked_range<int> Range(0, VRes);
 		auto Map = [&](const tbb::blocked_range<int> & Range)
@@ -221,6 +233,8 @@ inline MipMap<T>::MipMap(
 			s_WeightLut[i] = std::exp(-Alpha * R2) - std::exp(-Alpha);
 		}
 	}
+
+	LOG(INFO) << "Done. (Took " << ObjTimer.ElapsedString() << " and " << MemString(MemoryUsed) << ")";
 }
 
 template<typename T>

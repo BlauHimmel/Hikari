@@ -62,6 +62,7 @@ BitmapTexture::BitmapTexture(const PropertyList & PropList)
 		int Width, Height;
 		std::unique_ptr<float[]> Data = LoadImageFromFileR(m_Filename, m_Gamma, Width, Height, &Average, &Maximum, &Minimum);
 		m_Texture1f.reset(new MipMap1f(
+			m_Filename,
 			Point2i(Width, Height),
 			Data.get(),
 			m_FilterType == EFilterType::ETrilinear,
@@ -81,6 +82,7 @@ BitmapTexture::BitmapTexture(const PropertyList & PropList)
 		int Width, Height;
 		std::unique_ptr<Color3f[]> Data = LoadImageFromFileRGB(m_Filename, m_Gamma, Width, Height, &m_Average, &m_Maximum, &m_Minimum);
 		m_Texture3f.reset(new MipMap3f(
+			m_Filename,
 			Point2i(Width, Height),
 			Data.get(),
 			m_FilterType == EFilterType::ETrilinear,

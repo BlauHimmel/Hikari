@@ -26,7 +26,7 @@ WavefrontObjMesh::WavefrontObjMesh(const PropertyList & PropList)
 
 	Transform Trans = PropList.GetTransform(XML_MESH_WAVEFRONG_OBJ_TO_WORLD, DEFAULT_MESH_TO_WORLD);
 
-	LOG(INFO) << "Loading \"" << Filename << "\" ... ";
+	LOG(INFO) << "Loading mesh \"" << Filename << "\" ... ";
 	cout.flush();
 	Timer ObjTimer;
 

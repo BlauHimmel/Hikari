@@ -2,6 +2,7 @@
 #include <core\Intersection.hpp>
 #include <core\Color.hpp>
 #include <core\Vector.hpp>
+#include <core\Timer.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -19,6 +20,10 @@ std::unique_ptr<float[]> LoadImageFromFileR(
 )
 {
 	// Top left - (0,0)
+
+	LOG(INFO) << "Loading texture (R) \"" << Filename << "\" ... ";
+	cout.flush();
+	Timer ObjTimer;
 
 	int ChannelsInFile = -1, RequestChannels = 1;
 	unsigned char * pData = stbi_load(Filename.c_str(), &Width, &Height, &ChannelsInFile, RequestChannels);
@@ -61,6 +66,8 @@ std::unique_ptr<float[]> LoadImageFromFileR(
 
 	stbi_image_free(pData);
 
+	LOG(INFO) << "Done. (Took " << ObjTimer.ElapsedString() << ")";
+
 	return Pixels;
 }
 
@@ -75,6 +82,10 @@ std::unique_ptr<Color3f[]> LoadImageFromFileRGB(
 )
 {
 	// Top left - (0,0)
+
+	LOG(INFO) << "Loading texture (RGB) \"" << Filename << "\" ... ";
+	cout.flush();
+	Timer ObjTimer;
 
 	int ChannelsInFile = -1, RequestChannels = 3;
 	unsigned char * pData = stbi_load(Filename.c_str(), &Width, &Height, &ChannelsInFile, RequestChannels);
@@ -126,6 +137,8 @@ std::unique_ptr<Color3f[]> LoadImageFromFileRGB(
 	if (pAverage != nullptr) { *pAverage = Average; }
 
 	stbi_image_free(pData);
+
+	LOG(INFO) << "Done. (Took " << ObjTimer.ElapsedString() << ")";
 
 	return Pixels;
 }
