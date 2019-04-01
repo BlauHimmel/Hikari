@@ -75,6 +75,10 @@ void DiffuseBSDF::AddChild(Object * pChildObj, const std::string & Name)
 		if (m_pAlbedo != nullptr)
 		{
 			m_pAlbedo = (Texture *)(pChildObj);
+			if (m_pAlbedo->IsMonochromatic())
+			{
+				LOG(WARNING) << "Albedo texture is monochromatic! Make sure that it is done intentionally.";
+			}
 		}
 		else
 		{
