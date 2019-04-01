@@ -195,7 +195,7 @@ public:
 	const std::string & GetName() const;
 
 	/// Register a child object (e.g. a BSDF) with the mesh
-	virtual void AddChild(Object * pChildObj) override;
+	virtual void AddChild(Object * pChildObj, const std::string & Name) override;
 
 	/// Return a human-readable summary of this instance
 	virtual std::string ToString() const override;

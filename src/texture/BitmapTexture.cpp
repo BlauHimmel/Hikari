@@ -7,6 +7,8 @@ REGISTER_CLASS(BitmapTexture, XML_TEXTURE_BITMAP);
 BitmapTexture::BitmapTexture(const PropertyList & PropList)
 {
 	m_Filename = PropList.GetString(XML_TEXTURE_BITMAP_FILENAME);
+	filesystem::path Filename = GetFileResolver()->resolve(m_Filename);
+	m_Filename = Filename.str();
 
 	m_Gamma = PropList.GetFloat(XML_TEXTURE_BITMAP_GAMMA, DEFAULT_TEXTURE_BITMAP_GAMMA);
 
@@ -185,9 +187,9 @@ std::string BitmapTexture::ToString() const
 		"BitmapTexture[\n"
 		"  filename = %s,\n"
 		"  gamma = %f,\n"
-		"  uWrapMode = %s,\n",
-		"  vWrapMode = %s,\n",
-		"  filterType = %s,\n",
+		"  uWrapMode = %s,\n"
+		"  vWrapMode = %s,\n"
+		"  filterType = %s,\n"
 		"  maxAnisotropy = %f,\n"
 		"  channel = %s,\n"
 		"  width = %d,\n"

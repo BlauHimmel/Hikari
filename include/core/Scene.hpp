@@ -95,7 +95,7 @@ public:
 	virtual void Activate() override;
 
 	/// Add a child object to the scene (meshes, integrators etc.)
-	virtual void AddChild(Object * pChildObj) override;
+	virtual void AddChild(Object * pChildObj, const std::string & Name) override;
 
 	/// Return a string summary of the scene (for debugging purposes)
 	virtual std::string ToString() const override;

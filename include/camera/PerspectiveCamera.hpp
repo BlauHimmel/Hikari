@@ -22,7 +22,7 @@ public:
 
 	virtual Color3f SampleRay(Ray3f & Ray, const Point2f & SamplePosition, const Point2f & ApertureSample) const override;
 
-	virtual void AddChild(Object * pChildObj) override;
+	virtual void AddChild(Object * pChildObj, const std::string & Name) override;
 
 	virtual std::string ToString() const override;
 

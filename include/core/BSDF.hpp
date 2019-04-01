@@ -29,11 +29,14 @@ struct BSDFQueryRecord
 	/// The sampler currently used
 	Sampler * pSampler;
 
+	/// Reference to the underlying surface interaction
+	const Intersection & Isect;
+
 	/// Create a new record for sampling the BSDF
-	BSDFQueryRecord(const Vector3f & Wi, ETransportMode Mode, Sampler * pSampler);
+	BSDFQueryRecord(const Vector3f & Wi, ETransportMode Mode, Sampler * pSampler, const Intersection & Isect);
 
 	/// Create a new record for querying the BSDF
-	BSDFQueryRecord(const Vector3f & Wi, const Vector3f & Wo, EMeasure Measure, ETransportMode Mode, Sampler * pSampler);
+	BSDFQueryRecord(const Vector3f & Wi, const Vector3f & Wo, EMeasure Measure, ETransportMode Mode, Sampler * pSampler, const Intersection & Isect);
 
 	/// Return a human-readable string summary
 	std::string ToString() const;

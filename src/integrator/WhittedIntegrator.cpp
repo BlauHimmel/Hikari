@@ -73,7 +73,7 @@ Color3f WhittedIntegrator::LiRecursive(const Scene * pScene, Sampler * pSampler,
 		{
 			if (pEmitter == Isect.pEmitter)
 			{
-				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), Isect.ToLocal(Isect.ShadingFrame.N), EMeasure::ESolidAngle, ETransportMode::ERadiance, pSampler);
+				BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), Isect.ToLocal(Isect.ShadingFrame.N), EMeasure::ESolidAngle, ETransportMode::ERadiance, pSampler, Isect);
 				float Pdf = pBSDF->Pdf(BSDFRecord);
 				if (Pdf != 0.0f)
 				{
@@ -96,7 +96,7 @@ Color3f WhittedIntegrator::LiRecursive(const Scene * pScene, Sampler * pSampler,
 
 				if (!pScene->ShadowRayIntersect(ShadowRay))
 				{
-					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle, ETransportMode::ERadiance, pSampler);
+					BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0 * Ray.Direction), Isect.ToLocal(EmitterRecord.Wi), EMeasure::ESolidAngle, ETransportMode::ERadiance, pSampler, Isect);
 					Lr += pBSDF->Eval(BSDFRecord) * std::abs(Frame::CosTheta(BSDFRecord.Wo)) * Li;
 				}
 			}
@@ -107,7 +107,7 @@ Color3f WhittedIntegrator::LiRecursive(const Scene * pScene, Sampler * pSampler,
 		if (pSampler->Next1D() < 0.95f && Depth < m_Depth)
 		{
 			constexpr float Inv = 1.0f / 0.95f;
-			BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), ETransportMode::ERadiance, pSampler);
+			BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * Ray.Direction), ETransportMode::ERadiance, pSampler, Isect);
 			Color3f C = pBSDF->Sample(BSDFRecord, pSampler->Next2D());
 			Lr += C * LiRecursive(pScene, pSampler, Ray3f(Isect.P, Isect.ToWorld(BSDFRecord.Wo)), Depth + 1) * Inv;
 		}

@@ -1,6 +1,7 @@
 #include <core\Chi2Test.hpp>
 #include <core\Sampling.hpp>
 #include <core\BSDF.hpp>
+#include <core\Intersection.hpp>
 #include <hypothesis.h>
 #include <pcg32.h>
 
@@ -51,7 +52,7 @@ Chi2Test::~Chi2Test()
 	}
 }
 
-void Chi2Test::AddChild(Object * pChildObj)
+void Chi2Test::AddChild(Object * pChildObj, const std::string & Name)
 {
 	switch (pChildObj->GetClassType())
 	{
@@ -60,8 +61,8 @@ void Chi2Test::AddChild(Object * pChildObj)
 		break;
 	default:
 		throw HikariException(
-			"Chi2Test::AddChild(<%s>) is not supported!",
-			ClassTypeName(pChildObj->GetClassType())
+			"Chi2Test::AddChild(<%s>, <%s>) is not supported!",
+			ClassTypeName(pChildObj->GetClassType()), Name
 		);
 		break;
 	}
@@ -72,6 +73,8 @@ void Chi2Test::Activate()
 	int Passed = 0, Total = 0, Resolution = m_CosThetaResolution * m_PhiResolution;
 	/* Pseudorandom number generator */
 	pcg32 Random;
+
+	const Intersection Isect;
 
 	std::unique_ptr<double[]> pObservedFrequencies(new double[Resolution]);
 	std::unique_ptr<double[]> pExpectedFrequencies(new double[Resolution]);
@@ -98,7 +101,7 @@ void Chi2Test::Activate()
 			LOG(INFO) << "\nAccumulating " << m_SampleCount << " samples into a " << m_CosThetaResolution << "x" << m_PhiResolution << " contingency table .. ";
 
 			/* Generate many samples from the BSDF and create a histogram / contingency table */
-			BSDFQueryRecord BSDFRecord(Wi, ETransportMode::ERadiance, nullptr);
+			BSDFQueryRecord BSDFRecord(Wi, ETransportMode::ERadiance, nullptr, Isect);
 			for (int i = 0; i < m_SampleCount; ++i)
 			{
 				Point2f Sample(Random.nextFloat(), Random.nextFloat());
@@ -158,7 +161,7 @@ void Chi2Test::Activate()
 							float(CosTheta)
 						);
 
-						BSDFQueryRecord BSDFRecord(Wi, Wo, EMeasure::ESolidAngle, ETransportMode::ERadiance, nullptr);
+						BSDFQueryRecord BSDFRecord(Wi, Wo, EMeasure::ESolidAngle, ETransportMode::ERadiance, nullptr, Isect);
 						return pBSDF->Pdf(BSDFRecord);
 					};
 

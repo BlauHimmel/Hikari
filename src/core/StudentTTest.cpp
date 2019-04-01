@@ -4,6 +4,7 @@
 #include <core\Camera.hpp>
 #include <core\Sampler.hpp>
 #include <core\BSDF.hpp>
+#include <core\Intersection.hpp>
 #include <hypothesis.h>
 #include <pcg32.h>
 
@@ -47,7 +48,7 @@ StudentTTest::~StudentTTest()
 	}
 }
 
-void StudentTTest::AddChild(Object * pChildObj)
+void StudentTTest::AddChild(Object * pChildObj, const std::string & Name)
 {
 	switch (pChildObj->GetClassType())
 	{
@@ -59,8 +60,8 @@ void StudentTTest::AddChild(Object * pChildObj)
 		break;
 	default:
 		throw HikariException(
-			"StudentTTest::AddChild(<%s>) is not supported!",
-			ClassTypeName(pChildObj->GetClassType())
+			"StudentTTest::AddChild(<%s>, <%s>) is not supported!",
+			ClassTypeName(pChildObj->GetClassType()), Name
 		);
 		break;
 	}
@@ -70,6 +71,7 @@ void StudentTTest::Activate()
 {
 	int Total = 0, Passed = 0;
 	pcg32 Random;
+	const Intersection Isect;
 
 	if (!m_pBSDFs.empty())
 	{
@@ -94,7 +96,7 @@ void StudentTTest::Activate()
 				LOG(INFO) << "\nTesting (angle=" << Angle << "): " << pBSDF->ToString();
 				++Total;
 
-				BSDFQueryRecord BSDFRecord(SphericalDirection(DegToRad(Angle), 0.0f), ETransportMode::ERadiance, nullptr);
+				BSDFQueryRecord BSDFRecord(SphericalDirection(DegToRad(Angle), 0.0f), ETransportMode::ERadiance, nullptr, Isect);
 
 				LOG(INFO) << "\nDrawing " << m_SampleCount << " samples .. ";
 

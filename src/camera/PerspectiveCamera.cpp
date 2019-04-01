@@ -101,7 +101,7 @@ Color3f PerspectiveCamera::SampleRay(Ray3f & Ray, const Point2f & SamplePosition
 	return Color3f(1.0f);
 }
 
-void PerspectiveCamera::AddChild(Object * pChildObj)
+void PerspectiveCamera::AddChild(Object * pChildObj, const std::string & Name)
 {
 	switch (pChildObj->GetClassType())
 	{
@@ -113,7 +113,9 @@ void PerspectiveCamera::AddChild(Object * pChildObj)
 		m_pFilter = (ReconstructionFilter*)(pChildObj);
 		break;
 	default:
-		throw HikariException("Camera::AddChild(<%s>) is not supported!", ClassTypeName(pChildObj->GetClassType()));
+		throw HikariException("Camera::AddChild(<%s>, <%s>) is not supported!",
+			ClassTypeName(pChildObj->GetClassType()), Name
+		);
 	}
 }
 

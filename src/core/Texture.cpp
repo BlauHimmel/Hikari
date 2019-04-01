@@ -18,6 +18,8 @@ std::unique_ptr<float[]> LoadImageFromFileR(
 	float * pMinimum
 )
 {
+	// Top left - (0,0)
+
 	int ChannelsInFile = -1, RequestChannels = 1;
 	unsigned char * pData = stbi_load(Filename.c_str(), &Width, &Height, &ChannelsInFile, RequestChannels);
 
@@ -40,13 +42,14 @@ std::unique_ptr<float[]> LoadImageFromFileR(
 	{
 		for (int y = 0; y < Height; y++)
 		{
-			int PixelIdx = y * Height + x;
+			int LoadPixelIdx = y * Width + x;
+			int StorePixelIdx = (Height - 1 - y) * Width + x;
 			
-			Pixels[PixelIdx] = GammaCorrect(float(pData[PixelIdx * RequestChannels + 0]) * Inv255, InvGamma);
+			Pixels[StorePixelIdx] = GammaCorrect(float(pData[LoadPixelIdx * RequestChannels + 0]) * Inv255, InvGamma);
 
-			if (Pixels[PixelIdx] > Maximum) { Maximum = Pixels[PixelIdx]; }
-			if (Pixels[PixelIdx] < Minimum) { Minimum = Pixels[PixelIdx]; }
-			Average += Pixels[PixelIdx];
+			if (Pixels[StorePixelIdx] > Maximum) { Maximum = Pixels[StorePixelIdx]; }
+			if (Pixels[StorePixelIdx] < Minimum) { Minimum = Pixels[StorePixelIdx]; }
+			Average += Pixels[StorePixelIdx];
 		}
 	}
 
@@ -71,6 +74,8 @@ std::unique_ptr<Color3f[]> LoadImageFromFileRGB(
 	Color3f * pMinimum
 )
 {
+	// Top left - (0,0)
+
 	int ChannelsInFile = -1, RequestChannels = 3;
 	unsigned char * pData = stbi_load(Filename.c_str(), &Width, &Height, &ChannelsInFile, RequestChannels);
 
@@ -93,23 +98,24 @@ std::unique_ptr<Color3f[]> LoadImageFromFileRGB(
 	{
 		for (int y = 0; y < Height; y++)
 		{
-			int PixelIdx = y * Height + x;
+			int LoadPixelIdx = y * Width + x;
+			int StorePixelIdx = (Height - 1 - y) * Width + x;
 
-			Pixels[PixelIdx] = Color3f(
-				GammaCorrect(float(pData[PixelIdx * RequestChannels + 0]) * Inv255, InvGamma),
-				GammaCorrect(float(pData[PixelIdx * RequestChannels + 1]) * Inv255, InvGamma),
-				GammaCorrect(float(pData[PixelIdx * RequestChannels + 2]) * Inv255, InvGamma)
+			Pixels[StorePixelIdx] = Color3f(
+				GammaCorrect(float(pData[LoadPixelIdx * RequestChannels + 0]) * Inv255, InvGamma),
+				GammaCorrect(float(pData[LoadPixelIdx * RequestChannels + 1]) * Inv255, InvGamma),
+				GammaCorrect(float(pData[LoadPixelIdx * RequestChannels + 2]) * Inv255, InvGamma)
 			);
 
-			if (Pixels[PixelIdx][0] > Maximum[0]) { Maximum[0] = Pixels[PixelIdx][0]; }
-			if (Pixels[PixelIdx][1] > Maximum[1]) { Maximum[1] = Pixels[PixelIdx][1]; }
-			if (Pixels[PixelIdx][2] > Maximum[2]) { Maximum[2] = Pixels[PixelIdx][2]; }
-			if (Pixels[PixelIdx][0] < Minimum[0]) { Minimum[0] = Pixels[PixelIdx][0]; }
-			if (Pixels[PixelIdx][1] < Minimum[1]) { Minimum[1] = Pixels[PixelIdx][1]; }
-			if (Pixels[PixelIdx][2] < Minimum[2]) { Minimum[2] = Pixels[PixelIdx][2]; }
-			Average[0] += Pixels[PixelIdx][0];
-			Average[1] += Pixels[PixelIdx][1];
-			Average[2] += Pixels[PixelIdx][2];
+			if (Pixels[StorePixelIdx][0] > Maximum[0]) { Maximum[0] = Pixels[StorePixelIdx][0]; }
+			if (Pixels[StorePixelIdx][1] > Maximum[1]) { Maximum[1] = Pixels[StorePixelIdx][1]; }
+			if (Pixels[StorePixelIdx][2] > Maximum[2]) { Maximum[2] = Pixels[StorePixelIdx][2]; }
+			if (Pixels[StorePixelIdx][0] < Minimum[0]) { Minimum[0] = Pixels[StorePixelIdx][0]; }
+			if (Pixels[StorePixelIdx][1] < Minimum[1]) { Minimum[1] = Pixels[StorePixelIdx][1]; }
+			if (Pixels[StorePixelIdx][2] < Minimum[2]) { Minimum[2] = Pixels[StorePixelIdx][2]; }
+			Average[0] += Pixels[StorePixelIdx][0];
+			Average[1] += Pixels[StorePixelIdx][1];
+			Average[2] += Pixels[StorePixelIdx][2];
 		}
 	}
 

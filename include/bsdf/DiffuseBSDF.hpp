@@ -21,10 +21,12 @@ public:
 
 	virtual bool IsDiffuse() const override;
 
+	virtual void AddChild(Object * pChildObj, const std::string & Name) override;
+
 	virtual std::string ToString() const override;
 
 protected:
-	Color3f m_Albedo;
+	Texture * m_pAlbedo;
 };
 
 NAMESPACE_END

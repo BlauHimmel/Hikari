@@ -73,7 +73,7 @@ Color3f AreaLight::Eval(const EmitterQueryRecord & Record) const
 	return Color3f(0.0f);
 }
 
-void AreaLight::SetParent(Object * pParentObj)
+void AreaLight::SetParent(Object * pParentObj, const std::string & Name)
 {
 	EClassType ClzType = pParentObj->GetClassType();
 	if (ClzType == EClassType::EMesh)
@@ -82,7 +82,9 @@ void AreaLight::SetParent(Object * pParentObj)
 	}
 	else
 	{
-		throw HikariException("AreaLight::SetParent(<%s>) is not supported!", ClassTypeName(pParentObj->GetClassType()));
+		throw HikariException("AreaLight::SetParent(<%s>, <%s>) is not supported!",
+			ClassTypeName(pParentObj->GetClassType()), Name
+		);
 	}
 }
 

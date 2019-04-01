@@ -419,7 +419,7 @@ const std::string & Mesh::GetName() const
 	return m_Name;
 }
 
-void Mesh::AddChild(Object * pChildObj)
+void Mesh::AddChild(Object * pChildObj, const std::string & Name)
 {
 	switch (pChildObj->GetClassType())
 	{
@@ -442,7 +442,9 @@ void Mesh::AddChild(Object * pChildObj)
 		}
 		break;
 	default:
-		throw HikariException("Mesh::AddChild(<%s>) is not supported!", ClassTypeName(pChildObj->GetClassType()));
+		throw HikariException("Mesh::AddChild(<%s>, <%s>) is not supported!",
+			ClassTypeName(pChildObj->GetClassType()), Name
+		);
 	}
 }
 

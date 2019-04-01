@@ -1,0 +1,61 @@
+<scene>
+	<sampler type="independent">
+		<integer name="sampleCount" value="128"/>
+	</sampler>
+
+	<acceleration type="hlbvh">
+		<integer name="leafSize" value="10"/>
+	</acceleration>
+
+	<!-- Use the simple point light integrator -->
+    <integrator type="pathMIS">
+		<integer name="depth" value="128"/>
+	</integrator>
+
+	<emitter type="env"> 
+		<string name="filename" value="uffizi-large.exr" />
+		<float name="scale" value="0.35"/>
+	</emitter>
+
+	<camera type="perspective">
+		<float name="fov" value="81.20258907990751"/>
+		<float name="nearClip" value="0.10000000149011612"/>
+		<float name="farClip" value="100.0"/>
+		<integer name="width" value="1000"/>
+		<integer name="height" value="1000"/>
+		<transform name="toWorld">
+			<scale value="1.000000 1.000000 -1.000000"/>
+			<matrix value="-0.00015191634884104133,-0.33579739928245544,0.9419342279434204,3.476113796234131,1.0,-6.065189154469408e-05,0.00013965900870971382,1.0499275922775269,1.0232965905743185e-05,0.9419342279434204,0.33579739928245544,0.958214521408081,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<rfilter type="gaussian">
+			<float name="radius" value="1.2"/>
+			<float name="stddev" value="0.6"/>
+		</rfilter>
+	</camera>
+
+	<mesh type="obj">
+		<string name="filename" value="background.obj"/>
+		<transform name="toWorld">
+			<matrix value="1.0,0.0,0.0,0.0,0.0,-1.6292068494294654e-07,-1.0,0.0,0.0,1.0,-1.6292068494294654e-07,0.0,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<bsdf type="diffuse">
+			<texture type="bitmap" name="albedo">
+				<string name="filename" value="background.jpg"/>
+				<string name="filterType" value="ewa"/>
+			</texture>
+		</bsdf>
+	</mesh>
+
+	<mesh type="obj">
+		<string name="filename" value="messi.obj"/>
+		<transform name="toWorld">
+			<matrix value="-0.004054540768265724,-0.06862004101276398,0.013223109766840935,2.8873817920684814,0.0007799506420269608,0.013200088404119015,0.06873971968889236,0.8321716785430908,-0.06987812370061874,0.0041288770735263824,-6.726794121725277e-10,0.13148415088653564,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<bsdf type="diffuse">
+			<texture type="bitmap" name="albedo">
+				<string name="filename" value="messi.jpg"/>
+				<string name="filterType" value="ewa"/>
+			</texture>
+		</bsdf>
+	</mesh>
+</scene>

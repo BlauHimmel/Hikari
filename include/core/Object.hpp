@@ -48,7 +48,7 @@ public:
 	* The default implementation does not support children and
 	* simply throws an exception
 	*/
-	virtual void AddChild(Object * pChildObj);
+	virtual void AddChild(Object * pChildObj, const std::string & Name);
 
 	/**
 	* \brief Set the parent object
@@ -57,7 +57,7 @@ public:
 	* notified when they are added to a parent object. The
 	* default implementation simply does nothing
 	*/
-	virtual void SetParent(Object * pParentObj);
+	virtual void SetParent(Object * pParentObj, const std::string & Name);
 
 	/**
 	* \brief Perform some action associated with the object

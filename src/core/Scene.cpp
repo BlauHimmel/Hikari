@@ -162,7 +162,7 @@ void Scene::Activate()
 	LOG(INFO) << "\nConfiguration:\n" << ToString();
 }
 
-void Scene::AddChild(Object * pChildObj)
+void Scene::AddChild(Object * pChildObj, const std::string & Name)
 {
 	switch (pChildObj->GetClassType())
 	{
@@ -225,7 +225,9 @@ void Scene::AddChild(Object * pChildObj)
 		m_pIntegrator = (Integrator*)(pChildObj);
 		break;
 	default:
-		throw HikariException("Scene::AddChild(<%s>) is not supported!", ClassTypeName(pChildObj->GetClassType()));
+		throw HikariException("Scene::AddChild(<%s>, <%s>) is not supported!",
+			ClassTypeName(pChildObj->GetClassType()), Name
+		);
 	}
 }
 

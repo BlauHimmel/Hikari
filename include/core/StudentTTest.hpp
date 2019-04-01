@@ -32,7 +32,7 @@ public:
 
 	virtual ~StudentTTest();
 
-	virtual void AddChild(Object * pChildObj) override;
+	virtual void AddChild(Object * pChildObj, const std::string & Name) override;
 
 	virtual void Activate() override;
 

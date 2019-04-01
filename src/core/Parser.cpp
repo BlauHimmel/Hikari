@@ -110,7 +110,7 @@ Object * LoadFromXML(const std::string & Filename)
 	Tags[XML_TRANSFORM_SCALE]      = EScale;
 	Tags[XML_TRANSFORM_LOOKAT]     = ELookAt;
 
-	/* Helper function to check if attributes are fully specified */
+	/* Helper function to check if attributes are FULLY specified (Node.Attrs == Attrs) */
 	auto CheckAttributesFunc = [&](const pugi::xml_node & Node, std::set<std::string> Attrs)
 	{
 		for (auto Attr : Node.attributes())
@@ -131,6 +131,23 @@ Object * LoadFromXML(const std::string & Filename)
 				"Missing attribute \"%s\" in \"%s\" at %s",
 				*Attrs.begin(), Node.name(), OffsetFunc(Node.offset_debug())
 			);
+		}
+	};
+
+	/* Helper function to check if attributes can be found in Attrs (Node.Attrs \subset Attrs) */
+	auto CheckAttributesFuncPartly = [&](const pugi::xml_node & Node, std::set<std::string> Attrs)
+	{
+		for (auto Attr : Node.attributes())
+		{
+			auto Iter = Attrs.find(Attr.name());
+			if (Iter == Attrs.end())
+			{
+				throw HikariException(
+					"Unexpected attribute \"%s\" in \"%s\" at %s",
+					Attr.name(), Node.name(), OffsetFunc(Node.offset_debug())
+				);
+			}
+			Attrs.erase(Iter);
 		}
 	};
 
@@ -213,12 +230,14 @@ Object * LoadFromXML(const std::string & Filename)
 
 		PropertyList ChildPropList;
 		std::vector<Object*> pChildren;
+		std::vector<std::string> ChildNames;
 		for (pugi::xml_node & Child : Node.children())
 		{
 			Object * pChild = ParseTagFunc(Child, ChildPropList, Tag);
 			if (pChild)
 			{
 				pChildren.push_back(pChild);
+				ChildNames.push_back(Child.attribute("name").value());
 			}
 		}
 
@@ -228,7 +247,7 @@ Object * LoadFromXML(const std::string & Filename)
 		{
 			if (bCurrentIsObject)
 			{
-				CheckAttributesFunc(Node, { "type" });
+				CheckAttributesFuncPartly(Node, { "type", "name" });
 
 				/* This is an object, first instantiate it */
 				pResult = ObjectFactory::CreateInstance(Node.attribute("type").value(), ChildPropList);
@@ -244,10 +263,10 @@ Object * LoadFromXML(const std::string & Filename)
 				}
 
 				/* Add all children */
-				for (auto pChild : pChildren)
+				for (size_t i = 0; i < pChildren.size(); i++)
 				{
-					pResult->AddChild(pChild);
-					pChild->SetParent(pResult);
+					pResult->AddChild(pChildren[i], ChildNames[i]);
+					pChildren[i]->SetParent(pResult, Node.attribute("name").value());
 				}
 
 				/* Activate / configure the object */

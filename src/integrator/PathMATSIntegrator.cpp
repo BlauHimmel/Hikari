@@ -56,7 +56,7 @@ Color3f PathMATSIntegrator::Li(const Scene * pScene, Sampler * pSampler, const R
 		}
 
 		const BSDF * pBSDF = Isect.pBSDF;
-		BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction), ETransportMode::ERadiance, pSampler);
+		BSDFQueryRecord BSDFRecord(Isect.ToLocal(-1.0f * TracingRay.Direction), ETransportMode::ERadiance, pSampler, Isect);
 		Beta *= pBSDF->Sample(BSDFRecord, pSampler->Next2D());
 
 		if (Beta.isZero())

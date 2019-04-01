@@ -4,15 +4,16 @@ NAMESPACE_BEGIN
 
 Object::~Object() { /* Do nothing */ }
 
-void Object::AddChild(Object * pChildObj)
+void Object::AddChild(Object * pChildObj, const std::string & Name)
 {
 	throw HikariException(
-		"Object::AddChild(Object * pChildObj) is not implemented for objects of type '%s'!",
+		"Object::AddChild(Object * pChildObj, const std::string & Name)"
+		" is not implemented for objects of type '%s'!",
 		ClassTypeName(GetClassType())
 	);
 }
 
-void Object::SetParent(Object * pParentObj)
+void Object::SetParent(Object * pParentObj, const std::string & Name)
 {
 	/* Don nothing */
 }

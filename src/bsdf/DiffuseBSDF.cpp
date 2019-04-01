@@ -1,6 +1,7 @@
 #include <bsdf\DiffuseBSDF.hpp>
 #include <core\Frame.hpp>
 #include <core\Sampling.hpp>
+#include <core\Texture.hpp>
 
 NAMESPACE_BEGIN
 
@@ -8,7 +9,7 @@ REGISTER_CLASS(DiffuseBSDF, XML_BSDF_DIFFUSE);
 
 DiffuseBSDF::DiffuseBSDF(const PropertyList & PropList)
 {
-	m_Albedo = PropList.GetColor(XML_BSDF_DIFFUSE_ALBEDO, DEFAULT_BSDF_DIFFUSE_ALBEDO);
+	m_pAlbedo = new ConstantColor3fTexture(PropList.GetColor(XML_BSDF_DIFFUSE_ALBEDO, DEFAULT_BSDF_DIFFUSE_ALBEDO));
 }
 
 Color3f DiffuseBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
@@ -29,7 +30,7 @@ Color3f DiffuseBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) co
 
 	/* Eval() / Pdf() * Cos(Theta) = Albedo. There
 	is no need to call these functions. */
-	return m_Albedo;
+	return m_pAlbedo->Eval(Record.Isect);
 }
 
 Color3f DiffuseBSDF::Eval(const BSDFQueryRecord & Record) const
@@ -42,7 +43,7 @@ Color3f DiffuseBSDF::Eval(const BSDFQueryRecord & Record) const
 	}
 
 	/* The BRDF is simply the albedo / pi */
-	return m_Albedo * INV_PI;
+	return m_pAlbedo->Eval(Record.Isect) * INV_PI;
 }
 
 float DiffuseBSDF::Pdf(const BSDFQueryRecord & Record) const
@@ -67,9 +68,35 @@ bool DiffuseBSDF::IsDiffuse() const
 	return true;
 }
 
+void DiffuseBSDF::AddChild(Object * pChildObj, const std::string & Name)
+{
+	if (pChildObj->GetClassType() == EClassType::ETexture && Name == "albedo")
+	{
+		if (m_pAlbedo != nullptr)
+		{
+			m_pAlbedo = (Texture *)(pChildObj);
+		}
+		else
+		{
+			throw HikariException("DiffuseBSDF: tried to specify multiple albedo texturee");
+		}
+	}
+	else
+	{
+		throw HikariException("DiffuseBSDF::AddChild(<%s>, <%s>) is not supported!",
+			ClassTypeName(pChildObj->GetClassType()), Name
+		);
+	}
+}
+
 std::string DiffuseBSDF::ToString() const
 {
-	return tfm::format("Diffuse[albedo = %s]", m_Albedo.ToString());
+	return tfm::format(
+		"Diffuse[\n"
+		"  albedo = %s\n"
+		"]", 
+		m_pAlbedo->IsConstant() ? m_pAlbedo->GetAverage().ToString() : Indent(m_pAlbedo->ToString())
+	);
 }
 
 NAMESPACE_END
