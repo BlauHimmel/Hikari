@@ -22,9 +22,8 @@ BitmapTexture::BitmapTexture(const PropertyList & PropList)
 	}
 	else
 	{
-		std::string UWrapMode = "", VWrapMode = "";
-		UWrapMode = PropList.GetString(XML_TEXTURE_BITMAP_WRAP_MODE_U, DEFAULT_TEXTURE_BITMAP_WRAP_MODE_U);
-		VWrapMode = PropList.GetString(XML_TEXTURE_BITMAP_WRAP_MODE_V, DEFAULT_TEXTURE_BITMAP_WRAP_MODE_V);
+		std::string UWrapMode = PropList.GetString(XML_TEXTURE_BITMAP_WRAP_MODE_U, DEFAULT_TEXTURE_BITMAP_WRAP_MODE_U);
+		std::string VWrapMode = PropList.GetString(XML_TEXTURE_BITMAP_WRAP_MODE_V, DEFAULT_TEXTURE_BITMAP_WRAP_MODE_V);
 
 		if (UWrapMode == XML_TEXTURE_BITMAP_WRAP_MODE_REPEAT) { m_UWrapMode = EWrapMode::ERepeat; }
 		else if (UWrapMode == XML_TEXTURE_BITMAP_WRAP_MODE_CLAMP) { m_UWrapMode = EWrapMode::EClamp; }
