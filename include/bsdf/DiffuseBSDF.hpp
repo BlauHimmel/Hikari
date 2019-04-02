@@ -13,6 +13,8 @@ class DiffuseBSDF : public BSDF
 public:
 	DiffuseBSDF(const PropertyList & PropList);
 
+	virtual ~DiffuseBSDF();
+
 	virtual Color3f Sample(BSDFQueryRecord & Record, const Point2f & Sample) const override;
 
 	virtual Color3f Eval(const BSDFQueryRecord & Record) const override;

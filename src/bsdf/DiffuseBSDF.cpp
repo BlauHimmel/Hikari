@@ -12,6 +12,11 @@ DiffuseBSDF::DiffuseBSDF(const PropertyList & PropList)
 	m_pAlbedo = new ConstantColor3fTexture(PropList.GetColor(XML_BSDF_DIFFUSE_ALBEDO, DEFAULT_BSDF_DIFFUSE_ALBEDO));
 }
 
+DiffuseBSDF::~DiffuseBSDF()
+{
+	delete m_pAlbedo;
+}
+
 Color3f DiffuseBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
 {
 	if (Frame::CosTheta(Record.Wi) <= 0)
@@ -70,7 +75,7 @@ bool DiffuseBSDF::IsDiffuse() const
 
 void DiffuseBSDF::AddChild(Object * pChildObj, const std::string & Name)
 {
-	if (pChildObj->GetClassType() == EClassType::ETexture && Name == "albedo")
+	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_DIFFUSE_ALBEDO)
 	{
 		if (m_pAlbedo != nullptr)
 		{
@@ -82,7 +87,7 @@ void DiffuseBSDF::AddChild(Object * pChildObj, const std::string & Name)
 		}
 		else
 		{
-			throw HikariException("DiffuseBSDF: tried to specify multiple albedo texturee");
+			throw HikariException("DiffuseBSDF: tried to specify multiple albedo texture");
 		}
 	}
 	else

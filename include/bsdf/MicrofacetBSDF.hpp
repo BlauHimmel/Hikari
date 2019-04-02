@@ -10,6 +10,8 @@ class MicrofacetBSDF : public BSDF
 public:
 	MicrofacetBSDF(const PropertyList & PropList);
 
+	virtual ~MicrofacetBSDF();
+
 	virtual Color3f Sample(BSDFQueryRecord & Record, const Point2f & Sample) const override;
 
 	virtual Color3f Eval(const BSDFQueryRecord & Record) const override;
@@ -18,20 +20,21 @@ public:
 
 	virtual bool IsDiffuse() const override;
 
+	virtual void AddChild(Object * pChildObj, const std::string & Name) override;
+
 	virtual std::string ToString() const override;
 
 private:
-	float BeckmannD(const Normal3f & M) const;
+	float BeckmannD(const Normal3f & M, float Alpha) const;
 
-	float SmithBeckmannG1(const Vector3f & V, const Normal3f & M) const;
+	float SmithBeckmannG1(const Vector3f & V, const Normal3f & M, float Alpha) const;
 
 protected:
-	float m_Alpha;
+	Texture * m_pAlpha;
 	float m_IntIOR;
 	float m_ExtIOR;
-	Color3f m_Kd;
+	Texture * m_pKd;
 
-	float m_Ks;
 	float m_Eta, m_InvEta;
 };
 
