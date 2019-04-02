@@ -239,7 +239,8 @@ void BVHAcceleration::Build()
 	m_pFlatTree = new BVHFlatNode[m_nNodes];
 	memcpy(m_pFlatTree, BuildNodes.data(), m_nNodes * sizeof(BVHFlatNode));
 
-	LOG(INFO) << "Build BVH (" << m_nNodes << " nodes, with " << m_nLeafs << " leafs) in " << BVHBuildTimer.ElapsedString();
+	LOG(INFO) << "Build BVH (" << m_nNodes << " nodes, with " << m_nLeafs << " leafs) in " << 
+		BVHBuildTimer.ElapsedString() << " and take " << MemString(m_nNodes * sizeof(BVHFlatNode)) << ".";
 }
 
 bool BVHAcceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool bShadowRay) const

@@ -23,7 +23,7 @@ std::unique_ptr<float[]> LoadImageFromFileR(
 
 	LOG(INFO) << "Loading texture (R) \"" << Filename << "\" ... ";
 	cout.flush();
-	Timer ObjTimer;
+	Timer TexLoadTimer;
 
 	int ChannelsInFile = -1, RequestChannels = 1;
 	unsigned char * pData = stbi_load(Filename.c_str(), &Width, &Height, &ChannelsInFile, RequestChannels);
@@ -66,7 +66,7 @@ std::unique_ptr<float[]> LoadImageFromFileR(
 
 	stbi_image_free(pData);
 
-	LOG(INFO) << "Done. (Took " << ObjTimer.ElapsedString() << ")";
+	LOG(INFO) << "Done. (Took " << TexLoadTimer.ElapsedString() << ")";
 
 	return Pixels;
 }
@@ -85,7 +85,7 @@ std::unique_ptr<Color3f[]> LoadImageFromFileRGB(
 
 	LOG(INFO) << "Loading texture (RGB) \"" << Filename << "\" ... ";
 	cout.flush();
-	Timer ObjTimer;
+	Timer TexLoadTimer;
 
 	int ChannelsInFile = -1, RequestChannels = 3;
 	unsigned char * pData = stbi_load(Filename.c_str(), &Width, &Height, &ChannelsInFile, RequestChannels);
@@ -138,7 +138,7 @@ std::unique_ptr<Color3f[]> LoadImageFromFileRGB(
 
 	stbi_image_free(pData);
 
-	LOG(INFO) << "Done. (Took " << ObjTimer.ElapsedString() << ")";
+	LOG(INFO) << "Done. (Took " << TexLoadTimer.ElapsedString() << ")";
 
 	return Pixels;
 }

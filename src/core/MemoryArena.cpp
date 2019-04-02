@@ -27,15 +27,7 @@ MemoryArena::MemoryArena(size_t BlockSize) : m_nBlockSize(BlockSize) { }
 
 MemoryArena::~MemoryArena()
 {
-	FreeAligned(m_pCurrentBlock);
-	for (auto & Block : m_UsedBlocks)
-	{
-		FreeAligned(Block.second);
-	}
-	for (auto & Block : m_AvailableBlocks)
-	{
-		FreeAligned(Block.second);
-	}
+	Release();
 }
 
 void * MemoryArena::Alloc(size_t nBytes)
@@ -71,7 +63,7 @@ void * MemoryArena::Alloc(size_t nBytes)
 			}
 		}
 
-		if (!m_pCurrentBlock)
+		if (m_pCurrentBlock == nullptr)
 		{
 			m_iCurrentAllocSize = std::max(nBytes, m_nBlockSize);
 			m_pCurrentBlock = AllocAligned<uint8_t>(m_iCurrentAllocSize);
@@ -89,6 +81,27 @@ void MemoryArena::Reset()
 {
 	m_iCurrentBlockPos = 0;
 	m_AvailableBlocks.splice(m_AvailableBlocks.begin(), m_UsedBlocks);
+}
+
+void MemoryArena::Release()
+{
+	FreeAligned(m_pCurrentBlock);
+	for (auto & Block : m_UsedBlocks)
+	{
+		FreeAligned(Block.second);
+	}
+	for (auto & Block : m_AvailableBlocks)
+	{
+		FreeAligned(Block.second);
+	}
+
+	m_pCurrentBlock = nullptr;
+
+	m_iCurrentBlockPos = 0;
+	m_iCurrentAllocSize = 0;
+	
+	m_UsedBlocks.clear();
+	m_AvailableBlocks.clear();
 }
 
 size_t MemoryArena::TotalAllocated() const

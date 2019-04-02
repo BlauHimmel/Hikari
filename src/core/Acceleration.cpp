@@ -37,6 +37,11 @@ const BoundingBox3f & Acceleration::GetBoundingBox() const
 	return m_BBox;
 }
 
+size_t Acceleration::GetUsedMemoryForShape() const
+{
+	return m_MemoryArena.TotalAllocated();
+}
+
 bool Acceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool bShadowRay) const
 {
 	bool bFoundIntersection = false;       // Was an intersection found so far?

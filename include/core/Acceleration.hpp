@@ -32,6 +32,9 @@ public:
 	/// Return an axis-aligned box that bounds the scene
 	const BoundingBox3f & GetBoundingBox() const;
 
+	/// Return the size used for store the Shape (eg. triangles of the mesh)
+	size_t GetUsedMemoryForShape() const;
+
 	/**
 	* \brief Intersect a ray against all triangles stored in the scene and
 	* return detailed intersection information
@@ -63,7 +66,7 @@ public:
 	virtual std::string ToString() const override;
 
 protected:
-	std::vector<Shape*> m_pShapes;
+	std::vector<Shape *> m_pShapes;
 	BoundingBox3f m_BBox;
 	MemoryArena m_MemoryArena;
 };

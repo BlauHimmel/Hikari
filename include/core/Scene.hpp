@@ -18,6 +18,7 @@ public:
 	/// Return the color of the background;
 	Color3f GetBackground() const;
 
+	/// Return whether the specified background color is forced to used
 	bool GetForceBackground() const;
 
 	/// Return a pointer to the scene's acceleration structure
@@ -106,7 +107,7 @@ protected:
 	Color3f m_Background;
 	bool m_bForceBackground;
 
-	std::vector<Mesh*> m_pMeshes;
+	std::vector<Mesh *> m_pMeshes;
 	Integrator * m_pIntegrator = nullptr;
 	Sampler * m_pSampler = nullptr;
 	Camera * m_pCamera = nullptr;

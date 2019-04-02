@@ -47,6 +47,8 @@ public:
 
 	void Reset();
 
+	void Release();
+
 	size_t TotalAllocated() const;
 
 private:

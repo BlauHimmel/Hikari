@@ -184,7 +184,7 @@ Screen::Screen(const ImageBlock & Block) : m_Block(Block), m_Scale(0.5f)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-	LOG(INFO) << "OpenGL initialized!Version: " << glGetString(GL_VERSION);
+	LOG(INFO) << "OpenGL initialized! Version: " << glGetString(GL_VERSION);
 }
 
 std::vector<const ImageBlock *> & Screen::GetRenderingBlocks()

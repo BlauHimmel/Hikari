@@ -197,7 +197,10 @@ void HLBVHAcceleration::Build()
 	FlattenBVHTree(pRoot, &nOffset);
 	CHECK(m_nNodes == nOffset);
 
-	LOG(INFO) << "Build HLBVH (" << m_nNodes << " nodes, with " << m_nLeafs << " leafs) in " << HLBVHBuildTimer.ElapsedString();
+	m_MemoryArena.Release();
+
+	LOG(INFO) << "Build HLBVH (" << m_nNodes << " nodes, with " << m_nLeafs << " leafs) in " << 
+		HLBVHBuildTimer.ElapsedString() << " and take " <<  MemString(m_nNodes * sizeof(LinearBVHNode)) << ".";
 }
 
 bool HLBVHAcceleration::RayIntersect(const Ray3f & Ray, Intersection & Isect, bool bShadowRay) const

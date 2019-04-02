@@ -22,7 +22,7 @@ class MipMap
 {
 public:
 	MipMap(
-		const std::string Filename,
+		const std::string & Filename,
 		const Point2i & Resolution,
 		const T * pData,
 		bool bTrilinear = false,
@@ -63,7 +63,7 @@ private:
 
 template<typename T>
 inline MipMap<T>::MipMap(
-	const std::string Filename,
+	const std::string & Filename,
 	const Point2i & Resolution,
 	const T * pData,
 	bool bTrilinear,
@@ -87,7 +87,7 @@ inline MipMap<T>::MipMap(
 
 	LOG(INFO) << "Generated mipmap for the texture \"" << Filename << "\" ... ";
 	cout.flush();
-	Timer ObjTimer;
+	Timer MipMapBuildTimer;
 	size_t MemoryUsed = 0; // bytes
 
 	std::unique_ptr<T[]> ResampledImage = nullptr;
@@ -234,7 +234,8 @@ inline MipMap<T>::MipMap(
 		}
 	}
 
-	LOG(INFO) << "Done. (Took " << ObjTimer.ElapsedString() << " and " << MemString(MemoryUsed) << ")";
+	LOG(INFO) << "Done. (Levels = " << nLevels << ", took " << 
+		MipMapBuildTimer.ElapsedString() << " and " << MemString(MemoryUsed) << ")";
 }
 
 template<typename T>

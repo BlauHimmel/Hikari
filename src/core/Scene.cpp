@@ -142,6 +142,8 @@ void Scene::Activate()
 	m_pAcceleration->Build();
 	m_BBox = m_pAcceleration->GetBoundingBox();
 
+	LOG(INFO) << "Memory used for Shape : " << MemString(m_pAcceleration->GetUsedMemoryForShape());
+
 	if (m_pIntegrator == nullptr)
 	{
 		throw HikariException("No integrator was specified!");
