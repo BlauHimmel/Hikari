@@ -67,8 +67,7 @@
 				<string name="filename" value="background.jpg"/>
 				<string name="filterType" value="ewa"/>
 			</texture>
-			<!--<float name="intIOR" value="1.7"/>-->
-            <color name="kd" value="0.2 0.2 0.4"/>
+			<float name="intIOR" value="1.7"/>
 			<texture type="bitmap" name="alpha">
 				<string name="filename" value="alpha_tex2.png"/>
 				<string name="filterType" value="ewa"/>

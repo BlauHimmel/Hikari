@@ -1,5 +1,6 @@
 #include <bsdf\DielectricBSDF.hpp>
 #include <core\Frame.hpp>
+#include <core\Texture.hpp>
 
 NAMESPACE_BEGIN
 
@@ -14,13 +15,19 @@ DielectricBSDF::DielectricBSDF(const PropertyList & PropList)
 	m_ExtIOR = PropList.GetFloat(XML_BSDF_DIELECTRIC_EXT_IOR, DEFAULT_BSDF_DIELECTRIC_EXT_IOR);
 
 	/* Specular reflectance */
-	m_KsReflect = PropList.GetColor(XML_BSDF_DIELECTRIC_KS_REFLECT, DEFAULT_BSDF_DIELECTRIC_KS_REFLECT);
+	m_pKsReflect = new ConstantColor3fTexture(PropList.GetColor(XML_BSDF_DIELECTRIC_KS_REFLECT, DEFAULT_BSDF_DIELECTRIC_KS_REFLECT));
 
 	/* Specular transmittance */
-	m_KsRefract = PropList.GetColor(XML_BSDF_DIELECTRIC_KS_REFRACT, DEFAULT_BSDF_DIELECTRIC_KS_REFRACT);
+	m_pKsRefract = new ConstantColor3fTexture(PropList.GetColor(XML_BSDF_DIELECTRIC_KS_REFRACT, DEFAULT_BSDF_DIELECTRIC_KS_REFRACT));
 
 	m_Eta = m_IntIOR / m_ExtIOR;
 	m_InvEta = 1.0f / m_Eta;
+}
+
+DielectricBSDF::~DielectricBSDF()
+{
+	delete m_pKsReflect;
+	delete m_pKsRefract;
 }
 
 Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
@@ -37,7 +44,7 @@ Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample)
 		Record.Wo = Reflect(Record.Wi);
 		Record.Eta = 1.0f;
 
-		return m_KsReflect;
+		return m_pKsReflect->Eval(Record.Isect);
 	}
 	// Refraction
 	else
@@ -47,7 +54,7 @@ Color3f DielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample)
 		/* Radiance must be scaled to account for the solid angle compression
 		that occurs when crossing the interface. */
 		float Factor = (Record.Mode == ETransportMode::ERadiance) ? (CosThetaT < 0.0f ? m_InvEta : m_Eta) : 1.0f;
-		return m_KsRefract * (Factor * Factor);
+		return m_pKsRefract->Eval(Record.Isect) * (Factor * Factor);
 	}
 }
 
@@ -63,7 +70,7 @@ Color3f DielectricBSDF::Eval(const BSDFQueryRecord & Record) const
 	{
 		if (std::abs(Reflect(Record.Wi).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
 		{
-			return m_KsReflect * FresnelTerm;
+			return m_pKsReflect->Eval(Record.Isect) * FresnelTerm;
 		}
 	}
 	else
@@ -71,7 +78,7 @@ Color3f DielectricBSDF::Eval(const BSDFQueryRecord & Record) const
 		if (std::abs(Refract(Record.Wi, CosThetaT, m_Eta, m_InvEta).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
 		{
 			float Factor = (Record.Mode == ETransportMode::ERadiance) ? (CosThetaT < 0.0f ? m_InvEta : m_Eta) : 1.0f;
-			return m_KsRefract * (Factor * Factor) * (1.0f - FresnelTerm);
+			return m_pKsRefract->Eval(Record.Isect) * (Factor * Factor) * (1.0f - FresnelTerm);
 		}
 	}
 
@@ -104,6 +111,46 @@ float DielectricBSDF::Pdf(const BSDFQueryRecord & Record) const
 	return 0.0f;
 }
 
+void DielectricBSDF::AddChild(Object * pChildObj, const std::string & Name)
+{
+	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_DIELECTRIC_KS_REFLECT)
+	{
+		if (m_pKsReflect != nullptr)
+		{
+			m_pKsReflect = (Texture *)(pChildObj);
+			if (m_pKsReflect->IsMonochromatic())
+			{
+				LOG(WARNING) << "KsReflect texture is monochromatic! Make sure that it is done intentionally.";
+			}
+		}
+		else
+		{
+			throw HikariException("DielectricBSDF: tried to specify multiple KsReflect texture");
+		}
+	}
+	else if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_DIELECTRIC_KS_REFRACT)
+	{
+		if (m_pKsRefract != nullptr)
+		{
+			m_pKsRefract = (Texture *)(pChildObj);
+			if (m_pKsRefract->IsMonochromatic())
+			{
+				LOG(WARNING) << "KsRefract texture is monochromatic! Make sure that it is done intentionally.";
+			}
+		}
+		else
+		{
+			throw HikariException("DielectricBSDF: tried to specify multiple KsRefract texture");
+		}
+	}
+	else
+	{
+		throw HikariException("DielectricBSDF::AddChild(<%s>, <%s>) is not supported!",
+			ClassTypeName(pChildObj->GetClassType()), Name
+		);
+	}
+}
+
 std::string DielectricBSDF::ToString() const
 {
 	return tfm::format(
@@ -115,8 +162,8 @@ std::string DielectricBSDF::ToString() const
 		"]", 
 		m_IntIOR, 
 		m_ExtIOR,
-		m_KsReflect.ToString(),
-		m_KsRefract.ToString()
+		m_pKsReflect->IsConstant() ? m_pKsReflect->GetAverage().ToString() : Indent(m_pKsReflect->ToString()),
+		m_pKsRefract->IsConstant() ? m_pKsRefract->GetAverage().ToString() : Indent(m_pKsRefract->ToString())
 	);
 }
 
