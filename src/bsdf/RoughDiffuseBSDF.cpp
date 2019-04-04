@@ -1,6 +1,7 @@
 #include <bsdf\RoughDiffuseBSDF.hpp>
 #include <core\Frame.hpp>
 #include <core\Sampling.hpp>
+#include <core\Texture.hpp>
 
 NAMESPACE_BEGIN
 
@@ -9,15 +10,19 @@ REGISTER_CLASS(RoughDiffuseBSDF, XML_BSDF_ROUGH_DIFFUSE);
 RoughDiffuseBSDF::RoughDiffuseBSDF(const PropertyList & PropList)
 {
 	/*  The difuse albedo of the material */
-	m_Albedo = PropList.GetColor(XML_BSDF_ROUGH_DIFFUSE_ALBEDO, DEFAULT_BSDF_ROUGH_DIFFUSE_ALBEDO);
+	m_pAlbedo = new ConstantColor3fTexture(PropList.GetColor(XML_BSDF_ROUGH_DIFFUSE_ALBEDO, DEFAULT_BSDF_ROUGH_DIFFUSE_ALBEDO));
 
 	/* Roughness */
-	m_Alpha = PropList.GetFloat(XML_BSDF_ROUGH_DIFFUSE_ALPHA, DEFAULT_BSDF_ROUGH_DIFFUSE_ALPHA);
+	m_pAlpha = new ConstantFloatTexture(std::max(PropList.GetFloat(XML_BSDF_ROUGH_DIFFUSE_ALPHA, DEFAULT_BSDF_ROUGH_DIFFUSE_ALPHA), float(MIN_ALPHA)));
 
 	/* Whether to use full version of the model or a fast approximation */
 	m_bFastApprox = PropList.GetBoolean(XML_BSDF_ROUGH_DIFFUSE_FAST_APPROX, DEFAULT_BSDF_ROUGH_DIFFUSE_FAST_APPROX);
+}
 
-	m_Alpha = std::max(m_Alpha, 1e-4f);
+RoughDiffuseBSDF::~RoughDiffuseBSDF()
+{
+	delete m_pAlbedo;
+	delete m_pAlpha;
 }
 
 Color3f RoughDiffuseBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
@@ -60,7 +65,7 @@ Color3f RoughDiffuseBSDF::Eval(const BSDFQueryRecord & Record) const
 	the match is not as good anymore */
 	float ConversionFactor = 0.70710678118655f;
 
-	float Sigma = m_Alpha * ConversionFactor;
+	float Sigma = Clamp(m_pAlpha->Eval(Record.Isect)[0], float(MIN_ALPHA), 1.0f) * ConversionFactor;
 	float Sigma2 = Sigma * Sigma;
 
 	float SinThetaI = Frame::SinTheta(Record.Wi);
@@ -94,7 +99,7 @@ Color3f RoughDiffuseBSDF::Eval(const BSDFQueryRecord & Record) const
 			TanBeta = SinThetaO / Frame::CosTheta(Record.Wo);
 		}
 
-		return m_Albedo * (float(INV_PI) * Frame::CosTheta(Record.Wo) *
+		return m_pAlbedo->Eval(Record.Isect) * (float(INV_PI) * Frame::CosTheta(Record.Wo) *
 			(A + B * std::max(CosPhiDiff, 0.0f) * SinAlpha * TanBeta));
 	}
 	else
@@ -145,7 +150,7 @@ Color3f RoughDiffuseBSDF::Eval(const BSDFQueryRecord & Record) const
 			return Color3f(0.0f);
 		}
 
-		Color3f Rho = m_Albedo;
+		Color3f Rho = m_pAlbedo->Eval(Record.Isect);
 		Color3f	Lr1 = Rho * (C1 + CosPhiDiff * C2 * TanBeta + (1.0f - std::abs(CosPhiDiff)) * C3 * TanHalf);
 		Color3f	Lr2 = Rho * Rho * (C4 * (1.0f - CosPhiDiff * Tmp3 * Tmp3));
 
@@ -171,16 +176,56 @@ bool RoughDiffuseBSDF::IsDiffuse() const
 	return true;
 }
 
+void RoughDiffuseBSDF::AddChild(Object * pChildObj, const std::string & Name)
+{
+	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_ROUGH_DIFFUSE_ALBEDO)
+	{
+		if (m_pAlbedo != nullptr)
+		{
+			m_pAlbedo = (Texture *)(pChildObj);
+			if (m_pAlbedo->IsMonochromatic())
+			{
+				LOG(WARNING) << "Albedo texture is monochromatic! Make sure that it is done intentionally.";
+			}
+		}
+		else
+		{
+			throw HikariException("RoughDiffuseBSDF: tried to specify multiple Albedo texture");
+		}
+	}
+	else if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_ROUGH_DIFFUSE_ALPHA)
+	{
+		if (m_pAlpha != nullptr)
+		{
+			m_pAlpha = (Texture *)(pChildObj);
+			if (!m_pAlpha->IsMonochromatic())
+			{
+				LOG(WARNING) << "Alpha texture is not monochromatic, only R channel will be used.";
+			}
+		}
+		else
+		{
+			throw HikariException("RoughDiffuseBSDF: tried to specify multiple Alpha texture");
+		}
+	}
+	else
+	{
+		throw HikariException("RoughDiffuseBSDF::AddChild(<%s>, <%s>) is not supported!",
+			ClassTypeName(pChildObj->GetClassType()), Name
+		);
+	}
+}
+
 std::string RoughDiffuseBSDF::ToString() const
 {
 	return tfm::format(
 		"RoughDiffuse[\n"
 		"  albedo = %s,\n"
-		"  alpha = %f,\n"
+		"  alpha = %s,\n"
 		"  fastApprox = %s\n"
 		"]",
-		m_Albedo.ToString(),
-		m_Alpha,
+		m_pAlbedo->IsConstant() ? m_pAlbedo->GetAverage().ToString() : Indent(m_pAlbedo->ToString()),
+		m_pAlpha->IsConstant() ? std::to_string(m_pAlpha->GetAverage()[0]) : Indent(m_pAlpha->ToString()),
 		m_bFastApprox ? "true" : "false"
 	);
 }

@@ -27,6 +27,7 @@ RoughDielectricBSDF::RoughDielectricBSDF(const PropertyList & PropList)
 	else if (TypeStr == XML_BSDF_GGX) { m_Type = MicrofacetDistribution::EGGX; }
 	else { throw HikariException("Unexpected distribution type : %s", TypeStr); }
 
+	/* Whether anisotropic */
 	bool bAs = PropList.GetBoolean(XML_BSDF_ROUGH_DIELECTRIC_AS, DEFAULT_BSDF_ROUGH_DIELECTRIC_AS);
 
 	if (bAs)

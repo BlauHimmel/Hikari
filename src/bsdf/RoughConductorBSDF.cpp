@@ -25,6 +25,7 @@ RoughConductorBSDF::RoughConductorBSDF(const PropertyList & PropList)
 	else if (TypeStr == XML_BSDF_GGX) { m_Type = MicrofacetDistribution::EGGX; }
 	else { throw HikariException("Unexpected distribution type : %s", TypeStr); }
 
+	/* Whether anisotropic */
 	bool bAs = PropList.GetBoolean(XML_BSDF_ROUGH_CONDUCTOR_AS, DEFAULT_BSDF_ROUGH_CONDUCTOR_AS);
 
 	if (bAs)

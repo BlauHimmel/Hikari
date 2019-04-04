@@ -45,6 +45,9 @@
 /* Used for BSDF::Eval() or BSDF::PDF() for the delta distribution. */
 #define DeltaEpsilon 1e-3
 
+/* To avoid the numerical error in computation */
+#define MIN_ALPHA 5e-4
+
 /* A few useful constants */
 #undef M_PI
 

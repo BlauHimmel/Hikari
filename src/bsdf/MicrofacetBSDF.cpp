@@ -10,7 +10,7 @@ REGISTER_CLASS(MicrofacetBSDF, XML_BSDF_MICROFACET);
 MicrofacetBSDF::MicrofacetBSDF(const PropertyList & PropList)
 {
 	/* RMS surface roughness */
-	m_pAlpha = new ConstantFloatTexture(PropList.GetFloat(XML_BSDF_MICROFACET_ALPHA, DEFAULT_BSDF_MICROFACET_ALPHA));
+	m_pAlpha = new ConstantFloatTexture(std::max(PropList.GetFloat(XML_BSDF_MICROFACET_ALPHA, DEFAULT_BSDF_MICROFACET_ALPHA), float(MIN_ALPHA)));
 
 	/* Interior IOR */
 	m_IntIOR = PropList.GetFloat(XML_BSDF_MICROFACET_INT_IOR, DEFAULT_BSDF_MICROFACET_INT_IOR);
@@ -40,7 +40,7 @@ Color3f MicrofacetBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample)
 
 	Record.Measure = EMeasure::ESolidAngle;
 
-	float Alpha = Clamp(m_pAlpha->Eval(Record.Isect)[0], 5e-4f, 1.0f);
+	float Alpha = Clamp(m_pAlpha->Eval(Record.Isect)[0], float(MIN_ALPHA), 1.0f);
 	Color3f Kd = m_pKd->Eval(Record.Isect);
 
 	/*
@@ -103,7 +103,7 @@ Color3f MicrofacetBSDF::Eval(const BSDFQueryRecord & Record) const
 		return Color3f(0.0f);
 	}
 
-	float Alpha = Clamp(m_pAlpha->Eval(Record.Isect)[0], 5e-4f, 1.0f);
+	float Alpha = Clamp(m_pAlpha->Eval(Record.Isect)[0], float(MIN_ALPHA), 1.0f);
 	Color3f Kd = m_pKd->Eval(Record.Isect);
 
 	/*
@@ -144,7 +144,7 @@ float MicrofacetBSDF::Pdf(const BSDFQueryRecord & Record) const
 		return 0.0f;
 	}
 
-	float Alpha = Clamp(m_pAlpha->Eval(Record.Isect)[0], 5e-4f, 1.0f);
+	float Alpha = Clamp(m_pAlpha->Eval(Record.Isect)[0], float(MIN_ALPHA), 1.0f);
 	Color3f Kd = m_pKd->Eval(Record.Isect);
 
 	/*

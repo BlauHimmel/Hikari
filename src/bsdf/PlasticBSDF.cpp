@@ -1,6 +1,7 @@
 #include <bsdf\PlasticBSDF.hpp>
 #include <core\Frame.hpp>
 #include <core\Sampling.hpp>
+#include <core\Texture.hpp>
 
 NAMESPACE_BEGIN
 
@@ -15,10 +16,10 @@ PlasticBSDF::PlasticBSDF(const PropertyList & PropList)
 	m_ExtIOR = PropList.GetFloat(XML_BSDF_PLASTIC_EXT_IOR, DEFAULT_BSDF_PLASTIC_EXT_IOR);
 
 	/* Speculer reflectance  */
-	m_Ks = PropList.GetColor(XML_BSDF_PLASTIC_KS, DEFAULT_BSDF_PLASTIC_KS);
+	m_pKs = new ConstantColor3fTexture(PropList.GetColor(XML_BSDF_PLASTIC_KS, DEFAULT_BSDF_PLASTIC_KS));
 
 	/* Diffuse reflectance  */
-	m_Kd = PropList.GetColor(XML_BSDF_PLASTIC_KD, DEFAULT_BSDF_PLASTIC_KD);
+	m_pKd = new ConstantColor3fTexture(PropList.GetColor(XML_BSDF_PLASTIC_KD, DEFAULT_BSDF_PLASTIC_KD));
 
 	/* Account for nonlinear color shifts due to internal scattering ? */
 	m_bNonlinear = PropList.GetBoolean(XML_BSDF_PLASTIC_NONLINEAR, DEFAULT_BSDF_PLASTIC_NONLINEAR);
@@ -27,11 +28,17 @@ PlasticBSDF::PlasticBSDF(const PropertyList & PropList)
 	m_InvEta = 1.0f / m_Eta;
 	m_InvEta2 = m_InvEta * m_InvEta;
 
-	float KsAvg = m_Ks.GetLuminance();
-	float KdAvg = m_Kd.GetLuminance();
+	float KsAvg = m_pKs->GetAverage().GetLuminance();
+	float KdAvg = m_pKd->GetAverage().GetLuminance();
 	m_SpecularSamplingWeight = KsAvg / (KdAvg + KsAvg);
 	m_FresnelDiffuseReflectanceInt = ApproxFresnelDiffuseReflectance(m_InvEta);
 	m_FresnelDiffuseReflectanceExt = ApproxFresnelDiffuseReflectance(m_Eta);
+}
+
+PlasticBSDF::~PlasticBSDF()
+{
+	delete m_pKs;
+	delete m_pKd;
 }
 
 Color3f PlasticBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
@@ -55,7 +62,7 @@ Color3f PlasticBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) co
 	{
 		Record.Measure = EMeasure::EDiscrete;
 		Record.Wo = Reflect(Record.Wi);
-		return m_Ks * FresnelTermI / SpecularPDF;
+		return m_pKs->Eval(Record.Isect) * FresnelTermI / SpecularPDF;
 	}
 	else
 	{
@@ -66,7 +73,7 @@ Color3f PlasticBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) co
 
 		float FresnelTermO = FresnelDielectric(Frame::CosTheta(Record.Wo), m_Eta, m_InvEta, CosThetaT);
 
-		Color3f Diffuse = m_Kd;
+		Color3f Diffuse = m_pKd->Eval(Record.Isect);
 		if (m_bNonlinear)
 		{
 			Diffuse /= (Color3f(1.0f) - Diffuse * m_FresnelDiffuseReflectanceInt);
@@ -100,7 +107,7 @@ Color3f PlasticBSDF::Eval(const BSDFQueryRecord & Record) const
 	{
 		if (std::abs(Reflect(Record.Wi).dot(Record.Wo) - 1.0f) <= DeltaEpsilon)
 		{
-			return m_Ks * FresnelTermI;
+			return m_pKs->Eval(Record.Isect) * FresnelTermI;
 		}
 
 		return Color3f(0.0f);
@@ -108,7 +115,7 @@ Color3f PlasticBSDF::Eval(const BSDFQueryRecord & Record) const
 	else
 	{
 		float FresnelTermO = FresnelDielectric(CosThetaO, m_Eta, m_InvEta, CosThetaT);
-		Color3f Diffuse = m_Kd;
+		Color3f Diffuse = m_pKd->Eval(Record.Isect);
 		if (m_bNonlinear)
 		{
 			Diffuse /= (Color3f(1.0f) - Diffuse * m_FresnelDiffuseReflectanceInt);
@@ -163,20 +170,60 @@ bool PlasticBSDF::IsDiffuse() const
 	return true;
 }
 
+void PlasticBSDF::AddChild(Object * pChildObj, const std::string & Name)
+{
+	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_PLASTIC_KD)
+	{
+		if (m_pKd != nullptr)
+		{
+			m_pKd = (Texture *)(pChildObj);
+			if (m_pKd->IsMonochromatic())
+			{
+				LOG(WARNING) << "Kd texture is monochromatic! Make sure that it is done intentionally.";
+			}
+		}
+		else
+		{
+			throw HikariException("PlasticBSDF: tried to specify multiple Kd texture");
+		}
+	}
+	else if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_PLASTIC_KS)
+	{
+		if (m_pKs != nullptr)
+		{
+			m_pKs = (Texture *)(pChildObj);
+			if (m_pKs->IsMonochromatic())
+			{
+				LOG(WARNING) << "Ks texture is monochromatic! Make sure that it is done intentionally.";
+			}
+		}
+		else
+		{
+			throw HikariException("PlasticBSDF: tried to specify multiple Ks texture");
+		}
+	}
+	else
+	{
+		throw HikariException("PlasticBSDF::AddChild(<%s>, <%s>) is not supported!",
+			ClassTypeName(pChildObj->GetClassType()), Name
+		);
+	}
+}
+
 std::string PlasticBSDF::ToString() const
 {
 	return tfm::format(
 		"Plastic[\n"
-		"intIOR = %f,\n"
-		"extIOR = %f,\n"
-		"ks = %f,\n"
-		"kd = %s,\n"
-		"nonlinear = %s\n"
+		"  intIOR = %f,\n"
+		"  extIOR = %f,\n"
+		"  ks = %f,\n"
+		"  kd = %s,\n"
+		"  nonlinear = %s\n"
 		"]",
 		m_IntIOR,
 		m_ExtIOR,
-		m_Ks.ToString(),
-		m_Kd.ToString(),
+		m_pKs->IsConstant() ? m_pKs->GetAverage().ToString() : Indent(m_pKs->ToString()),
+		m_pKd->IsConstant() ? m_pKd->GetAverage().ToString() : Indent(m_pKd->ToString()),
 		m_bNonlinear ? "true" : "false"
 	);
 }

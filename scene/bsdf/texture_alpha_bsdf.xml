@@ -51,9 +51,15 @@
 		<transform name="toWorld">
 			<matrix value="0.75,0.0,0.0,0.5432344675064087,0.0,-1.221905137072099e-07,-0.75,1.025572419166565,0.0,0.75,-1.221905137072099e-07,-0.20573711395263672,0.0,0.0,0.0,1.0"/>
 		</transform>
-		<bsdf type="dielectric">
-			<float name="intIOR" value="1.5"/>
-			<float name="extIOR" value="1.0"/>
+		<bsdf type="roughDiffuse">
+        	<texture type="bitmap" name="albedo">
+				<string name="filename" value="background.jpg"/>
+				<string name="filterType" value="ewa"/>
+			</texture>
+			<texture type="bitmap" name="alpha">
+				<string name="filename" value="alpha_tex1.png"/>
+				<string name="filterType" value="ewa"/>
+			</texture>
 		</bsdf>
 	</mesh>
 

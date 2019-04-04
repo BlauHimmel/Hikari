@@ -11,6 +11,8 @@ class RoughDiffuseBSDF : public BSDF
 public:
 	RoughDiffuseBSDF(const PropertyList & PropList);
 
+	~RoughDiffuseBSDF();
+
 	virtual Color3f Sample(BSDFQueryRecord & Record, const Point2f & Sample) const override;
 
 	virtual Color3f Eval(const BSDFQueryRecord & Record) const override;
@@ -19,12 +21,14 @@ public:
 
 	virtual bool IsDiffuse() const override;
 
+	virtual void AddChild(Object * pChildObj, const std::string & Name) override;
+
 	virtual std::string ToString() const override;
 
 public:
 	bool m_bFastApprox;
-	Color3f m_Albedo;
-	float m_Alpha;
+	Texture * m_pAlbedo;
+	Texture * m_pAlpha;
 };
 
 NAMESPACE_END
