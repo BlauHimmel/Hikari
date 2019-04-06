@@ -171,8 +171,9 @@ void RoughConductorBSDF::AddChild(Object * pChildObj, const std::string & Name)
 {
 	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_ROUGH_CONDUCTOR_KS)
 	{
-		if (m_pKs != nullptr)
+		if (m_pKs->IsConstant())
 		{
+			delete m_pKs;
 			m_pKs = (Texture *)(pChildObj);
 			if (m_pKs->IsMonochromatic())
 			{
@@ -186,8 +187,10 @@ void RoughConductorBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 	else if (pChildObj->GetClassType() == EClassType::ETexture && !m_bAnisotropic && Name == XML_BSDF_ROUGH_CONDUCTOR_ALPHA)
 	{
-		if (m_pAlphaU != nullptr && m_pAlphaV != nullptr)
+		if (m_pAlphaU->IsConstant() && m_pAlphaV->IsConstant())
 		{
+			delete m_pAlphaU;
+			m_pAlphaV = nullptr;
 			m_pAlphaU = (Texture *)(pChildObj);
 			m_pAlphaV = m_pAlphaU;
 			if (!m_pAlphaU->IsMonochromatic())
@@ -202,8 +205,9 @@ void RoughConductorBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 	else if (pChildObj->GetClassType() == EClassType::ETexture && m_bAnisotropic && Name == XML_BSDF_ROUGH_CONDUCTOR_ALPHA_U)
 	{
-		if (m_pAlphaU != nullptr)
+		if (m_pAlphaU->IsConstant())
 		{
+			delete m_pAlphaU;
 			m_pAlphaU = (Texture *)(pChildObj);
 			if (!m_pAlphaU->IsMonochromatic())
 			{
@@ -217,8 +221,9 @@ void RoughConductorBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 	else if (pChildObj->GetClassType() == EClassType::ETexture && m_bAnisotropic && Name == XML_BSDF_ROUGH_CONDUCTOR_ALPHA_V)
 	{
-		if (m_pAlphaV != nullptr)
+		if (m_pAlphaV->IsConstant())
 		{
+			delete m_pAlphaV;
 			m_pAlphaV = (Texture *)(pChildObj);
 			if (!m_pAlphaV->IsMonochromatic())
 			{

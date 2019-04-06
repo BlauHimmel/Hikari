@@ -176,8 +176,9 @@ void MicrofacetBSDF::AddChild(Object * pChildObj, const std::string & Name)
 {
 	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_MICROFACET_KD)
 	{
-		if (m_pKd != nullptr)
+		if (m_pKd->IsConstant())
 		{
+			delete m_pKd;
 			m_pKd = (Texture *)(pChildObj);
 			if (m_pKd->IsMonochromatic())
 			{
@@ -191,8 +192,9 @@ void MicrofacetBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 	else if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_MICROFACET_ALPHA)
 	{
-		if (m_pAlpha != nullptr)
+		if (m_pAlpha->IsConstant())
 		{
+			delete m_pAlpha;
 			m_pAlpha = (Texture *)(pChildObj);
 			if (!m_pAlpha->IsMonochromatic())
 			{

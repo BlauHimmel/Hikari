@@ -180,8 +180,9 @@ void RoughDiffuseBSDF::AddChild(Object * pChildObj, const std::string & Name)
 {
 	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_ROUGH_DIFFUSE_ALBEDO)
 	{
-		if (m_pAlbedo != nullptr)
+		if (m_pAlbedo->IsConstant())
 		{
+			delete m_pAlbedo;
 			m_pAlbedo = (Texture *)(pChildObj);
 			if (m_pAlbedo->IsMonochromatic())
 			{
@@ -195,8 +196,9 @@ void RoughDiffuseBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 	else if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_ROUGH_DIFFUSE_ALPHA)
 	{
-		if (m_pAlpha != nullptr)
+		if (m_pAlpha->IsConstant())
 		{
+			delete m_pAlpha;
 			m_pAlpha = (Texture *)(pChildObj);
 			if (!m_pAlpha->IsMonochromatic())
 			{

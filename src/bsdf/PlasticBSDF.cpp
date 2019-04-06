@@ -174,8 +174,9 @@ void PlasticBSDF::AddChild(Object * pChildObj, const std::string & Name)
 {
 	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_PLASTIC_KD)
 	{
-		if (m_pKd != nullptr)
+		if (m_pKd->IsConstant())
 		{
+			delete m_pKd;
 			m_pKd = (Texture *)(pChildObj);
 			if (m_pKd->IsMonochromatic())
 			{
@@ -189,8 +190,9 @@ void PlasticBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 	else if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_PLASTIC_KS)
 	{
-		if (m_pKs != nullptr)
+		if (m_pKs->IsConstant())
 		{
+			delete m_pKs;
 			m_pKs = (Texture *)(pChildObj);
 			if (m_pKs->IsMonochromatic())
 			{

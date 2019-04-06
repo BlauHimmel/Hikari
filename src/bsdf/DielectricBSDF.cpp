@@ -115,8 +115,9 @@ void DielectricBSDF::AddChild(Object * pChildObj, const std::string & Name)
 {
 	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_DIELECTRIC_KS_REFLECT)
 	{
-		if (m_pKsReflect != nullptr)
+		if (m_pKsReflect->IsConstant())
 		{
+			delete m_pKsReflect;
 			m_pKsReflect = (Texture *)(pChildObj);
 			if (m_pKsReflect->IsMonochromatic())
 			{
@@ -130,8 +131,9 @@ void DielectricBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 	else if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_DIELECTRIC_KS_REFRACT)
 	{
-		if (m_pKsRefract != nullptr)
+		if (m_pKsRefract->IsConstant())
 		{
+			delete m_pKsRefract;
 			m_pKsRefract = (Texture *)(pChildObj);
 			if (m_pKsRefract->IsMonochromatic())
 			{

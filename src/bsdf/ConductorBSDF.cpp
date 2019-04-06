@@ -80,8 +80,9 @@ void ConductorBSDF::AddChild(Object * pChildObj, const std::string & Name)
 {
 	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_CONDUCTOR_KS)
 	{
-		if (m_pKs != nullptr)
+		if (m_pKs->IsConstant())
 		{
+			delete m_pKs;
 			m_pKs = (Texture *)(pChildObj);
 			if (m_pKs->IsMonochromatic())
 			{

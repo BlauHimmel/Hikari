@@ -77,8 +77,9 @@ void DiffuseBSDF::AddChild(Object * pChildObj, const std::string & Name)
 {
 	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_DIFFUSE_ALBEDO)
 	{
-		if (m_pAlbedo != nullptr)
+		if (m_pAlbedo->IsConstant())
 		{
+			delete m_pAlbedo;
 			m_pAlbedo = (Texture *)(pChildObj);
 			if (m_pAlbedo->IsMonochromatic())
 			{
