@@ -13,7 +13,7 @@ RoughDiffuseBSDF::RoughDiffuseBSDF(const PropertyList & PropList)
 	m_pAlbedo = new ConstantColor3fTexture(PropList.GetColor(XML_BSDF_ROUGH_DIFFUSE_ALBEDO, DEFAULT_BSDF_ROUGH_DIFFUSE_ALBEDO));
 
 	/* Roughness */
-	m_pAlpha = new ConstantFloatTexture(std::max(PropList.GetFloat(XML_BSDF_ROUGH_DIFFUSE_ALPHA, DEFAULT_BSDF_ROUGH_DIFFUSE_ALPHA), float(MIN_ALPHA)));
+	m_pAlpha = new ConstantFloatTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_DIFFUSE_ALPHA, DEFAULT_BSDF_ROUGH_DIFFUSE_ALPHA), float(MIN_ALPHA), float(MAX_ALPHA)));
 
 	/* Whether to use full version of the model or a fast approximation */
 	m_bFastApprox = PropList.GetBoolean(XML_BSDF_ROUGH_DIFFUSE_FAST_APPROX, DEFAULT_BSDF_ROUGH_DIFFUSE_FAST_APPROX);
@@ -65,7 +65,7 @@ Color3f RoughDiffuseBSDF::Eval(const BSDFQueryRecord & Record) const
 	the match is not as good anymore */
 	float ConversionFactor = 0.70710678118655f;
 
-	float Sigma = Clamp(m_pAlpha->Eval(Record.Isect)[0], float(MIN_ALPHA), 1.0f) * ConversionFactor;
+	float Sigma = Clamp(m_pAlpha->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA)) * ConversionFactor;
 	float Sigma2 = Sigma * Sigma;
 
 	float SinThetaI = Frame::SinTheta(Record.Wi);

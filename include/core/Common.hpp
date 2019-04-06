@@ -47,6 +47,7 @@
 
 /* To avoid the numerical error in computation */
 #define MIN_ALPHA 5e-4
+#define MAX_ALPHA 1.0
 
 /* A few useful constants */
 #undef M_PI

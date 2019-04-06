@@ -31,12 +31,12 @@ RoughConductorBSDF::RoughConductorBSDF(const PropertyList & PropList)
 
 	if (m_bAnisotropic)
 	{
-		m_pAlphaU = new ConstantColor3fTexture(std::max(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA_U, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_U), float(MIN_ALPHA)));
-		m_pAlphaV = new ConstantColor3fTexture(std::max(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA_V, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_V), float(MIN_ALPHA)));
+		m_pAlphaU = new ConstantColor3fTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA_U, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_U), float(MIN_ALPHA), float(MAX_ALPHA)));
+		m_pAlphaV = new ConstantColor3fTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA_V, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_V), float(MIN_ALPHA), float(MAX_ALPHA)));
 	}
 	else
 	{
-		m_pAlphaU = new ConstantColor3fTexture(std::max(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA), float(MIN_ALPHA)));
+		m_pAlphaU = new ConstantColor3fTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA), float(MIN_ALPHA), float(MAX_ALPHA)));
 		m_pAlphaV = m_pAlphaU;
 	}
 
@@ -64,11 +64,11 @@ Color3f RoughConductorBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sam
 	/* Construct the microfacet distribution matching the
 	  roughness values at the current surface position.
 	  (texture will be implemented later) */
-	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), 1.0f);
+	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
 	float AlphaV = AlphaU;
 	if (m_bAnisotropic)
 	{
-		AlphaV = Clamp(m_pAlphaV->Eval(Record.Isect)[0], float(MIN_ALPHA), 1.0f);
+		AlphaV = Clamp(m_pAlphaV->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
 	}
 	MicrofacetDistribution Distribution(m_Type, AlphaU, AlphaV);
 
@@ -112,11 +112,11 @@ Color3f RoughConductorBSDF::Eval(const BSDFQueryRecord & Record) const
 	/* Construct the microfacet distribution matching the
 	  roughness values at the current surface position. 
 	  (texture will be implemented later) */
-	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), 1.0f);
+	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
 	float AlphaV = AlphaU;
 	if (m_bAnisotropic)
 	{
-		AlphaV = Clamp(m_pAlphaV->Eval(Record.Isect)[0], float(MIN_ALPHA), 1.0f);
+		AlphaV = Clamp(m_pAlphaV->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
 	}
 	MicrofacetDistribution Distribution(m_Type, AlphaU, AlphaV);
 
@@ -151,11 +151,11 @@ float RoughConductorBSDF::Pdf(const BSDFQueryRecord & Record) const
 	/* Construct the microfacet distribution matching the
 	  roughness values at the current surface position.
 	  (texture will be implemented later) */
-	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), 1.0f);
+	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
 	float AlphaV = AlphaU;
 	if (m_bAnisotropic)
 	{
-		AlphaV = Clamp(m_pAlphaV->Eval(Record.Isect)[0], float(MIN_ALPHA), 1.0f);
+		AlphaV = Clamp(m_pAlphaV->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
 	}
 	MicrofacetDistribution Distribution(m_Type, AlphaU, AlphaV);
 
