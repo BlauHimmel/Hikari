@@ -136,6 +136,15 @@ WavefrontObjMesh::WavefrontObjMesh(const PropertyList & PropList)
 	}
 
 	m_Name = Filename.str();
+
+	if (Normals.empty() || Texcoords.empty())
+	{
+		LOG(WARNING) << "Mesh \"" << m_Name << "\" does not have normal or texture coordinate. "
+			"Consequently derivative information cannot be computed and ";
+			"some algorithm may not take effect. "
+			"(e.g. EWA filter, CurvatureTexture)";
+	}
+
 	LOG(INFO) << "Done. (V = " << m_V.cols() << ", F = " << m_F.cols() << ", took "
 		<< ObjTimer.ElapsedString() << " and "
 		<< MemString(m_F.size() * sizeof(uint32_t) + sizeof(float) * (m_V.size() + m_N.size() + m_UV.size()))

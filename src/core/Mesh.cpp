@@ -79,6 +79,7 @@ void Triangle::PostIntersect(Intersection & Isect)
 	/* Find the barycentric coordinates */
 	Vector3f Barycentric;
 	Barycentric << 1 - Isect.UV.sum(), Isect.UV;
+	Isect.UV = Point2f(0.0f);
 
 	/* References to all relevant mesh buffers */
 	const Mesh * pMesh = Isect.pShape->GetMesh();

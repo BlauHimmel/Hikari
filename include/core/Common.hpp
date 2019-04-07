@@ -156,6 +156,15 @@
 #define XML_TEXTURE_GRID_OFFSE_V                 "vOffset"
 #define XML_TEXTURE_GRID_SCALE_U                 "uScale"
 #define XML_TEXTURE_GRID_SCALE_V                 "vScale"
+#define XML_TEXTURE_CURVATURE                    "curvature"
+#define XML_TEXTURE_CURVATURE_POSITIVE_COLOR     "positiveColor"
+#define XML_TEXTURE_CURVATURE_NEGATIVE_COLOR     "negativeColor"
+#define XML_TEXTURE_CURVATURE_SCALE              "scale"
+#define XML_TEXTURE_CURVATURE_TYPE               "curvatureType"
+#define XML_TEXTURE_CURVATURE_OFFSE_U            "uOffset"
+#define XML_TEXTURE_CURVATURE_OFFSE_V            "vOffset"
+#define XML_TEXTURE_CURVATURE_SCALE_U            "uScale"
+#define XML_TEXTURE_CURVATURE_SCALE_V            "vScale"
 
 #define XML_ACCELERATION                         "acceleration"
 #define XML_ACCELERATION_BRUTO_LOOP              "bruto"
@@ -397,6 +406,13 @@
 #define DEFAULT_TEXTURE_GRID_OFFSET_V              0.0f
 #define DEFAULT_TEXTURE_GRID_SCALE_U               1.0f
 #define DEFAULT_TEXTURE_GRID_SCALE_V               1.0f
+#define DEFAULT_TEXTURE_CURVATURE_SCALE            1.0f
+#define DEFAULT_TEXTURE_CURVATURE_POSITIVE_COLOR   Color3f(1.0f, 0.0f, 0.0f)
+#define DEFAULT_TEXTURE_CURVATURE_NEGATIVE_COLOR   Color3f(0.0f, 0.0f, 1.0f)
+#define DEFAULT_TEXTURE_CURVATURE_OFFSET_U         0.0f
+#define DEFAULT_TEXTURE_CURVATURE_OFFSET_V         0.0f
+#define DEFAULT_TEXTURE_CURVATURE_SCALE_U          1.0f
+#define DEFAULT_TEXTURE_CURVATURE_SCALE_V          1.0f
 
 NAMESPACE_BEGIN
 

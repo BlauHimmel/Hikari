@@ -71,6 +71,9 @@ public:
 	/// Return a pointer to the BSDF associated with this mesh
 	virtual const BSDF * GetBSDF() const = 0;
 
+	/// Compute mean curvature and Gaussian curvature at the specified intersection point
+	void ComputeCurvature(const Intersection & Isect, float & H, float & K, bool bThrowException) const;
+
 	/**
 	* \brief Return the type of object (i.e. Mesh/BSDF/etc.)
 	* provided by this instance
