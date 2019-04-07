@@ -6,7 +6,7 @@ REGISTER_CLASS(CheckerboardTexture, XML_TEXTURE_CHECKERBOARD);
 
 CheckerboardTexture::CheckerboardTexture(const PropertyList & PropList)
 {
-	/* Number of the blocks per 1.0 u and per 1.0 v */
+	/* Number of the blocks per 1.0 u or per 1.0 v */
 	m_Blocks = PropList.GetInteger(XML_TEXTURE_CHECKERBOARD_BLOCKS, DEFAULT_TEXTURE_CHECKERBOARD_BLOCKS);
 	m_ColorA = PropList.GetColor(XML_TEXTURE_CHECKERBOARD_COLOR_A, DEFAULT_TEXTURE_CHECKERBOARD_COLOR_A);
 	m_ColorB = PropList.GetColor(XML_TEXTURE_CHECKERBOARD_COLOR_B, DEFAULT_TEXTURE_CHECKERBOARD_COLOR_B);
@@ -68,10 +68,12 @@ std::string CheckerboardTexture::ToString() const
 	return tfm::format(
 		"CheckerboardTexture[\n"
 		"  colorA = %s,\n"
-		"  colorB = %f,\n"
+		"  colorB = %s,\n"
+		"  blocks = %d,\n"
 		"]",
 		m_ColorA.ToString(),
-		m_ColorB.ToString()
+		m_ColorB.ToString(),
+		m_Blocks
 	);
 }
 

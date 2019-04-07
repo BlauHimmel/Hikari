@@ -215,6 +215,7 @@ set(
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/texture/BitmapTexture.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/texture/CheckerboardTexture.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/texture/GridTexture.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/texture/WireframeTexture.cpp
 )
 
@@ -295,6 +296,7 @@ set(
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/texture/BitmapTexture.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/texture/CheckerboardTexture.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/texture/GridTexture.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/texture/WireframeTexture.hpp
 )
 

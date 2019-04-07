@@ -143,6 +143,19 @@
 #define XML_TEXTURE_WIREFRAME_EDGE_COLOR         "edgeColor"
 #define XML_TEXTURE_WIREFRAME_EDGE_WIDTH         "edgeWidth"
 #define XML_TEXTURE_WIREFRAME_TRANSITION_WIDTH   "transitionWidth"
+#define XML_TEXTURE_WIREFRAME_OFFSE_U            "uOffset"
+#define XML_TEXTURE_WIREFRAME_OFFSE_V            "vOffset"
+#define XML_TEXTURE_WIREFRAME_SCALE_U            "uScale"
+#define XML_TEXTURE_WIREFRAME_SCALE_V            "vScale"
+#define XML_TEXTURE_GRID                         "grid"
+#define XML_TEXTURE_GRID_COLOR_BACKGROUND        "backgroundColor"
+#define XML_TEXTURE_GRID_COLOR_LINE              "lineColor"
+#define XML_TEXTURE_GRID_LINE_WIDTH              "lineWidth"
+#define XML_TEXTURE_GRID_LINES                   "lines"
+#define XML_TEXTURE_GRID_OFFSE_U                 "uOffset"
+#define XML_TEXTURE_GRID_OFFSE_V                 "vOffset"
+#define XML_TEXTURE_GRID_SCALE_U                 "uScale"
+#define XML_TEXTURE_GRID_SCALE_V                 "vScale"
 
 #define XML_ACCELERATION                         "acceleration"
 #define XML_ACCELERATION_BRUTO_LOOP              "bruto"
@@ -372,6 +385,18 @@
 #define DEFAULT_TEXTURE_WIREFRAME_EDGE_COLOR       Color3f(0.1f)
 #define DEFAULT_TEXTURE_WIREFRAME_EDGE_WIDTH       0.0f
 #define DEFAULT_TEXTURE_WIREFRAME_TRANSITION_WIDTH 0.5f
+#define DEFAULT_TEXTURE_WIREFRAME_OFFSET_U         0.0f
+#define DEFAULT_TEXTURE_WIREFRAME_OFFSET_V         0.0f
+#define DEFAULT_TEXTURE_WIREFRAME_SCALE_U          1.0f
+#define DEFAULT_TEXTURE_WIREFRAME_SCALE_V          1.0f
+#define DEFAULT_TEXTURE_GRID_COLOR_BACKGROUND      Color3f(0.2f)
+#define DEFAULT_TEXTURE_GRID_COLOR_LINE            Color3f(0.4f)
+#define DEFAULT_TEXTURE_GRID_LINE_WIDTH            0.01f
+#define DEFAULT_TEXTURE_GRID_LINES                 10
+#define DEFAULT_TEXTURE_GRID_OFFSET_U              0.0f
+#define DEFAULT_TEXTURE_GRID_OFFSET_V              0.0f
+#define DEFAULT_TEXTURE_GRID_SCALE_U               1.0f
+#define DEFAULT_TEXTURE_GRID_SCALE_V               1.0f
 
 NAMESPACE_BEGIN
 
