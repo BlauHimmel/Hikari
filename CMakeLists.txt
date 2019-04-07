@@ -214,6 +214,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/sampler/IndependentSampler.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/texture/BitmapTexture.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/texture/CheckerboardTexture.cpp
 )
 
 set(
@@ -292,6 +293,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/sampler/IndependentSampler.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/texture/BitmapTexture.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/texture/CheckerboardTexture.hpp
 )
 
 #########################################################################

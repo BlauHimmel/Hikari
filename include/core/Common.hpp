@@ -123,13 +123,21 @@
 #define XML_TEXTURE_BITMAP_FILTER_TYPE_TRILINEAR "trilinear"
 #define XML_TEXTURE_BITMAP_FILTER_TYPE_EWA       "ewa"
 #define XML_TEXTURE_BITMAP_MAX_ANISOTROPY        "maxAnisotropy"
-#define XML_TEXTURE_BITMAP_OFFSE_U              "uOffset"
-#define XML_TEXTURE_BITMAP_OFFSE_V              "vOffset"
+#define XML_TEXTURE_BITMAP_OFFSE_U               "uOffset"
+#define XML_TEXTURE_BITMAP_OFFSE_V               "vOffset"
 #define XML_TEXTURE_BITMAP_SCALE_U               "uScale"
 #define XML_TEXTURE_BITMAP_SCALE_V               "vScale"
 #define XML_TEXTURE_BITMAP_CHANNEL               "channel"
 #define XML_TEXTURE_BITMAP_CHANNEL_R             "r"
 #define XML_TEXTURE_BITMAP_CHANNEL_RGB           "rgb"
+#define XML_TEXTURE_CHECKERBOARD                 "checkerboard"
+#define XML_TEXTURE_CHECKERBOARD_BLOCKS          "blocks"
+#define XML_TEXTURE_CHECKERBOARD_COLOR_A         "colorA"
+#define XML_TEXTURE_CHECKERBOARD_COLOR_B         "colorB"
+#define XML_TEXTURE_CHECKERBOARD_OFFSE_U         "uOffset"
+#define XML_TEXTURE_CHECKERBOARD_OFFSE_V         "vOffset"
+#define XML_TEXTURE_CHECKERBOARD_SCALE_U         "uScale"
+#define XML_TEXTURE_CHECKERBOARD_SCALE_V         "vScale"
 
 #define XML_ACCELERATION                         "acceleration"
 #define XML_ACCELERATION_BRUTO_LOOP              "bruto"
@@ -348,6 +356,13 @@
 #define DEFAULT_TEXTURE_BITMAP_SCALE_U            1.0f
 #define DEFAULT_TEXTURE_BITMAP_SCALE_V            1.0f
 #define DEFAULT_TEXTURE_BITMAP_CHANNEL            XML_TEXTURE_BITMAP_CHANNEL_RGB
+#define DEFAULT_TEXTURE_CHECKERBOARD_BLOCKS       10
+#define DEFAULT_TEXTURE_CHECKERBOARD_COLOR_A      Color3f(0.4f)
+#define DEFAULT_TEXTURE_CHECKERBOARD_COLOR_B      Color3f(0.2f)
+#define DEFAULT_TEXTURE_CHECKERBOARD_OFFSET_U     0.0f
+#define DEFAULT_TEXTURE_CHECKERBOARD_OFFSET_V     0.0f
+#define DEFAULT_TEXTURE_CHECKERBOARD_SCALE_U      1.0f
+#define DEFAULT_TEXTURE_CHECKERBOARD_SCALE_V      1.0f
 
 NAMESPACE_BEGIN
 
@@ -818,6 +833,12 @@ inline int Log2Int(int64_t V)
 inline float GammaCorrect(float Value, float InvGamma)
 {
 	return InvGamma == 1.0f ? Value : std::pow(Value, InvGamma);
+}
+
+inline int ModPositive(int A, int B)
+{
+	int R = A % B;
+	return (R < 0) ? R + B : R;
 }
 
 /// Compute a direction for the given coordinates in spherical coordinates
