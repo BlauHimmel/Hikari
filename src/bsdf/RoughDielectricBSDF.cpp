@@ -1,6 +1,7 @@
 #include <bsdf\RoughDielectricBSDF.hpp>
 #include <core\Frame.hpp>
 #include <core\Sampler.hpp>
+#include <core\Texture.hpp>
 #include <pcg32.h>
 
 NAMESPACE_BEGIN
@@ -16,10 +17,10 @@ RoughDielectricBSDF::RoughDielectricBSDF(const PropertyList & PropList)
 	m_ExtIOR = PropList.GetFloat(XML_BSDF_ROUGH_DIELECTRIC_EXT_IOR, DEFAULT_BSDF_ROUGH_DIELECTRIC_EXT_IOR);
 
 	/* Speculer reflectance */
-	m_KsReflect = PropList.GetColor(XML_BSDF_ROUGH_DIELECTRIC_KS_REFLECT, DEFAULT_BSDF_ROUGH_DIELECTRIC_KS_REFLECT);
+	m_pKsReflect = new ConstantColor3fTexture(PropList.GetColor(XML_BSDF_ROUGH_DIELECTRIC_KS_REFLECT, DEFAULT_BSDF_ROUGH_DIELECTRIC_KS_REFLECT));
 	
 	/* Speculer transmitance */
-	m_KsRefract = PropList.GetColor(XML_BSDF_ROUGH_DIELECTRIC_KS_REFRACT, DEFAULT_BSDF_ROUGH_DIELECTRIC_KS_REFRACT);
+	m_pKsRefract = new ConstantColor3fTexture(PropList.GetColor(XML_BSDF_ROUGH_DIELECTRIC_KS_REFRACT, DEFAULT_BSDF_ROUGH_DIELECTRIC_KS_REFRACT));
 
 	/* Distribution type */
 	std::string TypeStr = PropList.GetString(XML_BSDF_ROUGH_DIELECTRIC_TYPE, DEFAULT_BSDF_ROUGH_DIELECTRIC_TYPE);
@@ -28,21 +29,29 @@ RoughDielectricBSDF::RoughDielectricBSDF(const PropertyList & PropList)
 	else { throw HikariException("Unexpected distribution type : %s", TypeStr); }
 
 	/* Whether anisotropic */
-	bool bAs = PropList.GetBoolean(XML_BSDF_ROUGH_DIELECTRIC_AS, DEFAULT_BSDF_ROUGH_DIELECTRIC_AS);
+	m_bAnisotropic = PropList.GetBoolean(XML_BSDF_ROUGH_DIELECTRIC_AS, DEFAULT_BSDF_ROUGH_DIELECTRIC_AS);
 
-	if (bAs)
+	if (m_bAnisotropic)
 	{
-		m_AlphaU = PropList.GetFloat(XML_BSDF_ROUGH_DIELECTRIC_ALPHA_U, DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA_U);
-		m_AlphaV = PropList.GetFloat(XML_BSDF_ROUGH_DIELECTRIC_ALPHA_V, DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA_V);
+		m_pAlphaU = new ConstantColor3fTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA_U, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_U), float(MIN_ALPHA), float(MAX_ALPHA)));
+		m_pAlphaV = new ConstantColor3fTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA_V, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_V), float(MIN_ALPHA), float(MAX_ALPHA)));
 	}
 	else
 	{
-		m_AlphaU = PropList.GetFloat(XML_BSDF_ROUGH_DIELECTRIC_ALPHA, DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA);
-		m_AlphaV = m_AlphaU;
+		m_pAlphaU = new ConstantColor3fTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA), float(MIN_ALPHA), float(MAX_ALPHA)));
+		m_pAlphaV = m_pAlphaU;
 	}
 
 	m_Eta = m_IntIOR / m_ExtIOR;
 	m_InvEta = 1.0f / m_Eta;
+}
+
+RoughDielectricBSDF::~RoughDielectricBSDF()
+{
+	delete m_pKsReflect;
+	delete m_pKsRefract;
+	delete m_pAlphaU;
+	delete m_pAlphaV;
 }
 
 Color3f RoughDielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) const
@@ -58,7 +67,13 @@ Color3f RoughDielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sa
 	/* Construct the microfacet distribution matching the
 	roughness values at the current surface position.
 	(texture will be implemented later) */
-	MicrofacetDistribution Distribution(m_Type, m_AlphaU, m_AlphaV);
+	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
+	float AlphaV = AlphaU;
+	if (m_bAnisotropic)
+	{
+		AlphaV = Clamp(m_pAlphaV->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
+	}
+	MicrofacetDistribution Distribution(m_Type, AlphaU, AlphaV);
 
 	/* Trick by Walter et al.: slightly scale the roughness values to
 	   reduce importance sampling weights. */
@@ -111,7 +126,7 @@ Color3f RoughDielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sa
 			return Color3f(0.0f);
 		}
 
-		W *= m_KsReflect;
+		W *= m_pKsReflect->Eval(Record.Isect);
 	}
 	else
 	{
@@ -131,7 +146,7 @@ Color3f RoughDielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sa
 		}
 
 		float Factor = (Record.Mode == ETransportMode::ERadiance) ? (CosThetaT < 0.0f ? m_InvEta : m_Eta) : 1.0f;
-		W *= m_KsRefract * (Factor * Factor);
+		W *= m_pKsRefract->Eval(Record.Isect) * (Factor * Factor);
 	}
 
 	W *= std::abs(Distribution.Eval(M) * Distribution.G(Record.Wi, Record.Wo, M) * Record.Wi.dot(M) / (Pdf * CosThetaI));
@@ -171,7 +186,13 @@ Color3f RoughDielectricBSDF::Eval(const BSDFQueryRecord & Record) const
 	/* Construct the microfacet distribution matching the
 	roughness values at the current surface position.
 	(texture will be implemented later) */
-	MicrofacetDistribution Distribution(m_Type, m_AlphaU, m_AlphaV);
+	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
+	float AlphaV = AlphaU;
+	if (m_bAnisotropic)
+	{
+		AlphaV = Clamp(m_pAlphaV->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
+	}
+	MicrofacetDistribution Distribution(m_Type, AlphaU, AlphaV);
 
 	float D = Distribution.Eval(H);
 
@@ -186,7 +207,7 @@ Color3f RoughDielectricBSDF::Eval(const BSDFQueryRecord & Record) const
 
 	if (bReflect)
 	{
-		return F * D * G / (4.0f * std::abs(CosThetaI)) * m_KsReflect;
+		return F * D * G / (4.0f * std::abs(CosThetaI)) * m_pKsReflect->Eval(Record.Isect);
 	}
 	else
 	{
@@ -199,7 +220,7 @@ Color3f RoughDielectricBSDF::Eval(const BSDFQueryRecord & Record) const
 
 		float Factor = (Record.Mode == ETransportMode::ERadiance) ? (CosThetaI < 0.0f ? m_InvEta : m_Eta) : 1.0f;
 
-		return std::abs(Value * Factor * Factor) * m_KsRefract;
+		return std::abs(Value * Factor * Factor) * m_pKsRefract->Eval(Record.Isect);
 	}
 }
 
@@ -248,7 +269,13 @@ float RoughDielectricBSDF::Pdf(const BSDFQueryRecord & Record) const
 	/* Construct the microfacet distribution matching the
 	  roughness values at the current surface position.
 	  (texture will be implemented later) */
-	MicrofacetDistribution Distribution(m_Type, m_AlphaU, m_AlphaV);
+	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
+	float AlphaV = AlphaU;
+	if (m_bAnisotropic)
+	{
+		AlphaV = Clamp(m_pAlphaV->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
+	}
+	MicrofacetDistribution Distribution(m_Type, AlphaU, AlphaV);
 
 	/* Trick by Walter et al.: slightly scale the roughness values to
 	   reduce importance sampling weights.*/
@@ -264,7 +291,99 @@ float RoughDielectricBSDF::Pdf(const BSDFQueryRecord & Record) const
 
 bool RoughDielectricBSDF::IsAnisotropic() const
 {
-	return true;
+	return m_bAnisotropic;
+}
+
+void RoughDielectricBSDF::AddChild(Object * pChildObj, const std::string & Name)
+{
+	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_ROUGH_DIELECTRIC_KS_REFLECT)
+	{
+		if (m_pKsReflect->IsConstant())
+		{
+			delete m_pKsReflect;
+			m_pKsReflect = (Texture *)(pChildObj);
+			if (m_pKsReflect->IsMonochromatic())
+			{
+				LOG(WARNING) << "KsReflect texture is monochromatic! Make sure that it is done intentionally.";
+			}
+		}
+		else
+		{
+			throw HikariException("RoughDielectricBSDF: tried to specify multiple KsReflect texture");
+		}
+	}
+	else if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_ROUGH_DIELECTRIC_KS_REFRACT)
+	{
+		if (m_pKsRefract->IsConstant())
+		{
+			delete m_pKsRefract;
+			m_pKsRefract = (Texture *)(pChildObj);
+			if (m_pKsRefract->IsMonochromatic())
+			{
+				LOG(WARNING) << "KsRefract texture is monochromatic! Make sure that it is done intentionally.";
+			}
+		}
+		else
+		{
+			throw HikariException("RoughDielectricBSDF: tried to specify multiple KsRefract texture");
+		}
+	}
+	else if (pChildObj->GetClassType() == EClassType::ETexture && !m_bAnisotropic && Name == XML_BSDF_ROUGH_DIELECTRIC_ALPHA)
+	{
+		if (m_pAlphaU->IsConstant() && m_pAlphaV->IsConstant())
+		{
+			delete m_pAlphaU;
+			m_pAlphaV = nullptr;
+			m_pAlphaU = (Texture *)(pChildObj);
+			m_pAlphaV = m_pAlphaU;
+			if (!m_pAlphaU->IsMonochromatic())
+			{
+				LOG(WARNING) << "Alpha texture is not monochromatic, only R channel will be used.";
+			}
+		}
+		else
+		{
+			throw HikariException("RoughDielectricBSDF: tried to specify multiple Alpha texture");
+		}
+	}
+	else if (pChildObj->GetClassType() == EClassType::ETexture && m_bAnisotropic && Name == XML_BSDF_ROUGH_DIELECTRIC_ALPHA_U)
+	{
+		if (m_pAlphaU->IsConstant())
+		{
+			delete m_pAlphaU;
+			m_pAlphaU = (Texture *)(pChildObj);
+			if (!m_pAlphaU->IsMonochromatic())
+			{
+				LOG(WARNING) << "AlphaU texture is not monochromatic, only R channel will be used.";
+			}
+		}
+		else
+		{
+			throw HikariException("RoughDielectricBSDF: tried to specify multiple AlphaU texture");
+		}
+	}
+	else if (pChildObj->GetClassType() == EClassType::ETexture && m_bAnisotropic && Name == XML_BSDF_ROUGH_DIELECTRIC_ALPHA_V)
+	{
+		if (m_pAlphaV->IsConstant())
+		{
+			delete m_pAlphaV;
+			m_pAlphaV = (Texture *)(pChildObj);
+			if (!m_pAlphaV->IsMonochromatic())
+			{
+				LOG(WARNING) << "AlphaV texture is not monochromatic, only R channel will be used.";
+			}
+		}
+		else
+		{
+			throw HikariException("RoughDielectricBSDF: tried to specify multiple AlphaV texture");
+		}
+	}
+	else
+	{
+		throw HikariException("RoughDielectricBSDF::AddChild(<%s>, <%s>) is not supported!",
+			ClassTypeName(pChildObj->GetClassType()), Name
+		);
+	}
 }
 
 std::string RoughDielectricBSDF::ToString() const
@@ -282,10 +401,10 @@ std::string RoughDielectricBSDF::ToString() const
 		MicrofacetDistribution::TypeName(m_Type),
 		m_IntIOR,
 		m_ExtIOR,
-		m_KsReflect.ToString(),
-		m_KsRefract.ToString(),
-		m_AlphaU,
-		m_AlphaV
+		m_pKsReflect->IsConstant() ? m_pKsReflect->GetAverage().ToString() : Indent(m_pKsReflect->ToString()),
+		m_pKsRefract->IsConstant() ? m_pKsRefract->GetAverage().ToString() : Indent(m_pKsRefract->ToString()),
+		m_pAlphaU->IsConstant() ? std::to_string(m_pAlphaU->GetAverage()[0]) : Indent(m_pAlphaU->ToString()),
+		m_pAlphaV->IsConstant() ? std::to_string(m_pAlphaV->GetAverage()[0]) : Indent(m_pAlphaV->ToString())
 	);
 }
 

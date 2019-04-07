@@ -12,6 +12,8 @@ class RoughDielectricBSDF : public BSDF
 public:
 	RoughDielectricBSDF(const PropertyList & PropList);
 
+	~RoughDielectricBSDF();
+
 	virtual Color3f Sample(BSDFQueryRecord & Record, const Point2f & Sample) const override;
 
 	virtual Color3f Eval(const BSDFQueryRecord & Record) const override;
@@ -20,13 +22,19 @@ public:
 
 	virtual bool IsAnisotropic() const override;
 
+	virtual void AddChild(Object * pChildObj, const std::string & Name) override;
+
 	virtual std::string ToString() const override;
 
 protected:
 	float m_IntIOR, m_ExtIOR;
-	Color3f m_KsReflect, m_KsRefract;
-	float m_AlphaU, m_AlphaV;
+	Texture * m_pKsReflect;
+	Texture * m_pKsRefract;
+	Texture * m_pAlphaU;
+	Texture * m_pAlphaV;
 	MicrofacetDistribution::EType m_Type;
+
+	bool m_bAnisotropic;
 
 	float m_Eta, m_InvEta;
 };
