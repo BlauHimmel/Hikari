@@ -138,6 +138,11 @@
 #define XML_TEXTURE_CHECKERBOARD_OFFSE_V         "vOffset"
 #define XML_TEXTURE_CHECKERBOARD_SCALE_U         "uScale"
 #define XML_TEXTURE_CHECKERBOARD_SCALE_V         "vScale"
+#define XML_TEXTURE_WIREFRAME                    "wireframe"
+#define XML_TEXTURE_WIREFRAME_INTERIOR_COLOR     "interiorColor"
+#define XML_TEXTURE_WIREFRAME_EDGE_COLOR         "edgeColor"
+#define XML_TEXTURE_WIREFRAME_EDGE_WIDTH         "edgeWidth"
+#define XML_TEXTURE_WIREFRAME_TRANSITION_WIDTH   "transitionWidth"
 
 #define XML_ACCELERATION                         "acceleration"
 #define XML_ACCELERATION_BRUTO_LOOP              "bruto"
@@ -254,115 +259,119 @@
 #define XML_SHAPE                                "shape"
 
 /* Default setting */
-#define DEFAULT_ACCELERATION_BVH_LEAF_SIZE        10
-#define DEFAULT_ACCELERATION_BVH_SPLIT_METHOD     XML_ACCELERATION_BVH_SPLIT_METHOD_SAH
+#define DEFAULT_ACCELERATION_BVH_LEAF_SIZE         10
+#define DEFAULT_ACCELERATION_BVH_SPLIT_METHOD      XML_ACCELERATION_BVH_SPLIT_METHOD_SAH
 
-#define DEFAULT_ACCELERATION_HLBVH_LEAF_SIZE      10
+#define DEFAULT_ACCELERATION_HLBVH_LEAF_SIZE       10
 
-#define DEFAULT_SCENE_ACCELERATION                XML_ACCELERATION_BRUTO_LOOP
+#define DEFAULT_SCENE_ACCELERATION                 XML_ACCELERATION_BRUTO_LOOP
 
-#define DEFAULT_SCENE_SAMPLER                     XML_SAMPLER_INDEPENDENT
+#define DEFAULT_SCENE_SAMPLER                      XML_SAMPLER_INDEPENDENT
 
-#define DEFAULT_CAMERA_OUTPUTSIZE_X               1280
-#define DEFAULT_CAMERA_OUTPUTSIZE_Y               720
-#define DEFAULT_CAMERA_CAMERA_TO_WORLD            Transform()
-#define DEFAULT_CAMERA_FOV                        30.0f
-#define DEFAULT_CAMERA_NEAR_CLIP                  1e-4f
-#define DEFAULT_CAMERA_FAR_CLIP                   1e4f
-#define DEFAULT_CAMERA_FAR_CLIP                   1e4f
-#define DEFAULT_CAMERA_RFILTER                    XML_FILTER_GAUSSION
+#define DEFAULT_CAMERA_OUTPUTSIZE_X                1280
+#define DEFAULT_CAMERA_OUTPUTSIZE_Y                720
+#define DEFAULT_CAMERA_CAMERA_TO_WORLD             Transform()
+#define DEFAULT_CAMERA_FOV                         30.0f
+#define DEFAULT_CAMERA_NEAR_CLIP                   1e-4f
+#define DEFAULT_CAMERA_FAR_CLIP                    1e4f
+#define DEFAULT_CAMERA_FAR_CLIP                    1e4f
+#define DEFAULT_CAMERA_RFILTER                     XML_FILTER_GAUSSION
 
-#define DEFAULT_BSDF_DIELECTRIC_INT_IOR           1.5046f /* (default: BK7 borosilicate optical glass) */
-#define DEFAULT_BSDF_DIELECTRIC_EXT_IOR           1.000277f /* Air */
-#define DEFAULT_BSDF_DIELECTRIC_KS_REFLECT        Color3f(1.0f) 
-#define DEFAULT_BSDF_DIELECTRIC_KS_REFRACT        Color3f(1.0f) 
-#define DEFAULT_BSDF_DIFFUSE_ALBEDO               Color3f(0.5f)
-#define DEFAULT_BSDF_MICROFACET_ALPHA             0.1f
-#define DEFAULT_BSDF_MICROFACET_INT_IOR           1.5046f /* (default: BK7 borosilicate optical glass) */
-#define DEFAULT_BSDF_MICROFACET_EXT_IOR           1.000277f /* Air */
-#define DEFAULT_BSDF_MICROFACET_ALBEDO            Color3f(0.5f)
-#define DEFAULT_BSDF_CONDUCTOR_INT_IOR            1.5046f /* (default: BK7 borosilicate optical glass) */
-#define DEFAULT_BSDF_CONDUCTOR_EXT_IOR            1.000277f /* Air */
-#define DEFAULT_BSDF_CONDUCTOR_K                  Color3f(1.0f)
-#define DEFAULT_BSDF_CONDUCTOR_KS                 Color3f(1.0f)
-#define DEFAULT_BSDF_PLASTIC_INT_IOR              1.5046f /* (default: BK7 borosilicate optical glass) */
-#define DEFAULT_BSDF_PLASTIC_EXT_IOR              1.000277f /* Air */
-#define DEFAULT_BSDF_PLASTIC_KS                   Color3f(1.0f)
-#define DEFAULT_BSDF_PLASTIC_KD                   Color3f(0.5f)
-#define DEFAULT_BSDF_PLASTIC_NONLINEAR            false
-#define DEFAULT_BSDF_ROUGH_CONDUCTOR_INT_IOR      1.5046f /* (default: BK7 borosilicate optical glass) */
-#define DEFAULT_BSDF_ROUGH_CONDUCTOR_EXT_IOR      1.000277f /* Air */
-#define DEFAULT_BSDF_ROUGH_CONDUCTOR_K            Color3f(1.0f)
-#define DEFAULT_BSDF_ROUGH_CONDUCTOR_KS           Color3f(1.0f)
-#define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA        0.1f
-#define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_U      0.1f
-#define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_V      0.1f
-#define DEFAULT_BSDF_ROUGH_CONDUCTOR_TYPE         XML_BSDF_BECKMANN
-#define DEFAULT_BSDF_ROUGH_CONDUCTOR_AS           false
-#define DEFAULT_BSDF_ROUGH_DIELECTRIC_INT_IOR     1.5046f /* (default: BK7 borosilicate optical glass) */
-#define DEFAULT_BSDF_ROUGH_DIELECTRIC_EXT_IOR     1.000277f /* Air */
-#define DEFAULT_BSDF_ROUGH_DIELECTRIC_KS_REFLECT  Color3f(1.0f) 
-#define DEFAULT_BSDF_ROUGH_DIELECTRIC_KS_REFRACT  Color3f(1.0f) 
-#define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA       0.1f
-#define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA_U     0.1f
-#define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA_V     0.1f
-#define DEFAULT_BSDF_ROUGH_DIELECTRIC_TYPE        XML_BSDF_BECKMANN
-#define DEFAULT_BSDF_ROUGH_DIELECTRIC_AS          false
-#define DEFAULT_BSDF_ROUGH_DIFFUSE_ALBEDO         Color3f(0.5f)
-#define DEFAULT_BSDF_ROUGH_DIFFUSE_ALPHA          0.2f
-#define DEFAULT_BSDF_ROUGH_DIFFUSE_FAST_APPROX    false
+#define DEFAULT_BSDF_DIELECTRIC_INT_IOR            1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_DIELECTRIC_EXT_IOR            1.000277f /* Air */
+#define DEFAULT_BSDF_DIELECTRIC_KS_REFLECT         Color3f(1.0f) 
+#define DEFAULT_BSDF_DIELECTRIC_KS_REFRACT         Color3f(1.0f) 
+#define DEFAULT_BSDF_DIFFUSE_ALBEDO                Color3f(0.5f)
+#define DEFAULT_BSDF_MICROFACET_ALPHA              0.1f
+#define DEFAULT_BSDF_MICROFACET_INT_IOR            1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_MICROFACET_EXT_IOR            1.000277f /* Air */
+#define DEFAULT_BSDF_MICROFACET_ALBEDO             Color3f(0.5f)
+#define DEFAULT_BSDF_CONDUCTOR_INT_IOR             1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_CONDUCTOR_EXT_IOR             1.000277f /* Air */
+#define DEFAULT_BSDF_CONDUCTOR_K                   Color3f(1.0f)
+#define DEFAULT_BSDF_CONDUCTOR_KS                  Color3f(1.0f)
+#define DEFAULT_BSDF_PLASTIC_INT_IOR               1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_PLASTIC_EXT_IOR               1.000277f /* Air */
+#define DEFAULT_BSDF_PLASTIC_KS                    Color3f(1.0f)
+#define DEFAULT_BSDF_PLASTIC_KD                    Color3f(0.5f)
+#define DEFAULT_BSDF_PLASTIC_NONLINEAR             false
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_INT_IOR       1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_EXT_IOR       1.000277f /* Air */
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_K             Color3f(1.0f)
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_KS            Color3f(1.0f)
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA         0.1f
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_U       0.1f
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_V       0.1f
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_TYPE          XML_BSDF_BECKMANN
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_AS            false
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_INT_IOR      1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_EXT_IOR      1.000277f /* Air */
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_KS_REFLECT   Color3f(1.0f) 
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_KS_REFRACT   Color3f(1.0f) 
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA        0.1f
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA_U      0.1f
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_ALPHA_V      0.1f
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_TYPE         XML_BSDF_BECKMANN
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_AS           false
+#define DEFAULT_BSDF_ROUGH_DIFFUSE_ALBEDO          Color3f(0.5f)
+#define DEFAULT_BSDF_ROUGH_DIFFUSE_ALPHA           0.2f
+#define DEFAULT_BSDF_ROUGH_DIFFUSE_FAST_APPROX     false
 
-#define DEFAULT_FILTER_GAUSSIAN_RADIUS            2.0f
-#define DEFAULT_FILTER_GAUSSIAN_STDDEV            0.5f
-#define DEFAULT_FILTER_MITCHELL_RADIUS            2.0f
-#define DEFAULT_FILTER_MITCHELL_B                 (1.0f / 3.0f)
-#define DEFAULT_FILTER_MITCHELL_C                 (1.0f / 3.0f)
+#define DEFAULT_FILTER_GAUSSIAN_RADIUS             2.0f
+#define DEFAULT_FILTER_GAUSSIAN_STDDEV             0.5f
+#define DEFAULT_FILTER_MITCHELL_RADIUS             2.0f
+#define DEFAULT_FILTER_MITCHELL_B                  (1.0f / 3.0f)
+#define DEFAULT_FILTER_MITCHELL_C                  (1.0f / 3.0f)
 
-#define DEFAULT_MESH_TO_WORLD                     Transform()
+#define DEFAULT_MESH_TO_WORLD                      Transform()
 
-#define DEFAULT_INTEGRATOR_AO_ALPHA               1e6f
-#define DEFAULT_INTEGRATOR_AO_SAMPLE_COUNT        16
-#define DEFAULT_INTEGRATOR_WHITTED_DEPTH          -1
+#define DEFAULT_INTEGRATOR_AO_ALPHA                1e6f
+#define DEFAULT_INTEGRATOR_AO_SAMPLE_COUNT         16
+#define DEFAULT_INTEGRATOR_WHITTED_DEPTH           -1
 
-#define DEFAULT_SAMPLER_INDEPENDENT_SAMPLE_COUNT  1
+#define DEFAULT_SAMPLER_INDEPENDENT_SAMPLE_COUNT   1
 
-#define DEFAULT_MESH_BSDF                         XML_BSDF_DIFFUSE
+#define DEFAULT_MESH_BSDF                          XML_BSDF_DIFFUSE
 
-#define DEFAULT_EMITTER_ENVIRONMENT_SCALE         1.0f
-#define DEFAULT_EMITTER_ENVIRONMENT_TO_WORLD      Transform()
+#define DEFAULT_EMITTER_ENVIRONMENT_SCALE          1.0f
+#define DEFAULT_EMITTER_ENVIRONMENT_TO_WORLD       Transform()
 
-#define DEFAULT_TEST_STUDENT_T_SIGNIFICANCE_LEVEL 0.01f
-#define DEFAULT_TEST_STUDENT_T_ANGLES             ""
-#define DEFAULT_TEST_STUDENT_T_REFERENCES         ""
-#define DEFAULT_TEST_STUDENT_T_SAMPLE_COUNT       100000
+#define DEFAULT_TEST_STUDENT_T_SIGNIFICANCE_LEVEL  0.01f
+#define DEFAULT_TEST_STUDENT_T_ANGLES              ""
+#define DEFAULT_TEST_STUDENT_T_REFERENCES          ""
+#define DEFAULT_TEST_STUDENT_T_SAMPLE_COUNT        100000
 
-#define DEFAULT_TEST_CHI2_SIGNIFICANCE_LEVEL      0.01f
-#define DEFAULT_TEST_CHI2_RESOLUTION              10
-#define DEFAULT_TEST_CHI2_MIN_EXP_FREQUENCY       5
-#define DEFAULT_TEST_CHI2_SAMPLE_COUNT            -1
-#define DEFAULT_TEST_CHI2_TEST_COUNT              5
+#define DEFAULT_TEST_CHI2_SIGNIFICANCE_LEVEL       0.01f
+#define DEFAULT_TEST_CHI2_RESOLUTION               10
+#define DEFAULT_TEST_CHI2_MIN_EXP_FREQUENCY        5
+#define DEFAULT_TEST_CHI2_SAMPLE_COUNT             -1
+#define DEFAULT_TEST_CHI2_TEST_COUNT               5
 
-#define DEFAULT_SCENE_BACKGROUND                  Color3f(0.0f)
-#define DEFAULT_SCENE_FORCE_BACKGROUND            false
+#define DEFAULT_SCENE_BACKGROUND                   Color3f(0.0f)
+#define DEFAULT_SCENE_FORCE_BACKGROUND             false
 
-#define DEFAULT_TEXTURE_BITMAP_GAMMA              1.0f
-#define DEFAULT_TEXTURE_BITMAP_WRAP_MODE          XML_TEXTURE_BITMAP_WRAP_MODE_REPEAT
-#define DEFAULT_TEXTURE_BITMAP_WRAP_MODE_U        XML_TEXTURE_BITMAP_WRAP_MODE_REPEAT
-#define DEFAULT_TEXTURE_BITMAP_WRAP_MODE_V        XML_TEXTURE_BITMAP_WRAP_MODE_REPEAT
-#define DEFAULT_TEXTURE_BITMAP_FILTER_TYPE        XML_TEXTURE_BITMAP_FILTER_TYPE_EWA
-#define DEFAULT_TEXTURE_BITMAP_MAX_ANISOTROPY     20.0f
-#define DEFAULT_TEXTURE_BITMAP_OFFSET_U           0.0f
-#define DEFAULT_TEXTURE_BITMAP_OFFSET_V           0.0f
-#define DEFAULT_TEXTURE_BITMAP_SCALE_U            1.0f
-#define DEFAULT_TEXTURE_BITMAP_SCALE_V            1.0f
-#define DEFAULT_TEXTURE_BITMAP_CHANNEL            XML_TEXTURE_BITMAP_CHANNEL_RGB
-#define DEFAULT_TEXTURE_CHECKERBOARD_BLOCKS       10
-#define DEFAULT_TEXTURE_CHECKERBOARD_COLOR_A      Color3f(0.4f)
-#define DEFAULT_TEXTURE_CHECKERBOARD_COLOR_B      Color3f(0.2f)
-#define DEFAULT_TEXTURE_CHECKERBOARD_OFFSET_U     0.0f
-#define DEFAULT_TEXTURE_CHECKERBOARD_OFFSET_V     0.0f
-#define DEFAULT_TEXTURE_CHECKERBOARD_SCALE_U      1.0f
-#define DEFAULT_TEXTURE_CHECKERBOARD_SCALE_V      1.0f
+#define DEFAULT_TEXTURE_BITMAP_GAMMA               1.0f
+#define DEFAULT_TEXTURE_BITMAP_WRAP_MODE           XML_TEXTURE_BITMAP_WRAP_MODE_REPEAT
+#define DEFAULT_TEXTURE_BITMAP_WRAP_MODE_U         XML_TEXTURE_BITMAP_WRAP_MODE_REPEAT
+#define DEFAULT_TEXTURE_BITMAP_WRAP_MODE_V         XML_TEXTURE_BITMAP_WRAP_MODE_REPEAT
+#define DEFAULT_TEXTURE_BITMAP_FILTER_TYPE         XML_TEXTURE_BITMAP_FILTER_TYPE_EWA
+#define DEFAULT_TEXTURE_BITMAP_MAX_ANISOTROPY      20.0f
+#define DEFAULT_TEXTURE_BITMAP_OFFSET_U            0.0f
+#define DEFAULT_TEXTURE_BITMAP_OFFSET_V            0.0f
+#define DEFAULT_TEXTURE_BITMAP_SCALE_U             1.0f
+#define DEFAULT_TEXTURE_BITMAP_SCALE_V             1.0f
+#define DEFAULT_TEXTURE_BITMAP_CHANNEL             XML_TEXTURE_BITMAP_CHANNEL_RGB
+#define DEFAULT_TEXTURE_CHECKERBOARD_BLOCKS        10
+#define DEFAULT_TEXTURE_CHECKERBOARD_COLOR_A       Color3f(0.4f)
+#define DEFAULT_TEXTURE_CHECKERBOARD_COLOR_B       Color3f(0.2f)
+#define DEFAULT_TEXTURE_CHECKERBOARD_OFFSET_U      0.0f
+#define DEFAULT_TEXTURE_CHECKERBOARD_OFFSET_V      0.0f
+#define DEFAULT_TEXTURE_CHECKERBOARD_SCALE_U       1.0f
+#define DEFAULT_TEXTURE_CHECKERBOARD_SCALE_V       1.0f
+#define DEFAULT_TEXTURE_WIREFRAME_INTERIOR_COLOR   Color3f(0.5f)
+#define DEFAULT_TEXTURE_WIREFRAME_EDGE_COLOR       Color3f(0.1f)
+#define DEFAULT_TEXTURE_WIREFRAME_EDGE_WIDTH       0.0f
+#define DEFAULT_TEXTURE_WIREFRAME_TRANSITION_WIDTH 0.5f
 
 NAMESPACE_BEGIN
 
@@ -839,6 +848,13 @@ inline int ModPositive(int A, int B)
 {
 	int R = A % B;
 	return (R < 0) ? R + B : R;
+}
+
+/// S-shape interpolation between two values
+inline float SmoothStep(float Min, float Max, float Value)
+{
+	float V = Clamp((Value - Min) / (Max - Min), 0.0f, 1.0f);
+	return V * V * (-2.0f * V + 3.0f);
 }
 
 /// Compute a direction for the given coordinates in spherical coordinates
