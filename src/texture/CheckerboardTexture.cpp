@@ -20,7 +20,7 @@ Color3f CheckerboardTexture::Eval(const Point2f & UV, const Vector2f & D0, const
 {
 	bool bEvenX = ModPositive(ModPositive(int(UV[0] * m_Blocks), m_Blocks), 2) == 0;
 	bool bEvenY = ModPositive(ModPositive(int(UV[1] * m_Blocks), m_Blocks), 2) == 0;
-	return bEvenX ^ bEvenY ? m_ColorA : m_ColorB;
+	return (bEvenX ^ bEvenY) ? m_ColorA : m_ColorB;
 }
 
 Color3f CheckerboardTexture::GetAverage() const
