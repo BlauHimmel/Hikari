@@ -34,8 +34,6 @@ Color3f GridTexture::Eval(const Point2f & UV, const Vector2f & D0, const Vector2
 	{
 		return m_BackgroundColor;
 	}
-
-	return Color3f();
 }
 
 Color3f GridTexture::GetAverage() const
