@@ -165,6 +165,8 @@
 #define XML_TEXTURE_CURVATURE_OFFSE_V            "vOffset"
 #define XML_TEXTURE_CURVATURE_SCALE_U            "uScale"
 #define XML_TEXTURE_CURVATURE_SCALE_V            "vScale"
+#define XML_TEXTURE_SCALE                        "scale"
+#define XML_TEXTURE_SCALE_SCALE                  "scale"
 
 #define XML_ACCELERATION                         "acceleration"
 #define XML_ACCELERATION_BRUTO_LOOP              "bruto"
