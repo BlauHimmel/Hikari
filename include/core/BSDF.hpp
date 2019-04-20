@@ -106,9 +106,7 @@ public:
 	virtual bool IsDiffuse() const;
 
 	/**
-	* \brief Return whether or not this BRDF is anisotropic. This
-	* is primarily used by the intersection process, since continuous 
-	* tangent space should be computed in this case.
+	* \brief Return whether or not this BRDF is anisotropic. 
 	*/
 	virtual bool IsAnisotropic() const;
 };

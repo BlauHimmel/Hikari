@@ -1,0 +1,63 @@
+<scene>
+	<sampler type="independent">
+		<integer name="sampleCount" value="1024"/>
+	</sampler>
+	<acceleration type="hlbvh">
+		<integer name="leafSize" value="10"/>
+	</acceleration>
+    <integrator type="pathMIS">
+		<integer name="depth" value="64"/>
+	</integrator>
+	<emitter type="env"> 
+		<string name="filename" value="uffizi-large.exr" />
+		<float name="scale" value="0.1" />
+	</emitter>
+	
+	<camera type="perspective">
+		<float name="fov" value="49.13434207760448"/>
+		<float name="nearClip" value="0.10000000149011612"/>
+		<float name="farClip" value="100.0"/>
+		<integer name="width" value="800"/>
+		<integer name="height" value="800"/>
+		<transform name="toWorld">
+			<scale value="1.000000 1.000000 -1.000000"/>
+			<matrix value="0.8381392359733582,-0.40597838163375854,0.3642858862876892,0.18933695554733276,0.5454563498497009,0.6238195896148682,-0.5597557425498962,-0.20809967815876007,4.839010259161114e-08,0.6678552627563477,0.7442911863327026,0.36485588550567627,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<rfilter type="gaussian">
+			<float name="radius" value="2.0"/>
+			<float name="stddev" value="0.6"/>
+		</rfilter>
+	</camera>
+	<mesh type="obj">
+		<string name="filename" value="dragon/Light.obj"/>
+		<transform name="toWorld">
+			<matrix value="0.05000000074505806,0.0,0.0,0.0,0.0,0.0353553406894207,-0.0353553406894207,-0.5632553696632385,0.0,0.0353553406894207,0.0353553406894207,0.5600000023841858,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<emitter type="area">
+            <color name="radiance" value="122 120 120"/>
+		</emitter>
+	</mesh>
+	<mesh type="obj">
+		<string name="filename" value="dragon/Plane.obj"/>
+		<transform name="toWorld">
+			<matrix value="1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,-0.006026809569448233,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<bsdf type="diffuse">
+			<color name="albedo" value="0.75,0.75,0.75"/>
+		</bsdf>
+	</mesh>
+	<mesh type="obj">
+		<string name="filename" value="dragon/dragon_remeshed.obj"/>
+		<transform name="toWorld">
+			<matrix value="0.0006386842578649521,-4.5970648443471873e-07,-0.0007694688392803073,0.0,3.79323901142925e-05,0.000998802832327783,3.088840458076447e-05,0.0,0.0007685334421694279,-4.891573189524934e-05,0.0006379371043294668,0.04235324263572693,0.0,0.0,0.0,1.0"/>
+		</transform>
+		<bsdf type="roughPlastic">
+			<float name="intIOR" value="1.5"/>
+			<float name="extIOR" value="1.0"/>
+			<color name="kd" value="0.1 0.1 0.4"/>
+			<boolean name="nonlinear" value="true"/>
+			<string name="type" value="beckmann"/>
+			<float name="alpha" value="0.3"/>
+		</bsdf>
+	</mesh>
+</scene>

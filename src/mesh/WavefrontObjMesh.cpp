@@ -140,7 +140,7 @@ WavefrontObjMesh::WavefrontObjMesh(const PropertyList & PropList)
 	if (Normals.empty() || Texcoords.empty())
 	{
 		LOG(WARNING) << "Mesh \"" << m_Name << "\" does not have normal or texture coordinate. "
-			"Consequently derivative information cannot be computed and ";
+			"Consequently derivative information cannot be computed and "
 			"some algorithm may not take effect. "
 			"(e.g. EWA filter, CurvatureTexture)";
 	}

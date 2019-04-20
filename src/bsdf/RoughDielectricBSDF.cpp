@@ -33,12 +33,12 @@ RoughDielectricBSDF::RoughDielectricBSDF(const PropertyList & PropList)
 
 	if (m_bAnisotropic)
 	{
-		m_pAlphaU = new ConstantColor3fTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA_U, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_U), float(MIN_ALPHA), float(MAX_ALPHA)));
-		m_pAlphaV = new ConstantColor3fTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA_V, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_V), float(MIN_ALPHA), float(MAX_ALPHA)));
+		m_pAlphaU = new ConstantFloatTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA_U, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_U), float(MIN_ALPHA), float(MAX_ALPHA)));
+		m_pAlphaV = new ConstantFloatTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA_V, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_V), float(MIN_ALPHA), float(MAX_ALPHA)));
 	}
 	else
 	{
-		m_pAlphaU = new ConstantColor3fTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA), float(MIN_ALPHA), float(MAX_ALPHA)));
+		m_pAlphaU = new ConstantFloatTexture(Clamp(PropList.GetFloat(XML_BSDF_ROUGH_CONDUCTOR_ALPHA, DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA), float(MIN_ALPHA), float(MAX_ALPHA)));
 		m_pAlphaV = m_pAlphaU;
 	}
 
@@ -292,6 +292,11 @@ float RoughDielectricBSDF::Pdf(const BSDFQueryRecord & Record) const
 bool RoughDielectricBSDF::IsAnisotropic() const
 {
 	return m_bAnisotropic;
+}
+
+bool RoughDielectricBSDF::IsDiffuse() const
+{
+	return true;
 }
 
 void RoughDielectricBSDF::AddChild(Object * pChildObj, const std::string & Name)

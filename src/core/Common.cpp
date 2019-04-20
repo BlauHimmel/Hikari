@@ -227,6 +227,243 @@ Color4f Lerp(float T, const Color4f & V1, const Color4f & V2)
 	return (1.0f - T) * V1 + T * V2;
 }
 
+float EvalCubicInterpolate1D(
+	float X,
+	const float * pValues,
+	int Size,
+	float Min,
+	float Max,
+	bool bExtrapolate
+)
+{
+	/* Give up when given an out-of-range or NaN argument */
+	if (!(X >= Min && X <= Max) && !bExtrapolate)
+	{
+		return 0.0f;
+	}
+
+	/* Transform X so that knots lie at integer positions */
+	float T = ((X - Min) * (Size - 1)) / (Max - Min);
+
+	/* Find the index of the left knot in the queried subinterval, be
+	   robust to cases where T lies exactly on the right endpoint */
+	int K = std::max(int(0), std::min(int(T), Size - 2));
+
+	float F0 = pValues[K], F1 = pValues[K + 1];
+	float D0, D1;
+
+	/* Approximate the derivatives */
+	if (K > 0)
+	{
+		D0 = 0.5f * (pValues[K + 1] - pValues[K - 1]);
+	}
+	else
+	{
+		D0 = pValues[K + 1] - pValues[K];
+	}
+
+	if (K + 2 < Size)
+	{
+		D1 = 0.5f * (pValues[K + 2] - pValues[K]);
+	}
+	else
+	{
+		D1 = pValues[K + 1] - pValues[K];
+	}
+
+	/* Compute the relative position within the interval */
+	T = T - float(K);
+
+	float T2 = T * T, T3 = T2 * T;
+
+	return (2.0f * T3 - 3.0f * T2 + 1) * F0 +
+		(-2.0f * T3 + 3.0f * T2) * F1 +
+		(T3 - 2.0f * T2 + T) * D0 +
+		(T3 - T2) * D1;
+}
+
+float EvalCubicInterpolate2D(
+	const Point2f & P,
+	const float * pValues,
+	const Point2i & Size,
+	const Point2f & Min,
+	const Point2f & Max,
+	bool bExtrapolate
+)
+{
+	float KnotWeights[2][4];
+	Point2i Knot;
+
+	/* Compute interpolation weights separately for each dimension */
+	for (int Dim = 0; Dim < 2; ++Dim)
+	{
+		float * pWeights = KnotWeights[Dim];
+		/* Give up when given an out-of-range or NaN argument */
+		if (!(P[Dim] >= Min[Dim] && P[Dim] <= Max[Dim]) && !bExtrapolate)
+		{
+			return 0.0f;
+		}
+
+		/* Transform P so that knots lie at integer positions */
+		float T = ((P[Dim] - Min[Dim]) * float(Size[Dim] - 1)) / (Max[Dim] - Min[Dim]);
+
+		/* Find the index of the left knot in the queried subinterval, be
+		   robust to cases where 't' lies exactly on the right endpoint */
+		Knot[Dim] = std::min(int(T), Size[Dim] - 2);
+
+		/* Compute the relative position within the interval */
+		T = T - float(Knot[Dim]);
+
+		/* Compute node weights */
+		float T2 = T * T, T3 = T2 * T;
+		pWeights[0] = 0.0f;
+		pWeights[1] = 2.0f * T3 - 3.0f * T2 + 1;
+		pWeights[2] = -2.0f * T3 + 3.0f * T2;
+		pWeights[3] = 0.0f;
+
+		/* Derivative weights */
+		float D0 = T3 - 2.0f * T2 + T, D1 = T3 - T2;
+
+		/* Turn derivative weights into node weights using
+		   an appropriate chosen finite differences stencil */
+		if (Knot[Dim] > 0)
+		{
+			pWeights[2] += 0.5f * D0;
+			pWeights[0] -= 0.5f * D0;
+		}
+		else
+		{
+			pWeights[2] += D0;
+			pWeights[1] -= D0;
+		}
+
+		if (Knot[Dim] + 2 < Size[Dim])
+		{
+			pWeights[3] += 0.5f * D1;
+			pWeights[1] -= 0.5f * D1;
+		}
+		else
+		{
+			pWeights[2] += D1;
+			pWeights[1] -= D1;
+		}
+	}
+
+	float Result = 0.0f;
+	for (int y = -1; y <= 2; y++)
+	{
+		float WY = KnotWeights[1][y + 1];
+		for (int x = -1; x <= 2; x++)
+		{
+			float WXY = KnotWeights[0][x + 1] * WY;
+
+			if (WXY == 0)
+			{
+				continue;
+			}
+
+			int Pos = (Knot[1] + y) * Size[0] + Knot[0] + x;
+
+			Result += pValues[Pos] * WXY;
+		}
+	}
+	return Result;
+}
+
+float EvalCubicInterpolate3D(
+	const Point3f & P,
+	const float * pValues,
+	const Point3i & Size,
+	const Point3f & Min,
+	const Point3f & Max,
+	bool bExtrapolate
+)
+{
+	float KnotWeights[3][4];
+	Point3i Knot;
+
+	/* Compute interpolation weights separately for each dimension */
+	for (int Dim = 0; Dim < 3; ++Dim)
+	{
+		float * pWeights = KnotWeights[Dim];
+
+		/* Give up when given an out-of-range or NaN argument */
+		if (!(P[Dim] >= Min[Dim] && P[Dim] <= Max[Dim]) && !bExtrapolate)
+		{
+			return 0.0f;
+		}
+
+		/* Transform P so that knots lie at integer positions */
+		float T = ((P[Dim] - Min[Dim]) * float(Size[Dim] - 1)) / (Max[Dim] - Min[Dim]);
+
+		/* Find the index of the left knot in the queried subinterval, be
+		   robust to cases where 'T' lies exactly on the right endpoint */
+		Knot[Dim] = std::min(int(T), Size[Dim] - 2);
+
+		/* Compute the relative position within the interval */
+		T = T - float(Knot[Dim]);
+
+		/* Compute node weights */
+		float T2 = T * T, T3 = T2 * T;
+		pWeights[0] = 0.0f;
+		pWeights[1] = 2.0f * T3 - 3.0f * T2 + 1.0f;
+		pWeights[2] = -2.0f * T3 + 3.0f * T2;
+		pWeights[3] = 0.0f;
+
+		/* Derivative weights */
+		float D0 = T3 - 2.0f * T2 + T, D1 = T3 - T2;
+
+		/* Turn derivative weights into node weights using
+		   an appropriate chosen finite differences stencil */
+		if (Knot[Dim] > 0)
+		{
+			pWeights[2] += 0.5f * D0;
+			pWeights[0] -= 0.5f * D0;
+		}
+		else
+		{
+			pWeights[2] += D0;
+			pWeights[1] -= D0;
+		}
+
+		if (Knot[Dim] + 2 < Size[Dim])
+		{
+			pWeights[3] += 0.5f * D1;
+			pWeights[1] -= 0.5f * D1;
+		}
+		else
+		{
+			pWeights[2] += D1;
+			pWeights[1] -= D1;
+		}
+	}
+
+	float Result = 0.0f;
+	for (int z = -1; z <= 2; z++)
+	{
+		float WZ = KnotWeights[2][z + 1];
+		for (int y = -1; y <= 2; y++)
+		{
+			float WYZ = KnotWeights[1][y + 1] * WZ;
+			for (int x = -1; x <= 2; x++)
+			{
+				float WXYZ = KnotWeights[0][x + 1] * WYZ;
+
+				if (WXYZ == 0)
+				{
+					continue;
+				}
+
+				int Pos = ((Knot[2] + z) * Size[1] + (Knot[1] + y)) * Size[0] + Knot[0] + x;
+
+				Result += pValues[Pos] * WXYZ;
+			}
+		}
+	}
+
+	return Result;
+}
+
 Vector3f SphericalDirection(float Theta, float Phi)
 {
 	float SinTheta, CosTheta, SinPhi, CosPhi;

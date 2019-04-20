@@ -22,6 +22,8 @@ public:
 
 	virtual bool IsAnisotropic() const override;
 
+	virtual bool IsDiffuse() const override;
+
 	virtual void AddChild(Object * pChildObj, const std::string & Name) override;
 
 	virtual std::string ToString() const override;

@@ -25,7 +25,7 @@ public:
 
 	virtual std::string ToString() const override;
 
-public:
+protected:
 	bool m_bFastApprox;
 	Texture * m_pAlbedo;
 	Texture * m_pAlpha;

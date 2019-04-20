@@ -153,6 +153,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/RoughConductorBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/RoughDielectricBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/RoughDiffuseBSDF.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/RoughPlasticBSDF.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/camera/PerspectiveCamera.cpp
         
@@ -179,6 +180,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/PropertyList.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Ray.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/ReconstructionFilter.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/RoughTransmitance.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Sampler.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Sampling.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/Scene.cpp
@@ -236,6 +238,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/RoughConductorBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/RoughDielectricBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/RoughDiffuseBSDF.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/RoughPlasticBSDF.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/camera/PerspectiveCamera.hpp
         
@@ -262,6 +265,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/PropertyList.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Ray.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/ReconstructionFilter.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/core/RoughTransmitance.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Sampler.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Sampling.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Scene.hpp

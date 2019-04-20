@@ -238,6 +238,16 @@
 #define XML_BSDF_ROUGH_DIFFUSE_ALBEDO            "albedo"
 #define XML_BSDF_ROUGH_DIFFUSE_ALPHA             "alpha"
 #define XML_BSDF_ROUGH_DIFFUSE_FAST_APPROX       "fastApprox"
+#define XML_BSDF_ROUGH_PLASTIC                   "roughPlastic"
+#define XML_BSDF_ROUGH_PLASTIC_INT_IOR           "intIOR"
+#define XML_BSDF_ROUGH_PLASTIC_EXT_IOR           "extIOR"
+#define XML_BSDF_ROUGH_PLASTIC_KS                "ks"
+#define XML_BSDF_ROUGH_PLASTIC_KD                "kd"
+#define XML_BSDF_ROUGH_PLASTIC_NONLINEAR         "nonlinear"
+#define XML_BSDF_ROUGH_PLASTIC_TYPE              "type"
+#define XML_BSDF_ROUGH_PLASTIC_ALPHA             "alpha"
+#define XML_BSDF_ROUGH_PLASTIC_BECKMANN_RFT_DATA "data\\BeckmannRFTData.bin"
+#define XML_BSDF_ROUGH_PLASTIC_GGX_RFT_DATA      "data\\GGXRFTData.bin"
 
 #define XML_MEDIUM                               "medium"
 
@@ -301,25 +311,25 @@
 #define DEFAULT_CAMERA_FAR_CLIP                    1e4f
 #define DEFAULT_CAMERA_RFILTER                     XML_FILTER_GAUSSION
 
-#define DEFAULT_BSDF_DIELECTRIC_INT_IOR            1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_DIELECTRIC_INT_IOR            1.5046f
 #define DEFAULT_BSDF_DIELECTRIC_EXT_IOR            1.000277f /* Air */
 #define DEFAULT_BSDF_DIELECTRIC_KS_REFLECT         Color3f(1.0f) 
 #define DEFAULT_BSDF_DIELECTRIC_KS_REFRACT         Color3f(1.0f) 
 #define DEFAULT_BSDF_DIFFUSE_ALBEDO                Color3f(0.5f)
 #define DEFAULT_BSDF_MICROFACET_ALPHA              0.1f
-#define DEFAULT_BSDF_MICROFACET_INT_IOR            1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_MICROFACET_INT_IOR            1.5046f
 #define DEFAULT_BSDF_MICROFACET_EXT_IOR            1.000277f /* Air */
 #define DEFAULT_BSDF_MICROFACET_ALBEDO             Color3f(0.5f)
-#define DEFAULT_BSDF_CONDUCTOR_INT_IOR             1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_CONDUCTOR_INT_IOR             1.5046f
 #define DEFAULT_BSDF_CONDUCTOR_EXT_IOR             1.000277f /* Air */
 #define DEFAULT_BSDF_CONDUCTOR_K                   Color3f(1.0f)
 #define DEFAULT_BSDF_CONDUCTOR_KS                  Color3f(1.0f)
-#define DEFAULT_BSDF_PLASTIC_INT_IOR               1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_PLASTIC_INT_IOR               1.5046f
 #define DEFAULT_BSDF_PLASTIC_EXT_IOR               1.000277f /* Air */
 #define DEFAULT_BSDF_PLASTIC_KS                    Color3f(1.0f)
 #define DEFAULT_BSDF_PLASTIC_KD                    Color3f(0.5f)
 #define DEFAULT_BSDF_PLASTIC_NONLINEAR             false
-#define DEFAULT_BSDF_ROUGH_CONDUCTOR_INT_IOR       1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_ROUGH_CONDUCTOR_INT_IOR       1.5046f
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_EXT_IOR       1.000277f /* Air */
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_K             Color3f(1.0f)
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_KS            Color3f(1.0f)
@@ -328,7 +338,7 @@
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_ALPHA_V       0.1f
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_TYPE          XML_BSDF_BECKMANN
 #define DEFAULT_BSDF_ROUGH_CONDUCTOR_AS            false
-#define DEFAULT_BSDF_ROUGH_DIELECTRIC_INT_IOR      1.5046f /* (default: BK7 borosilicate optical glass) */
+#define DEFAULT_BSDF_ROUGH_DIELECTRIC_INT_IOR      1.5046f
 #define DEFAULT_BSDF_ROUGH_DIELECTRIC_EXT_IOR      1.000277f /* Air */
 #define DEFAULT_BSDF_ROUGH_DIELECTRIC_KS_REFLECT   Color3f(1.0f) 
 #define DEFAULT_BSDF_ROUGH_DIELECTRIC_KS_REFRACT   Color3f(1.0f) 
@@ -340,6 +350,13 @@
 #define DEFAULT_BSDF_ROUGH_DIFFUSE_ALBEDO          Color3f(0.5f)
 #define DEFAULT_BSDF_ROUGH_DIFFUSE_ALPHA           0.2f
 #define DEFAULT_BSDF_ROUGH_DIFFUSE_FAST_APPROX     false
+#define DEFAULT_BSDF_ROUGH_PLASTIC_INT_IOR         1.49f
+#define DEFAULT_BSDF_ROUGH_PLASTIC_EXT_IOR         1.000277f /* Air */
+#define DEFAULT_BSDF_ROUGH_PLASTIC_KS              Color3f(1.0f)
+#define DEFAULT_BSDF_ROUGH_PLASTIC_KD              Color3f(0.5f)
+#define DEFAULT_BSDF_ROUGH_PLASTIC_NONLINEAR       false
+#define DEFAULT_BSDF_ROUGH_PLASTIC_TYPE            XML_BSDF_BECKMANN
+#define DEFAULT_BSDF_ROUGH_PLASTIC_ALPHA           0.1f
 
 #define DEFAULT_FILTER_GAUSSIAN_RADIUS             2.0f
 #define DEFAULT_FILTER_GAUSSIAN_STDDEV             0.5f
@@ -467,6 +484,7 @@ class ConstantFloatTexture;
 class Color3fAdditionTexture;
 class Color3fSubtractionTexture;
 class Color3fProductTexture;
+struct RoughTransmittance;
 
 /* Basic data structures (vectors, points, rays, bounding boxes,
 kd-trees) are oblivious to the underlying data type and dimension.
@@ -899,6 +917,108 @@ inline float SmoothStep(float Min, float Max, float Value)
 	float V = Clamp((Value - Min) / (Max - Min), 0.0f, 1.0f);
 	return V * V * (-2.0f * V + 3.0f);
 }
+
+/**
+ * \brief Evaluate a cubic spline interpolant of a uniformly sampled 1D function
+ *
+ * This implementation relies on Catmull-Rom splines, i.e. it uses finite
+ * differences to approximate the derivatives at the endpoints of each spline
+ * segment.
+ *
+ * \param X
+ *      Evaluation point
+ * \param pValues
+ *      Floating point array containing size regularly spaced evaluations
+ *      in the range [Min, Max] of the function to be approximated.
+ * \param Size
+ *      Denotes the size of the pValues array
+ * \param Min
+ *      Position of the first knot
+ * \param Max
+ *      Position of the last knot
+ * \param bExtrapolate
+ *      Extrapolate values when X is out of range?
+ * \return
+ *      The interpolated value or zero when bExtrapolate = false
+ *      and X lies outside of [Min, Max]
+ */
+float EvalCubicInterpolate1D(
+	float X,
+	const float * pValues,
+	int Size,
+	float Min,
+	float Max,
+	bool bExtrapolate = false
+);
+
+/**
+ * \brief Evaluate a cubic spline interpolant of a uniformly sampled 2D function
+ *
+ * This implementation relies on a tensor product of Catmull-Rom splines, i.e. it uses
+ * finite differences to approximate the derivatives at the endpoints of each spline
+ * patch.
+ *
+ * \param P
+ *      Evaluation point
+ * \param pValues
+ *      A 2D floating point array of Size.x * Size.y cells containing regularly
+ *      spaced evaluations of the function to be interpolated on the domain [Min, Max].
+ *      Consecutive entries of this array correspond to increments in the 'x' coordinate.
+ * \param Size
+ *      Denotes the size of the pValues array (along each dimension)
+ * \param Min
+ *      Position of the first knot on each dimension
+ * \param Max
+ *      Position of the last knot on each dimension
+ * \param bExtrapolate
+ *      Extrapolate values when P is out of range?
+ * \return
+ *      The interpolated value or zero when bExtrapolate=false and
+ *      P lies outside of the knot range
+ */
+float EvalCubicInterpolate2D(
+	const Point2f & P,
+	const float * pValues,
+	const Point2i & Size,
+	const Point2f & Min,
+	const Point2f & Max,
+	bool bExtrapolate = false
+);
+
+/**
+ * \brief Evaluate a cubic spline interpolant of a uniformly sampled 3D function
+ *
+ * This implementation relies on a tensor product of Catmull-Rom splines, i.e. it uses
+ * finite differences to approximate the derivatives at the endpoints of each spline
+ * region.
+ *
+ * \param P
+ *      Evaluation point of the interpolant
+ * \param pValues
+ *      A 3D floating point array of Size.x * Size.y * Size.z cells containing regularly
+ *      spaced evaluations of the function to be interpolated on the domain [Min, Max].
+ *      Consecutive entries of this array correspond to increments in the 'x' coordinate,
+ *      then 'y', and finally 'z' increments.
+ * \param Size
+ *      Denotes the size of the pValues array (along each dimension)
+ * \param Min
+ *      Position of the first knot on each dimension
+ * \param Max
+ *      Position of the last knot on each dimension
+ * \param bExtrapolate
+ *      Extrapolate values when P is out of range?
+ * \return
+ *      The interpolated value or zero when bExtrapolate=false and
+ *      P lies outside of the knot range
+ */
+float EvalCubicInterpolate3D(
+	const Point3f & P,
+	const float * pValues,
+	const Point3i & Size,
+	const Point3f & Min,
+	const Point3f & Max, 
+	bool bExtrapolate = false
+);
 
 /// Compute a direction for the given coordinates in spherical coordinates
 Vector3f SphericalDirection(float Theta, float Phi);

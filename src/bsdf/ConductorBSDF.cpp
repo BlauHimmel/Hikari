@@ -35,7 +35,7 @@ Color3f ConductorBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) 
 
 	float CosThetaI = Frame::CosTheta(Record.Wi);
 
-	if (CosThetaI < 0.0f)
+	if (CosThetaI <= 0.0f)
 	{
 		return Color3f(0.0f);
 	}

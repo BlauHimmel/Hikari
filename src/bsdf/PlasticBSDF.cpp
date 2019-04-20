@@ -45,7 +45,7 @@ Color3f PlasticBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) co
 {
 	float CosThetaI = Frame::CosTheta(Record.Wi);
 
-	if (CosThetaI < 0.0f)
+	if (CosThetaI <= 0.0f)
 	{
 		return Color3f(0.0f);
 	}
