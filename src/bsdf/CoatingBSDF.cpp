@@ -76,7 +76,6 @@ Color3f CoatingBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) co
 		Vector3f WiBackup = Record.Wi;
 		Record.Wi = WiPrime;
 		Color3f Result = m_pNestedBSDF->Sample(Record, Sample2D);
-		float Pdf = m_pNestedBSDF->Pdf(Record);
 		Record.Wi = WiBackup;
 
 		if (Result.isZero())
@@ -127,7 +126,7 @@ Color3f CoatingBSDF::Eval(const BSDFQueryRecord & Record) const
 		float R12, R21;
 		BSDFQueryRecord RecordInt(Record);
 		RecordInt.Wi = RefractIn(Record.Wi, R12);
-		RecordInt.Wo = RefractIn(Record.Wo, R12);
+		RecordInt.Wo = RefractIn(Record.Wo, R21);
 
 		if (R12 == 1.0f || R21 == 1.0f)
 		{

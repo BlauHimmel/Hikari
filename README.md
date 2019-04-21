@@ -8,5 +8,5 @@ An ray tracer based on nori.
 
 ![](https://github.com/BlauHimmel/Hikari/blob/master/screenshot/dragon-roughPlastic-0.15.png)
 
-![](https://github.com/BlauHimmel/Hikari/blob/master/screenshot/dragon-Coated-roughConductor-0.3.png)
+![](https://github.com/BlauHimmel/Hikari/blob/master/screenshot/dragon-Coated-roughConductor-0.2.png)
 
