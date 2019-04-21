@@ -1050,7 +1050,7 @@ Vector3f Refract(const Vector3f & Wi, float CosThetaT, float Eta, float InvEta);
 /// Reflection in global coordinates
 Vector3f Reflect(const Vector3f & Wi, const Vector3f & M);
 
-/// Refraction in local coordinates
+/// Refraction in global coordinates
 Vector3f Refract(const Vector3f & Wi, const Vector3f & M, float CosThetaT, float Eta, float InvEta);
 
 /**
