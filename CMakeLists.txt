@@ -144,6 +144,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/acceleration/BVHAcceleration.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/acceleration/HLBVHAcceleration.cpp
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/CoatingBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/ConductorBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/DielectricBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/DiffuseBSDF.cpp
@@ -229,6 +230,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/acceleration/BVHAcceleration.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/acceleration/HLBVHAcceleration.hpp
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/CoatingBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/ConductorBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/DielectricBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/DiffuseBSDF.hpp

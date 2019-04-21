@@ -248,6 +248,12 @@
 #define XML_BSDF_ROUGH_PLASTIC_ALPHA             "alpha"
 #define XML_BSDF_ROUGH_PLASTIC_BECKMANN_RFT_DATA "data\\BeckmannRFTData.bin"
 #define XML_BSDF_ROUGH_PLASTIC_GGX_RFT_DATA      "data\\GGXRFTData.bin"
+#define XML_BSDF_COATING                         "coating"
+#define XML_BSDF_COATING_INT_IOR                 "intIOR"
+#define XML_BSDF_COATING_EXT_IOR                 "extIOR"
+#define XML_BSDF_COATING_THICKNESS               "thickness"
+#define XML_BSDF_COATING_SIGMA_A                 "sigmaA"
+#define XML_BSDF_COATING_KS                      "ks"
 
 #define XML_MEDIUM                               "medium"
 
@@ -357,6 +363,11 @@
 #define DEFAULT_BSDF_ROUGH_PLASTIC_NONLINEAR       false
 #define DEFAULT_BSDF_ROUGH_PLASTIC_TYPE            XML_BSDF_BECKMANN
 #define DEFAULT_BSDF_ROUGH_PLASTIC_ALPHA           0.1f
+#define DEFAULT_BSDF_COATING_INT_IOR               1.49f
+#define DEFAULT_BSDF_COATING_EXT_IOR               1.000277f /* Air */
+#define DEFAULT_BSDF_COATING_THICKNESS             1.0f
+#define DEFAULT_BSDF_COATING_SIGMA_A               Color3f(0.0f)
+#define DEFAULT_BSDF_COATING_KS                    Color3f(1.0f)
 
 #define DEFAULT_FILTER_GAUSSIAN_RADIUS             2.0f
 #define DEFAULT_FILTER_GAUSSIAN_STDDEV             0.5f
