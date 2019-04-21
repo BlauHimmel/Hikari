@@ -28,9 +28,6 @@ PlasticBSDF::PlasticBSDF(const PropertyList & PropList)
 	m_InvEta = 1.0f / m_Eta;
 	m_InvEta2 = m_InvEta * m_InvEta;
 
-	float KsAvg = m_pKs->GetAverage().GetLuminance();
-	float KdAvg = m_pKd->GetAverage().GetLuminance();
-	m_SpecularSamplingWeight = KsAvg / (KdAvg + KsAvg);
 	m_FresnelDiffuseReflectanceInt = ApproxFresnelDiffuseReflectance(m_InvEta);
 	m_FresnelDiffuseReflectanceExt = ApproxFresnelDiffuseReflectance(m_Eta);
 }
@@ -210,6 +207,13 @@ void PlasticBSDF::AddChild(Object * pChildObj, const std::string & Name)
 			ClassTypeName(pChildObj->GetClassType()), Name
 		);
 	}
+}
+
+void PlasticBSDF::Activate()
+{
+	float KsAvg = m_pKs->GetAverage().GetLuminance();
+	float KdAvg = m_pKd->GetAverage().GetLuminance();
+	m_SpecularSamplingWeight = KsAvg / (KdAvg + KsAvg);
 }
 
 std::string PlasticBSDF::ToString() const

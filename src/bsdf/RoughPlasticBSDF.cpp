@@ -52,23 +52,6 @@ RoughPlasticBSDF::RoughPlasticBSDF(const PropertyList & PropList)
 	m_Eta = m_IntIOR / m_ExtIOR;
 	m_InvEta = 1.0f / m_Eta;
 	m_InvEta2 = m_InvEta * m_InvEta;
-	float KsAvg = m_pKs->GetAverage().GetLuminance();
-	float KdAvg = m_pKd->GetAverage().GetLuminance();
-	m_SpecularSamplingWeight = KsAvg / (KdAvg + KsAvg);
-
-	m_pExtData->CheckEta(m_Eta);
-	m_pExtData->CheckAlpha(m_pAlpha->GetMinimum()[0]);
-	m_pExtData->CheckAlpha(m_pAlpha->GetMaximum()[0]);
-
-	m_pIntData = m_pExtData->Clone().release();
-
-	m_pExtData->SetEta(m_Eta);
-	m_pIntData->SetEta(m_InvEta);
-
-	if (m_pAlpha->IsConstant())
-	{
-		m_pExtData->SetAlpha(m_pAlpha->Eval(Intersection())[0]);
-	}
 }
 
 RoughPlasticBSDF::~RoughPlasticBSDF()
@@ -272,6 +255,27 @@ void RoughPlasticBSDF::AddChild(Object * pChildObj, const std::string & Name)
 		throw HikariException("RoughPlasticBSDF::AddChild(<%s>, <%s>) is not supported!",
 			ClassTypeName(pChildObj->GetClassType()), Name
 		);
+	}
+}
+
+void RoughPlasticBSDF::Activate()
+{
+	float KsAvg = m_pKs->GetAverage().GetLuminance();
+	float KdAvg = m_pKd->GetAverage().GetLuminance();
+	m_SpecularSamplingWeight = KsAvg / (KdAvg + KsAvg);
+
+	m_pExtData->CheckEta(m_Eta);
+	m_pExtData->CheckAlpha(m_pAlpha->GetMinimum()[0]);
+	m_pExtData->CheckAlpha(m_pAlpha->GetMaximum()[0]);
+
+	m_pIntData = m_pExtData->Clone().release();
+
+	m_pExtData->SetEta(m_Eta);
+	m_pIntData->SetEta(m_InvEta);
+
+	if (m_pAlpha->IsConstant())
+	{
+		m_pExtData->SetAlpha(m_pAlpha->Eval(Intersection())[0]);
 	}
 }
 
