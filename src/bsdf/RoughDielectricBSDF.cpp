@@ -64,9 +64,6 @@ Color3f RoughDielectricBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sa
 		return Color3f(0.0f);
 	}
 
-	/* Construct the microfacet distribution matching the
-	roughness values at the current surface position.
-	(texture will be implemented later) */
 	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
 	float AlphaV = AlphaU;
 	if (m_bAnisotropic)
@@ -183,9 +180,6 @@ Color3f RoughDielectricBSDF::Eval(const BSDFQueryRecord & Record) const
 	   same hemisphere as the macrosurface normal */
 	H *= Signum(Frame::CosTheta(H));
 
-	/* Construct the microfacet distribution matching the
-	roughness values at the current surface position.
-	(texture will be implemented later) */
 	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
 	float AlphaV = AlphaU;
 	if (m_bAnisotropic)
@@ -266,9 +260,6 @@ float RoughDielectricBSDF::Pdf(const BSDFQueryRecord & Record) const
 	   same hemisphere as the macrosurface normal */
 	H *= Signum(Frame::CosTheta(H));
 
-	/* Construct the microfacet distribution matching the
-	  roughness values at the current surface position.
-	  (texture will be implemented later) */
 	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
 	float AlphaV = AlphaU;
 	if (m_bAnisotropic)

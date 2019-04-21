@@ -61,9 +61,6 @@ Color3f RoughConductorBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sam
 		return Color3f(0.0f);
 	}
 
-	/* Construct the microfacet distribution matching the
-	  roughness values at the current surface position.
-	  (texture will be implemented later) */
 	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
 	float AlphaV = AlphaU;
 	if (m_bAnisotropic)
@@ -109,9 +106,6 @@ Color3f RoughConductorBSDF::Eval(const BSDFQueryRecord & Record) const
 	/* Calculate the reflection half-vector */
 	Vector3f H = (Record.Wi + Record.Wo).normalized();
 
-	/* Construct the microfacet distribution matching the
-	  roughness values at the current surface position. 
-	  (texture will be implemented later) */
 	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
 	float AlphaV = AlphaU;
 	if (m_bAnisotropic)
@@ -148,9 +142,6 @@ float RoughConductorBSDF::Pdf(const BSDFQueryRecord & Record) const
 	/* Calculate the reflection half-vector */
 	Vector3f H = (Record.Wi + Record.Wo).normalized();
 
-	/* Construct the microfacet distribution matching the
-	  roughness values at the current surface position.
-	  (texture will be implemented later) */
 	float AlphaU = Clamp(m_pAlphaU->Eval(Record.Isect)[0], float(MIN_ALPHA), float(MAX_ALPHA));
 	float AlphaV = AlphaU;
 	if (m_bAnisotropic)
