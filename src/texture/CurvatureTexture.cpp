@@ -34,7 +34,7 @@ CurvatureTexture::CurvatureTexture(const PropertyList & PropList)
 Color3f CurvatureTexture::Eval(const Intersection & Isect) const
 {
 	float H, K;
-	Isect.pShape->ComputeCurvature(Isect, H, K, true);
+	Isect.pShape->ComputeCurvature(Isect, H, K);
 
 	static auto LookUpColor = [&](float Value) -> Color3f
 	{

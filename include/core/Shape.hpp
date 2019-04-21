@@ -72,7 +72,7 @@ public:
 	virtual const BSDF * GetBSDF() const = 0;
 
 	/// Compute mean curvature and Gaussian curvature at the specified intersection point
-	void ComputeCurvature(const Intersection & Isect, float & H, float & K, bool bThrowException) const;
+	void ComputeCurvature(const Intersection & Isect, float & H, float & K) const;
 
 	/**
 	* \brief Return the type of object (i.e. Mesh/BSDF/etc.)

@@ -27,16 +27,13 @@ const Emitter * Shape::GetEmitter() const
 	return nullptr;
 }
 
-void Shape::ComputeCurvature(const Intersection & Isect, float & H, float & K, bool bThrowException) const
+void Shape::ComputeCurvature(const Intersection & Isect, float & H, float & K) const
 {
 	if (!Isect.bHasUVPartial)
 	{
 		H = 0.0f;
 		K = 0.0f;
-		if (bThrowException)
-		{
-			throw HikariException("Curvature cannot be computed, since there is no derivative information.");
-		}
+		LOG(ERROR) << "Curvature cannot be computed, since there is no derivative information.";
 		return;
 	}
 	/* Compute the coefficients of the first and second fundamental form */
