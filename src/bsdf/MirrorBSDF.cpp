@@ -54,6 +54,11 @@ float MirrorBSDF::Pdf(const BSDFQueryRecord & Record) const
 	return 0.0f;
 }
 
+void MirrorBSDF::Activate()
+{
+	AddBSDFType(EBSDFType::EDeltaReflection);
+}
+
 std::string MirrorBSDF::ToString() const
 {
 	return "Mirror[]";

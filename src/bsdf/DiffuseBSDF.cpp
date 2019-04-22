@@ -99,6 +99,15 @@ void DiffuseBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 }
 
+void DiffuseBSDF::Activate()
+{
+	AddBSDFType(EBSDFType::EDiffuseReflection);
+	if (!m_pAlbedo->IsConstant())
+	{
+		AddBSDFType(EBSDFType::EUVDependent);
+	}
+}
+
 std::string DiffuseBSDF::ToString() const
 {
 	return tfm::format(

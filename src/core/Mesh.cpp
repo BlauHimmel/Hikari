@@ -239,6 +239,14 @@ void Mesh::Activate()
 		m_pBSDF = (BSDF*)(ObjectFactory::CreateInstance(DEFAULT_MESH_BSDF, PropertyList()));
 	}
 
+	if (m_pBSDF->HasBSDFType(EBSDFType::EUVDependent))
+	{
+		if (m_UV.size() == 0)
+		{
+			LOG(WARNING) << "Attached BSDF is UV dependent, but the mesh does not have UV coordinate!";
+		}
+	}
+
 	std::vector<float> Areas(GetTriangleCount());
 	// Create the pdf (defined by the area of each triangle)
 	for (uint32_t i = 0; i < GetTriangleCount(); i++)

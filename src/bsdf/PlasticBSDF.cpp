@@ -214,6 +214,13 @@ void PlasticBSDF::Activate()
 	float KsAvg = m_pKs->GetAverage().GetLuminance();
 	float KdAvg = m_pKd->GetAverage().GetLuminance();
 	m_SpecularSamplingWeight = KsAvg / (KdAvg + KsAvg);
+
+	AddBSDFType(EBSDFType::EDeltaReflection);
+	AddBSDFType(EBSDFType::EDiffuseReflection);
+	if (!m_pKd->IsConstant() || !m_pKs->IsConstant())
+	{
+		AddBSDFType(EBSDFType::EUVDependent);
+	}
 }
 
 std::string PlasticBSDF::ToString() const

@@ -277,6 +277,13 @@ void RoughPlasticBSDF::Activate()
 	{
 		m_pExtData->SetAlpha(m_pAlpha->Eval(Intersection())[0]);
 	}
+
+	AddBSDFType(EBSDFType::EGlossyReflection);
+	AddBSDFType(EBSDFType::EDiffuseReflection);
+	if (!m_pKs->IsConstant() || !m_pKd->IsConstant() || !m_pAlpha->IsConstant())
+	{
+		AddBSDFType(EBSDFType::EUVDependent);
+	}
 }
 
 std::string RoughPlasticBSDF::ToString() const

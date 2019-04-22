@@ -153,6 +153,16 @@ void DielectricBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 }
 
+void DielectricBSDF::Activate()
+{
+	AddBSDFType(EBSDFType::EDeltaReflection);
+	AddBSDFType(EBSDFType::EDeltaTransmission);
+	if (!m_pKsRefract->IsConstant() || !m_pKsReflect->IsConstant())
+	{
+		AddBSDFType(EBSDFType::EUVDependent);
+	}
+}
+
 std::string DielectricBSDF::ToString() const
 {
 	return tfm::format(

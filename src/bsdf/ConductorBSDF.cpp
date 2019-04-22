@@ -102,6 +102,15 @@ void ConductorBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 }
 
+void ConductorBSDF::Activate()
+{
+	AddBSDFType(EBSDFType::EDeltaReflection);
+	if (!m_pKs->IsConstant())
+	{
+		AddBSDFType(EBSDFType::EUVDependent);
+	}
+}
+
 std::string ConductorBSDF::ToString() const
 {
 	return tfm::format(

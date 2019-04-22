@@ -16,6 +16,8 @@ public:
 	virtual Color3f Eval(const BSDFQueryRecord & Record) const override;
 	
 	virtual float Pdf(const BSDFQueryRecord & Record) const override;
+
+	virtual void Activate() override;
 	
 	virtual std::string ToString() const override;
 };

@@ -260,6 +260,13 @@ void CoatingBSDF::Activate()
 	{
 		throw HikariException("CoatingBSDF needs a nested BSDF!");
 	}
+
+	AddBSDFType(m_pNestedBSDF->GetBSDFTypes());
+	AddBSDFType(EBSDFType::EDeltaReflection);
+	if (!m_pSigmaA->IsConstant() || !m_pKs->IsConstant())
+	{
+		AddBSDFType(EBSDFType::EUVDependent);
+	}
 }
 
 std::string CoatingBSDF::ToString() const
@@ -294,7 +301,6 @@ Vector3f CoatingBSDF::RefractOut(const Vector3f & Wi, float & Reflectance) const
 	float CosThetaT;
 	Reflectance = FresnelDielectric(std::abs(Frame::CosTheta(Wi)), m_InvEta, m_Eta, CosThetaT);
 	return Vector3f(m_Eta * Wi.x(), m_Eta * Wi.y(), -Signum(Frame::CosTheta(Wi)) * CosThetaT);
-
 }
 
 NAMESPACE_END

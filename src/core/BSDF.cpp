@@ -78,4 +78,19 @@ bool BSDF::IsAnisotropic() const
 	return false;
 }
 
+void BSDF::AddBSDFType(uint32_t Type)
+{
+	m_CombinedType |= Type;
+}
+
+bool BSDF::HasBSDFType(EBSDFType Type) const
+{
+	return (uint32_t(Type) & m_CombinedType) != 0;
+}
+
+uint32_t BSDF::GetBSDFTypes() const
+{
+	return m_CombinedType;
+}
+
 NAMESPACE_END

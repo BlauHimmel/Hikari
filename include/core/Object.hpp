@@ -10,6 +10,10 @@ NAMESPACE_BEGIN
 *
 * An object represents an instance that is part of
 * a scene description, e.g. a scattering model or emitter.
+*
+* While an Object is constructing, functions will be called in 
+* a sequence like:
+* Constructor() -> AddChild() (multiple times) -> SetParent() -> Activate()
 */
 class Object
 {

@@ -22,6 +22,8 @@ public:
 
 	virtual void AddChild(Object * pChildObj, const std::string & Name) override;
 
+	virtual void Activate() override;
+
 	virtual std::string ToString() const override;
 
 private:

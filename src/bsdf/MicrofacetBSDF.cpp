@@ -211,6 +211,16 @@ void MicrofacetBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 }
 
+void MicrofacetBSDF::Activate()
+{
+	AddBSDFType(EBSDFType::EDiffuseReflection);
+	AddBSDFType(EBSDFType::EGlossyReflection);
+	if (!m_pAlpha->IsConstant() || !m_pKd->IsConstant())
+	{
+		AddBSDFType(EBSDFType::EUVDependent);
+	}
+}
+
 std::string MicrofacetBSDF::ToString() const
 {
 	return tfm::format(

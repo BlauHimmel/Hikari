@@ -213,6 +213,15 @@ void RoughDiffuseBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 }
 
+void RoughDiffuseBSDF::Activate()
+{
+	AddBSDFType(EBSDFType::EGlossyReflection);
+	if (!m_pAlpha->IsConstant() || !m_pAlbedo->IsConstant())
+	{
+		AddBSDFType(EBSDFType::EUVDependent);
+	}
+}
+
 std::string RoughDiffuseBSDF::ToString() const
 {
 	return tfm::format(

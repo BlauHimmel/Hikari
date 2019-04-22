@@ -234,6 +234,15 @@ void RoughConductorBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 }
 
+void RoughConductorBSDF::Activate()
+{
+	AddBSDFType(EBSDFType::EGlossyReflection);
+	if (!m_pKs->IsConstant() || !m_pAlphaU->IsConstant() || !m_pAlphaV->IsConstant())
+	{
+		AddBSDFType(EBSDFType::EUVDependent);
+	}
+}
+
 std::string RoughConductorBSDF::ToString() const
 {
 	return tfm::format(

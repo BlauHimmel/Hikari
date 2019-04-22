@@ -377,6 +377,18 @@ void RoughDielectricBSDF::AddChild(Object * pChildObj, const std::string & Name)
 	}
 }
 
+void RoughDielectricBSDF::Activate()
+{
+	AddBSDFType(EBSDFType::EGlossyReflection);
+	AddBSDFType(EBSDFType::EGlossyTransmission);
+	AddBSDFType(EBSDFType::EExtraSampling);
+	if (!m_pKsReflect->IsConstant() || !m_pKsRefract->IsConstant() ||
+		!m_pAlphaU->IsConstant() || !m_pAlphaV->IsConstant())
+	{
+		AddBSDFType(EBSDFType::EUVDependent);
+	}
+}
+
 std::string RoughDielectricBSDF::ToString() const
 {
 	return tfm::format(

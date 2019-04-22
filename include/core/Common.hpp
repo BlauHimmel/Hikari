@@ -658,13 +658,33 @@ enum class ETransportMode
 /// Wrap mode of the texture, which decides the behavior when u > 1 or v > 1.
 enum class EWrapMode
 {
-	ERepeat, EBlack, EClamp
+	ERepeat = 0,
+	EBlack = 1,
+	EClamp = 2
 };
 
 /// Filter type of the sampler
 enum class EFilterType
 {
-	ENearest, EBilinear, ETrilinear, EEWA
+	ENearest = 0,
+	EBilinear = 1,
+	ETrilinear = 2,
+	EEWA = 3
+};
+
+/// Lobe type of the BSDF
+enum EBSDFType
+{
+	ENull                = 0x001,
+	EDiffuseReflection   = 0x002,
+	EDiffuseTransmission = 0x004,
+	EGlossyReflection    = 0x008,
+	EGlossyTransmission  = 0x010,
+	EDeltaReflection     = 0x020,
+	EDeltaTransmission   = 0x040,
+
+	EExtraSampling       = 0x080,
+	EUVDependent         = 0x100,
 };
 
 /// Convert radians to degrees

@@ -2,6 +2,7 @@
 
 #include <core\Common.hpp>
 #include <core\Object.hpp>
+#include <initializer_list>
 
 NAMESPACE_BEGIN
 
@@ -109,6 +110,15 @@ public:
 	* \brief Return whether or not this BRDF is anisotropic. 
 	*/
 	virtual bool IsAnisotropic() const;
+
+	void AddBSDFType(uint32_t Type);
+
+	bool HasBSDFType(EBSDFType Type) const;
+
+	uint32_t GetBSDFTypes() const;
+
+private:
+	uint32_t m_CombinedType = 0;
 };
 
 NAMESPACE_END
