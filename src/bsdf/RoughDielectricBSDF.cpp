@@ -285,11 +285,6 @@ bool RoughDielectricBSDF::IsAnisotropic() const
 	return m_bAnisotropic;
 }
 
-bool RoughDielectricBSDF::IsDiffuse() const
-{
-	return true;
-}
-
 void RoughDielectricBSDF::AddChild(Object * pChildObj, const std::string & Name)
 {
 	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_ROUGH_DIELECTRIC_KS_REFLECT)

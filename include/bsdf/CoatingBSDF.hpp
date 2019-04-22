@@ -20,6 +20,8 @@ public:
 
 	virtual bool IsDiffuse() const override;
 
+	virtual bool IsAnisotropic() const override;
+
 	virtual void AddChild(Object * pChildObj, const std::string & Name) override;
 
 	virtual void Activate() override;

@@ -158,11 +158,6 @@ bool RoughConductorBSDF::IsAnisotropic() const
 	return m_bAnisotropic;
 }
 
-bool RoughConductorBSDF::IsDiffuse() const
-{
-	return true;
-}
-
 void RoughConductorBSDF::AddChild(Object * pChildObj, const std::string & Name)
 {
 	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_ROUGH_CONDUCTOR_KS)

@@ -171,11 +171,6 @@ float RoughDiffuseBSDF::Pdf(const BSDFQueryRecord & Record) const
 	return Sampling::SquareToCosineHemispherePdf(Record.Wo);
 }
 
-bool RoughDiffuseBSDF::IsDiffuse() const
-{
-	return true;
-}
-
 void RoughDiffuseBSDF::AddChild(Object * pChildObj, const std::string & Name)
 {
 	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_ROUGH_DIFFUSE_ALBEDO)

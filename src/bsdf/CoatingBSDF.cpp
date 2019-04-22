@@ -198,6 +198,11 @@ bool CoatingBSDF::IsDiffuse() const
 	return m_pNestedBSDF->IsDiffuse();
 }
 
+bool CoatingBSDF::IsAnisotropic() const
+{
+	return m_pNestedBSDF->IsAnisotropic();
+}
+
 void CoatingBSDF::AddChild(Object * pChildObj, const std::string & Name)
 {
 	if (pChildObj->GetClassType() == EClassType::ETexture && Name == XML_BSDF_COATING_KS)
