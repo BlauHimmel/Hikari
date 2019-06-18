@@ -106,8 +106,6 @@ Color3f CoatingBSDF::Sample(BSDFQueryRecord & Record, const Point2f & Sample) co
 
 		return Result;
 	}
-
-	return Color3f();
 }
 
 Color3f CoatingBSDF::Eval(const BSDFQueryRecord & Record) const

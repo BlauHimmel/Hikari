@@ -61,7 +61,8 @@ public:
 	*         sample. The returned value also includes the cosine
 	*         foreshortening factor associated with the outgoing direction,
 	*         when this is appropriate. A zero value means that sampling
-	*         failed.
+	*         failed. Record.Measure, Record.Eta and Record.Wo are set in 
+	*         the function.
 	*/
 	virtual Color3f Sample(BSDFQueryRecord & Record, const Point2f & Sample) const = 0;
 
