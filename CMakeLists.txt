@@ -156,6 +156,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/RoughDielectricBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/RoughDiffuseBSDF.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/RoughPlasticBSDF.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/bsdf/TwoSidedBSDF.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/camera/PerspectiveCamera.cpp
         
@@ -243,6 +244,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/RoughDielectricBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/RoughDiffuseBSDF.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/RoughPlasticBSDF.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/bsdf/TwoSidedBSDF.hpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/camera/PerspectiveCamera.hpp
         

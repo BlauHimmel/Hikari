@@ -264,6 +264,7 @@
 #define XML_BSDF_ROUGH_COATING_TYPE              "type"
 #define XML_BSDF_ROUGH_COATING_BECKMANN_RFT_DATA "data\\BeckmannRFTData.bin"
 #define XML_BSDF_ROUGH_COATING_GGX_RFT_DATA      "data\\GGXRFTData.bin"
+#define XML_BSDF_TWO_SIDED                       "twoSided"
 
 #define XML_MEDIUM                               "medium"
 
@@ -570,44 +571,72 @@ public:
 	HikariException(const char * pFmt, const Args &... Arg) : std::runtime_error(tfm::format(pFmt, Arg...)) { }
 };
 
-template<class T>
-void CheckRange(const std::string & ObjName, const std::string & FieldName, T Var, T Min, T Max)
+/* Check whether "Value" is in the range (Min, Max). Exception will be throw
+with info "Msg" if it is not in the range. */
+template <typename T, typename... Args>
+void CheckOO(
+	T Value,
+	T Min,
+	T Max,
+	const char * pFmt,
+	const Args &... Arg
+)
 {
-	if (Var >= Min && Var <= Max)
+	if (Value <= Min || Value >= Max)
 	{
-		return;
+		throw HikariException(pFmt, Arg...);
 	}
-	throw HikariException(tfm::format("Field %s in object %s out of range. (%s, %s)"), FieldName, ObjName, Min.ToString(), Max.ToString());
 }
 
-template<>
-inline void CheckRange<int>(const std::string & ObjName, const std::string & FieldName, int Var, int Min, int Max)
+/* Check whether "Value" is in the range (Min, Max]. Exception will be throw
+with info "Msg" if it is not in the range. */
+template <typename T, typename... Args>
+void CheckOC(
+	T Value,
+	T Min,
+	T Max,
+	const char * pFmt,
+	const Args &... Arg
+)
 {
-	if (Var >= Min && Var <= Max)
+	if (Value <= Min || Value > Max)
 	{
-		return;
+		throw HikariException(pFmt, Arg...);
 	}
-	throw HikariException("Field %s in object %s out of range (%d, %d).", FieldName, ObjName, Min, Max);
 }
 
-template<>
-inline void CheckRange<uint32_t>(const std::string & ObjName, const std::string & FieldName, uint32_t Var, uint32_t Min, uint32_t Max)
+/* Check whether "Value" is in the range [Min, Max). Exception will be throw
+with info "Msg" if it is not in the range. */
+template <typename T, typename... Args>
+void CheckCO(
+	T Value,
+	T Min,
+	T Max,
+	const char * pFmt,
+	const Args &... Arg
+)
 {
-	if (Var >= Min && Var <= Max)
+	if (Value < Min || Value >= Max)
 	{
-		return;
+		throw HikariException(pFmt, Arg...);
 	}
-	throw HikariException("Field %s in object %s out of range (%u, %u).", FieldName, ObjName, Min, Max);
 }
 
-template<>
-inline void CheckRange<float>(const std::string & ObjName, const std::string & FieldName, float Var, float Min, float Max)
+/* Check whether "Value" is in the range [Min, Max]. Exception will be throw
+with info "Msg" if it is not in the range. */
+template <typename T, typename... Args>
+void CheckCC(
+	T Value,
+	T Min,
+	T Max,
+	const char * pFmt,
+	const Args &... Arg
+)
 {
-	if (Var >= Min && Var <= Max)
+	if (Value < Min || Value > Max)
 	{
-		return;
+		throw HikariException(pFmt, Arg...);
 	}
-	throw HikariException("Field %s in object %s out of range (%f, %f).", FieldName, ObjName, Min, Max);
 }
 
 /// Return the number of cores (real and virtual)
