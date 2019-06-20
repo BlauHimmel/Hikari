@@ -66,7 +66,6 @@ public:
 	*/
 	virtual Color3f Sample(BSDFQueryRecord & Record, const Point2f & Sample) const = 0;
 
-
 	/**
 	* \brief Evaluate the BSDF for a pair of directions and measure
 	* specified in \code Record
@@ -112,10 +111,13 @@ public:
 	*/
 	virtual bool IsAnisotropic() const;
 
+	/// Add a new component of the BSDFType (Could be a combined type or a single type)
 	void AddBSDFType(uint32_t Type);
 
+	/// Whether the given BSDF type is contained in this BSDF
 	bool HasBSDFType(EBSDFType Type) const;
 
+	/// Get the combined bitwise BSDF type
 	uint32_t GetBSDFTypes() const;
 
 private:
