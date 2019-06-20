@@ -36,11 +36,13 @@ public:
 	int GetLevels() const { return int(m_Pyramid.size()); }
 	const T & Texel(int Level, int U, int V) const;
 	/// Perform a Nearest sample
-	T Lookup(const Point2f & UV);
+	T Lookup(const Point2f & UV) const;
 	/// Perform a Trilinear sample when Width != 0, otherwise perform a bilinear sample
 	T Lookup(const Point2f & UV, float Width) const;
 	/// Perform a Trilinear sample or EWA sample based on the bTrilinear variable
-	T Lookup(const Point2f & UV, Vector2f D0, Vector2f D1);
+	T Lookup(const Point2f & UV, Vector2f D0, Vector2f D1) const;
+	/// Evaluate the gradient of the texture a the given level
+	void EvalGradient(int Level, const Point2f & UV, T * pGradients) const;
 
 private:
 	std::unique_ptr<ResampleWeight[]> GetResampleWeights(int Old, int New);
@@ -276,7 +278,7 @@ inline const T & MipMap<T>::Texel(int Level, int U, int V) const
 }
 
 template<typename T>
-inline T MipMap<T>::Lookup(const Point2f & UV)
+inline T MipMap<T>::Lookup(const Point2f & UV) const
 {
 	return Texel(0, int(std::floor(UV[0] * m_Resolution[0])), int(std::floor(UV[1] * m_Resolution[1])));
 }
@@ -305,7 +307,7 @@ inline T MipMap<T>::Lookup(const Point2f & UV, float Width) const
 }
 
 template<typename T>
-inline T MipMap<T>::Lookup(const Point2f & UV, Vector2f D0, Vector2f D1)
+inline T MipMap<T>::Lookup(const Point2f & UV, Vector2f D0, Vector2f D1) const
 {
 	if (m_bTrilinear)
 	{
@@ -345,6 +347,33 @@ inline T MipMap<T>::Lookup(const Point2f & UV, Vector2f D0, Vector2f D1)
 
 	return Lerp(LOD - iLOD, EWA(int(iLOD), UV, D0, D1),
 		EWA(int(iLOD + 1.0f), UV, D0, D1));
+}
+
+template<typename T>
+inline void MipMap<T>::EvalGradient(int Level, const Point2f & UV, T * pGradients) const
+{
+	CHECK_LT(Level, m_Pyramid.size());
+
+	const BlockedArray<T, 2> & Data = *m_Pyramid[Level];
+
+	float U = UV.x() * Data.USize() - 0.5f;
+	float V = UV.y() * Data.VSize() - 0.5f;
+
+	int X = int(std::floor(U));
+	int Y = int(std::floor(V));
+
+	float DeltaX = U - float(X);
+	float DeltaY = V - float(Y);
+
+	const T P00 = Texel(Level, X    , Y    );
+	const T P10 = Texel(Level, X + 1, Y    );
+	const T P01 = Texel(Level, X    , Y + 1);
+	const T P11 = Texel(Level, X + 1, Y + 1);
+
+	const T Temp = P01 + P10 - P11;
+
+	pGradients[0] = (P10 + P00 * (DeltaY - 1.0f) - Temp * DeltaY) * float(Data.USize());
+	pGradients[1] = (P01 + P00 * (DeltaX - 1.0f) - Temp * DeltaX) * float(Data.VSize());
 }
 
 template<typename T>

@@ -18,6 +18,11 @@ CheckerboardTexture::CheckerboardTexture(const PropertyList & PropList)
 
 Color3f CheckerboardTexture::Eval(const Point2f & UV, const Vector2f & D0, const Vector2f & D1) const
 {
+	return Eval(UV);
+}
+
+Color3f CheckerboardTexture::Eval(const Point2f & UV) const
+{
 	bool bEvenX = ModPositive(ModPositive(int(UV[0] * m_Blocks), m_Blocks), 2) == 0;
 	bool bEvenY = ModPositive(ModPositive(int(UV[1] * m_Blocks), m_Blocks), 2) == 0;
 	return (bEvenX ^ bEvenY) ? m_ColorA : m_ColorB;

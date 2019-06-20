@@ -129,6 +129,50 @@ Color3f BitmapTexture::Eval(const Point2f & UV, const Vector2f & D0, const Vecto
 	}
 }
 
+Color3f BitmapTexture::Eval(const Point2f & UV) const
+{
+	if (m_Channel == 1)
+	{
+		return Color3f(m_Texture1f->Lookup(UV));
+
+	}
+	else //if (m_Channel == 3)
+	{
+		return m_Texture3f->Lookup(UV);
+	}
+}
+
+void BitmapTexture::EvalGradient(const Point2f & UV, Color3f * pGradients) const
+{
+	if (m_Channel == 1)
+	{
+		if (m_FilterType != EFilterType::ENearest)
+		{
+			float Gradients[2];
+			m_Texture1f->EvalGradient(0, UV, Gradients);
+			pGradients[0] = Color3f(Gradients[0]);
+			pGradients[1] = Color3f(Gradients[1]);
+		}
+		else
+		{
+			pGradients[0] = Color3f(0.0f);
+			pGradients[1] = Color3f(0.0f);
+		}
+	}
+	else //if (m_Channel == 3)
+	{
+		if (m_FilterType != EFilterType::ENearest)
+		{
+			m_Texture3f->EvalGradient(0, UV, pGradients);
+		}
+		else
+		{
+			pGradients[0] = Color3f(0.0f);
+			pGradients[1] = Color3f(0.0f);
+		}
+	}
+}
+
 Color3f BitmapTexture::GetAverage() const
 {
 	return m_Average;

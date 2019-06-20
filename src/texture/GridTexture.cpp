@@ -19,6 +19,11 @@ GridTexture::GridTexture(const PropertyList & PropList)
 
 Color3f GridTexture::Eval(const Point2f & UV, const Vector2f & D0, const Vector2f & D1) const
 {
+	return Eval(UV);
+}
+
+Color3f GridTexture::Eval(const Point2f & UV) const
+{
 	Point2f ScaledUV = UV * (m_Lines - 1);
 	float dX = ScaledUV[0] - std::floor(ScaledUV[0]);
 	float dY = ScaledUV[1] - std::floor(ScaledUV[1]);

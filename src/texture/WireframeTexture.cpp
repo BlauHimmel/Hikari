@@ -19,7 +19,7 @@ WireframeTexture::WireframeTexture(const PropertyList & PropList)
 	m_UVScale[1] = PropList.GetFloat(XML_TEXTURE_WIREFRAME_SCALE_V, DEFAULT_TEXTURE_WIREFRAME_SCALE_V);
 }
 
-Color3f WireframeTexture::Eval(const Intersection & Isect) const
+Color3f WireframeTexture::Eval(const Intersection & Isect, bool bFilter) const
 {
 	const Mesh * pMesh = Isect.pShape->GetMesh();
 	if (pMesh == nullptr)

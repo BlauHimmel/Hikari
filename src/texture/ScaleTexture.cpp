@@ -16,9 +16,17 @@ ScaleTexture::~ScaleTexture()
 	delete m_pNestedTexture;
 }
 
-Color3f ScaleTexture::Eval(const Intersection & Isect) const
+Color3f ScaleTexture::Eval(const Intersection & Isect, bool bFilter) const
 {
-	return m_pNestedTexture->Eval(Isect) * m_Scale;
+	return m_pNestedTexture->Eval(Isect, bFilter) * m_Scale;
+}
+
+void ScaleTexture::EvalGradient(const Intersection & Isect, Color3f * pGradients) const
+{
+	m_pNestedTexture->EvalGradient(Isect, pGradients);
+
+	pGradients[0] *= m_Scale;
+	pGradients[1] *= m_Scale;
 }
 
 Color3f ScaleTexture::GetAverage() const

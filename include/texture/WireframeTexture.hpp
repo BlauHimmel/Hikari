@@ -11,7 +11,7 @@ class WireframeTexture : public Texture
 public:
 	WireframeTexture(const PropertyList & PropList);
 
-	virtual Color3f Eval(const Intersection & Isect) const override;
+	virtual Color3f Eval(const Intersection & Isect, bool bFilter = true) const override;
 
 	virtual Color3f GetAverage() const override;
 

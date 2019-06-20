@@ -143,9 +143,29 @@ std::unique_ptr<Color3f[]> LoadImageFromFileRGB(
 	return Pixels;
 }
 
-Color3f Texture::Eval(const Intersection & Isect) const
+Color3f Texture::Eval(const Intersection & Isect, bool bFilter) const
 {
-	throw HikariException("Texture::Eval(const Intersection & Isect) is not implemented!");
+	throw HikariException(
+		"Texture::Eval(const Intersection & Isect, bool bFilter) is not implemented!"
+	);
+}
+
+void Texture::EvalGradient(const Intersection & Isect, Color3f * pGradients) const
+{
+	Intersection IsectCopy(Isect);
+
+	Color3f Value = Eval(Isect, false);
+	
+	IsectCopy.P = Isect.P + Isect.dPdU * float(Epsilon);
+	IsectCopy.UV = Isect.UV + Vector2f(float(Epsilon), 0.0f);
+	Color3f ValueU = Eval(IsectCopy, false);
+
+	IsectCopy.P = Isect.P + Isect.dPdV * float(Epsilon);
+	IsectCopy.UV = Isect.UV + Vector2f(0.0f, float(Epsilon));
+	Color3f ValueV = Eval(IsectCopy, false);
+
+	pGradients[0] = (ValueU - Value) / float(Epsilon);
+	pGradients[1] = (ValueV - Value) / float(Epsilon);
 }
 
 Color3f Texture::GetAverage() const
@@ -188,18 +208,43 @@ Object::EClassType Texture::GetClassType() const
 	return EClassType::ETexture;
 }
 
-Color3f Texture2D::Eval(const Intersection & Isect) const
+Color3f Texture2D::Eval(const Intersection & Isect, bool bFilter) const
 {
 	Point2f UV = Point2f(Isect.UV.x() * m_UVScale.x(), Isect.UV.y() * m_UVScale.y()) + m_UVOffset;
 
-	return Eval(UV,
-		Vector2f(Isect.dUdX * m_UVScale.x(), Isect.dVdX * m_UVScale.y()),
-		Vector2f(Isect.dUdY * m_UVScale.x(), Isect.dVdY * m_UVScale.y()));
+	if (bFilter)
+	{
+		return Eval(UV,
+			Vector2f(Isect.dUdX * m_UVScale.x(), Isect.dVdX * m_UVScale.y()),
+			Vector2f(Isect.dUdY * m_UVScale.x(), Isect.dVdY * m_UVScale.y()));
+	}
+	else
+	{
+		return Eval(UV);
+	}
+}
+
+void Texture2D::EvalGradient(const Intersection & Isect, Color3f * pGradients) const
+{
+	EvalGradient(Isect.UV, pGradients);
+
+	pGradients[0] *= m_UVScale.x();
+	pGradients[1] *= m_UVScale.y();
+}
+
+void Texture2D::EvalGradient(const Point2f & UV, Color3f * pGradients) const
+{
+	Color3f Value = Eval(UV);
+	Color3f ValueU = Eval(UV + Vector2f(float(Epsilon), 0.0f));
+	Color3f ValueV = Eval(UV + Vector2f(0.0f, float(Epsilon)));
+
+	pGradients[0] = (ValueU - Value) / float(Epsilon);
+	pGradients[1] = (ValueV - Value) / float(Epsilon);
 }
 
 ConstantColor3fTexture::ConstantColor3fTexture(const Color3f & Value) : m_Value(Value) { }
 
-Color3f ConstantColor3fTexture::Eval(const Intersection & Isect) const
+Color3f ConstantColor3fTexture::Eval(const Intersection & Isect, bool bFilter) const
 {
 	return m_Value;
 }
@@ -243,7 +288,7 @@ std::string ConstantColor3fTexture::ToString() const
 
 ConstantFloatTexture::ConstantFloatTexture(float Value) : m_Value(Value) { }
 
-Color3f ConstantFloatTexture::Eval(const Intersection & Isect) const
+Color3f ConstantFloatTexture::Eval(const Intersection & Isect, bool bFilter) const
 {
 	return Color3f(m_Value);
 }
@@ -292,9 +337,9 @@ Color3fAdditionTexture::Color3fAdditionTexture(const Texture * pTextureA, const 
 	CHECK_NOTNULL(m_pTextureB);
 }
 
-Color3f Color3fAdditionTexture::Eval(const Intersection & Isect) const
+Color3f Color3fAdditionTexture::Eval(const Intersection & Isect, bool bFilter) const
 {
-	return m_pTextureA->Eval(Isect) + m_pTextureB->Eval(Isect);
+	return m_pTextureA->Eval(Isect, bFilter) + m_pTextureB->Eval(Isect, bFilter);
 }
 
 Color3f Color3fAdditionTexture::GetAverage() const
@@ -349,9 +394,9 @@ Color3fSubtractionTexture::Color3fSubtractionTexture(const Texture * pTextureA, 
 	CHECK_NOTNULL(m_pTextureB);
 }
 
-Color3f Color3fSubtractionTexture::Eval(const Intersection & Isect) const
+Color3f Color3fSubtractionTexture::Eval(const Intersection & Isect, bool bFilter) const
 {
-	return m_pTextureA->Eval(Isect) - m_pTextureB->Eval(Isect);
+	return m_pTextureA->Eval(Isect, bFilter) - m_pTextureB->Eval(Isect, bFilter);
 }
 
 Color3f Color3fSubtractionTexture::GetAverage() const
@@ -406,9 +451,9 @@ Color3fProductTexture::Color3fProductTexture(const Texture * pTextureA, const Te
 	CHECK_NOTNULL(m_pTextureB);
 }
 
-Color3f Color3fProductTexture::Eval(const Intersection & Isect) const
+Color3f Color3fProductTexture::Eval(const Intersection & Isect, bool bFilter) const
 {
-	return m_pTextureA->Eval(Isect) * m_pTextureB->Eval(Isect);
+	return m_pTextureA->Eval(Isect, bFilter) * m_pTextureB->Eval(Isect, bFilter);
 }
 
 Color3f Color3fProductTexture::GetAverage() const

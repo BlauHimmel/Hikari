@@ -13,6 +13,10 @@ public:
 
 	virtual Color3f Eval(const Point2f & UV, const Vector2f & D0, const Vector2f & D1) const override;
 
+	virtual Color3f Eval(const Point2f & UV) const override;
+
+	virtual void EvalGradient(const Point2f & UV, Color3f * pGradients) const override;
+
 	virtual Color3f GetAverage() const override;
 
 	virtual Color3f GetMinimum() const override;

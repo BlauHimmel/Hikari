@@ -35,7 +35,14 @@ public:
 	/**
 	* \brief Return the texture value at \c Isect
 	*/
-	virtual Color3f Eval(const Intersection & Isect) const;
+	virtual Color3f Eval(const Intersection & Isect, bool bFilter = true) const;
+
+	/**
+	* \brief Return the texture gradient at Isect. This function is usually 
+	* implemented pointwise without any kind of filtering. Length of the array 
+	* 'pGradients' should be at least 2 (U and V component respectively).
+	*/
+	virtual void EvalGradient(const Intersection & Isect, Color3f * pGradients) const;
 
 	/// Return the component-wise average value of the texture over its domain
 	virtual Color3f GetAverage() const;
@@ -81,10 +88,24 @@ public:
 	*    Specifies whether a filtered texture lookup is desired. Note
 	*    that this does not mean that filtering will actually be used.
 	*/
-	virtual Color3f Eval(const Intersection & Isect) const override;
+	virtual Color3f Eval(const Intersection & Isect, bool bFilter = true) const override;
 
 	/// Filtered texture lookup -- Texture2D subclasses must provide this function
 	virtual Color3f Eval(const Point2f & UV, const Vector2f & D0, const Vector2f & D1) const = 0;
+
+	/// Unfiltered texture lookup -- Texture2D subclasses must provide this function
+	virtual Color3f Eval(const Point2f & UV) const = 0;
+
+	/**
+	* \brief Return the texture gradient at Isect. This function is usually
+	* implemented pointwise without any kind of filtering. Length of the array
+	* 'pGradients' should be at least 2 (U and V component respectively).
+	*/
+	virtual void EvalGradient(const Intersection & Isect, Color3f * pGradients) const override;
+
+	/// Unfiltered texture lookup
+	virtual void EvalGradient(const Point2f & UV, Color3f * pGradients) const;
+
 };
 
 /* ============================================================ */
@@ -96,7 +117,7 @@ class ConstantColor3fTexture : public Texture
 public:
 	ConstantColor3fTexture(const Color3f & Value);
 
-	virtual Color3f Eval(const Intersection & Isect) const override;
+	virtual Color3f Eval(const Intersection & Isect, bool bFilter = true) const override;
 
 	virtual Color3f GetAverage() const override;
 
@@ -121,7 +142,7 @@ class ConstantFloatTexture : public Texture
 public:
 	ConstantFloatTexture(float Value);
 	
-	virtual Color3f Eval(const Intersection & Isect) const override;
+	virtual Color3f Eval(const Intersection & Isect, bool bFilter = true) const override;
 
 	virtual Color3f GetAverage() const override;
 
@@ -146,7 +167,7 @@ class Color3fAdditionTexture : public Texture
 public:
 	Color3fAdditionTexture(const Texture * pTextureA, const Texture * pTextureB);
 
-	virtual Color3f Eval(const Intersection & Isect) const override;
+	virtual Color3f Eval(const Intersection & Isect, bool bFilter = true) const override;
 
 	virtual Color3f GetAverage() const override;
 
@@ -172,7 +193,7 @@ class Color3fSubtractionTexture : public Texture
 public:
 	Color3fSubtractionTexture(const Texture * pTextureA, const Texture * pTextureB);
 
-	virtual Color3f Eval(const Intersection & Isect) const override;
+	virtual Color3f Eval(const Intersection & Isect, bool bFilter = true) const override;
 
 	virtual Color3f GetAverage() const override;
 
@@ -198,7 +219,7 @@ class Color3fProductTexture : public Texture
 public:
 	Color3fProductTexture(const Texture * pTextureA, const Texture * pTextureB);
 
-	virtual Color3f Eval(const Intersection & Isect) const override;
+	virtual Color3f Eval(const Intersection & Isect, bool bFilter = true) const override;
 
 	virtual Color3f GetAverage() const override;
 

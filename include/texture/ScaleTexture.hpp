@@ -13,7 +13,9 @@ public:
 
 	~ScaleTexture();
 
-	virtual Color3f Eval(const Intersection & Isect) const override;
+	virtual Color3f Eval(const Intersection & Isect, bool bFilter = true) const override;
+
+	virtual void EvalGradient(const Intersection & Isect, Color3f * pGradients) const override;
 
 	virtual Color3f GetAverage() const override;
 
