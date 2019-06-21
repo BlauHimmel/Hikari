@@ -266,6 +266,7 @@
 #define XML_BSDF_ROUGH_COATING_GGX_RFT_DATA      "data\\GGXRFTData.bin"
 #define XML_BSDF_TWO_SIDED                       "twoSided"
 #define XML_BSDF_BUMP_MAP                        "bumpMap"
+#define XML_BSDF_NORMAL_MAP                      "normalMap"
 
 #define XML_MEDIUM                               "medium"
 

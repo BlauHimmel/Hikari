@@ -43,6 +43,7 @@ std::string Object::ClassTypeName(EClassType Type)
 }
 
 std::map<std::string, ObjectFactory::Constructor> * ObjectFactory::m_pConstructors = nullptr;
+std::map<std::string, Object *> * ObjectFactory::m_pCreatedInstances = nullptr;
 
 void ObjectFactory::RegisterClz(const std::string & Name, const Constructor & Construct)
 {
@@ -53,10 +54,12 @@ void ObjectFactory::RegisterClz(const std::string & Name, const Constructor & Co
 
 	if (m_pConstructors->find(Name) != m_pConstructors->end())
 	{
-		throw HikariException("Class '%s' has been registered!", Name);
+		LOG(ERROR) << tfm::format("This registration was abort because class '%s' has been registered before!", Name);
 	}
-
-	(*m_pConstructors)[Name] = Construct;
+	else
+	{
+		(*m_pConstructors)[Name] = Construct;
+	}
 }
 
 Object * ObjectFactory::CreateInstance(const std::string & Name, const PropertyList & PropList)
@@ -65,7 +68,35 @@ Object * ObjectFactory::CreateInstance(const std::string & Name, const PropertyL
 	{
 		throw HikariException("A constructor for class \"%s\" could not be found!", Name);
 	}
-	return (*m_pConstructors)[Name](PropList);
+
+	if (m_pCreatedInstances == nullptr)
+	{
+		m_pCreatedInstances = new std::map<std::string, Object *>();
+	}
+
+	Object * pNewObj = (*m_pConstructors)[Name](PropList);
+
+	time_t Time;
+	time(&Time);
+	char Buffer[64];
+	strftime(Buffer, sizeof(Buffer), "%Y-%m-%d_%H:%M:%S", localtime(&Time));
+
+	std::string NewObjName = "[" + std::to_string(m_pCreatedInstances->size()) + "]" + Name + Buffer;
+	(*m_pCreatedInstances)[NewObjName] = pNewObj;
+
+	return pNewObj;
+}
+
+void ObjectFactory::ReleaseAllocatedMemory()
+{
+	//for (const auto & KV : *m_pCreatedInstances)
+	//{
+	//	Object * pObj = KV.second;
+	//	delete pObj;
+	//}
+
+	delete m_pCreatedInstances;
+	delete m_pConstructors;
 }
 
 NAMESPACE_END

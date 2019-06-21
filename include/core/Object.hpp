@@ -122,8 +122,15 @@ public:
 	*/
 	static Object * CreateInstance(const std::string & Name, const PropertyList & PropList);
 
+	/**
+	* \brief Release all the instance created by the function 'CreateInstance' and the 
+	* memory used for the 'ObjectFactory' class.
+	*/
+	static void ReleaseAllocatedMemory();
+
 private:
 	static std::map<std::string, Constructor> * m_pConstructors;
+	static std::map<std::string, Object *> * m_pCreatedInstances;
 };
 
 /// Macro for registering an object constructor with the \ref ObjectFactory

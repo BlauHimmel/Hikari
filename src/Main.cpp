@@ -197,6 +197,8 @@ int main(int argc, char ** argv)
 		LOG(ERROR) << "Fatal error: " << Ex.what();
 	}
 
+	Hikari::ObjectFactory::ReleaseAllocatedMemory();
+
 	google::ShutdownGoogleLogging();
 	system("PAUSE");
 	return 0;

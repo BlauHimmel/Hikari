@@ -69,8 +69,8 @@
 			<matrix value="1.0,0.0,0.0,0.0,0.0,-1.6292068494294654e-07,-1.0,0.0,0.0,1.0,-1.6292068494294654e-07,0.0,0.0,0.0,0.0,1.0"/>
 		</transform>
 		<bsdf type="bumpMap">
-			<texture type="bitmap" name="alpha">
-				<string name="filename" value="bump.jpg"/>
+			<texture type="bitmap">
+				<string name="filename" value="bump2.jpg"/>
 			</texture>
 			<bsdf type="roughConductor">
 				<string name="type" value="ggx"/>
