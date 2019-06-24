@@ -175,7 +175,7 @@ int main(int argc, char ** argv)
 			/* When the XML root object is a scene, start rendering it .. */
 			if (Root->GetClassType() == Hikari::Object::EClassType::EScene)
 			{
-				Hikari::Render((Hikari::Scene*)(Root.get()), argv[1]);
+				Hikari::Render((Hikari::Scene *)(Root.get()), argv[1]);
 			}
 		}
 		else if (Path.extension() == "exr")
