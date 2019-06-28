@@ -19,7 +19,7 @@ public:
 	virtual std::string ToString() const;
 
 protected:
-	Color3f m_Power;
+	Color3f m_Irradiance;
 	Vector3f m_Direction;
 };
 
