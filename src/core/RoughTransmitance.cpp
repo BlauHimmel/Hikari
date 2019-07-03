@@ -36,6 +36,7 @@ RoughTransmittance::RoughTransmittance(const std::string & DataFilename)
 	{
 		DataFile.read((char*)(&DiffTransmittances[i]), sizeof(float));
 	}
+	DataFile.close();
 
 	bEtaFixed = false;
 	bAlphaFixed = false;
