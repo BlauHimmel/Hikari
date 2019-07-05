@@ -43,7 +43,7 @@ public:
 	virtual bool RayIntersect(const Ray3f & Ray, float & U, float & V, float & T) const = 0;
 
 	/// After intersection test passed, compute the detail information of the intersection point.
-	virtual void PostIntersect(Intersection & Isect) = 0;
+	virtual void PostIntersect(Intersection & Isect) const = 0;
 
 	/**
 	* \brief Return the pointer of the mesh that this shape attach

@@ -57,7 +57,7 @@ public:
 	virtual bool RayIntersect(const Ray3f & Ray, float & U, float & V, float & T) const override;
 
 	/// After intersection test passed, compute the detail information of the intersection point.
-	virtual void PostIntersect(Intersection & Isect) override;
+	virtual void PostIntersect(Intersection & Isect) const override;
 
 	/**
 	* \brief Return the pointer of the mesh that this shape attach

@@ -64,7 +64,7 @@ bool Triangle::RayIntersect(const Ray3f & Ray, float & U, float & V, float & T) 
 	return m_pMesh->RayIntersect(m_iFacet, Ray, U, V, T);
 }
 
-void Triangle::PostIntersect(Intersection & Isect)
+void Triangle::PostIntersect(Intersection & Isect) const
 {
 	/* At this point, we now know that there is an intersection,
 	and we know the triangle index of the closest such intersection.
