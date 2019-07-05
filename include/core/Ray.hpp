@@ -64,8 +64,8 @@ struct TRay
 
 	/// Copy a ray, but change the covered segment of the copy
 	TRay(const TRay & Ray, Scalar MinT, Scalar MaxT) :
-		Origin(ray.Origin), Direction(ray.Direction),
-		DirectionReciprocal(ray.DirectionReciprocal),
+		Origin(Ray.Origin), Direction(Ray.Direction),
+		DirectionReciprocal(Ray.DirectionReciprocal),
 		MinT(Ray.MinT), MaxT(Ray.MaxT),
 		RxOrigin(Ray.RxOrigin), RyOrigin(Ray.RyOrigin),
 		RxDirection(Ray.RxDirection), RyDirection(Ray.RyDirection),

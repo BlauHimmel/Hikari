@@ -28,12 +28,12 @@ Color3f DirectionalLight::Sample(EmitterQueryRecord & Record, const Point2f & Sa
 
 float DirectionalLight::Pdf(const EmitterQueryRecord & Record) const
 {
-	return 1.0f;
+	return 0.0f;
 }
 
 Color3f DirectionalLight::Eval(const EmitterQueryRecord & Record) const
 {
-	return m_Irradiance;
+	return Color3f(0.0f);
 }
 
 std::string DirectionalLight::ToString() const
