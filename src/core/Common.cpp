@@ -167,9 +167,9 @@ std::string TimeString(double Time, bool bPrecise)
 			if (Time > 60)
 			{
 				Time /= 60; Suffix = "h";
-				if (Time > 12)
+				if (Time > 24)
 				{
-					Time /= 12; Suffix = "d";
+					Time /= 24; Suffix = "d";
 				}
 			}
 		}
