@@ -10,18 +10,18 @@ class Shape : public Object
 {
 public:
 	/**
-	* \brief Uniformly sample a position on the mesh with
+	* \brief Uniformly sample a position on the shape with
 	* respect to surface area. Returns both position and normal
 	*/
 	virtual void SamplePosition(const Point2f & Sample, Point3f & P, Normal3f & N) const = 0;
 
-	/// Return the surface area of the given triangle
+	/// Return the surface area of the given shape
 	virtual float SurfaceArea() const = 0;
 
-	/// Return an axis-aligned bounding box of the entire mesh
+	/// Return an axis-aligned bounding box of the entire shape
 	virtual BoundingBox3f GetBoundingBox() const = 0;
 
-	/// Return the centroid of the given triangle
+	/// Return the centroid of the given shape
 	virtual Point3f GetCentroid() const = 0;
 
 	/** \brief intersection test
@@ -59,7 +59,7 @@ public:
 	*/
 	virtual uint32_t GetFacetIndex() const;
 
-	/// Is this mesh an area emitter?
+	/// Is this shape an area emitter?
 	virtual bool IsEmitter() const;
 
 	/// Return a pointer to an attached area emitter instance
@@ -68,7 +68,7 @@ public:
 	/// Return a pointer to an attached area emitter instance (const version)
 	virtual const Emitter * GetEmitter() const;
 
-	/// Return a pointer to the BSDF associated with this mesh
+	/// Return a pointer to the BSDF associated with this shape
 	virtual const BSDF * GetBSDF() const = 0;
 
 	/// Compute mean curvature and Gaussian curvature at the specified intersection point

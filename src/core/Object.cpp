@@ -89,6 +89,11 @@ Object * ObjectFactory::CreateInstance(const std::string & Name, const PropertyL
 
 void ObjectFactory::ReleaseAllocatedMemory()
 {
+	/* Currently, the lifttime of each object is managed by its parent object and 
+	Scene is managed by the user manually. Uncomment code below and remove the 'delelte'
+	statement in destructor of each object to let the Factory manage the lifetime 
+	of all object. */
+
 	//for (const auto & KV : *m_pCreatedInstances)
 	//{
 	//	Object * pObj = KV.second;
