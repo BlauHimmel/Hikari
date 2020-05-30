@@ -128,7 +128,11 @@ void BVHAcceleration::Build()
 			float SplitCoord = 0.5f * (Centroid.Min[SplitDim] + Centroid.Max[SplitDim]);
 
 			// Partition the list of objects on this split
-			for (uint32_t i = iStart + 1; i < iEnd; i++)
+			// Fix bug: Originally 'i' starts from 'iStart + 1'.  
+			// When 'm_pShapes[iStart]->GetCentroid()[SplitDim] < SplitCoord',
+			// a wrong result would be obtained. (Although it make no 
+			// difference to the final render result.) 
+			for (uint32_t i = iStart; i < iEnd; i++)
 			{
 				if (m_pShapes[i]->GetCentroid()[SplitDim] < SplitCoord)
 				{
